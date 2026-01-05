@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">好好学习</string>
+    
+    <!-- 导航 -->
+    <string name="nav_practice">练习</string>
+    <string name="nav_progress">进度</string>
+    <string name="nav_wrong_book">错题本</string>
+    <string name="nav_ai_assistant">AI助手</string>
+    
+    <!-- 登录 -->
+    <string name="login">登录</string>
+    <string name="register">注册</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="username_hint">请输入用户名</string>
+    <string name="password_hint">请输入密码</string>
+    
+    <!-- 练习 -->
+    <string name="select_subject">选择科目</string>
+    <string name="select_grade">选择年级</string>
+    <string name="subject_chinese">语文</string>
+    <string name="subject_math">数学</string>
+    <string name="subject_english">英语</string>
+    <string name="grade_one">一年级</string>
+    <string name="grade_two">二年级</string>
+    <string name="grade_three">三年级</string>
+    <string name="grade_four">四年级</string>
+    <string name="grade_five">五年级</string>
+    <string name="grade_six">六年级</string>
+    <string name="start_practice">开始练习</string>
+    <string name="submit_answer">提交答案</string>
+    <string name="next_question">下一题</string>
+    <string name="correct">正确</string>
+    <string name="wrong">错误</string>
+    
+    <!-- 进度 -->
+    <string name="learning_progress">学习进度</string>
+    <string name="total_questions">总题数</string>
+    <string name="completed_questions">已完成</string>
+    <string name="accuracy_rate">正确率</string>
+    
+    <!-- 错题本 -->
+    <string name="wrong_questions">错题本</string>
+    <string name="review_wrong_question">复习错题</string>
+    <string name="delete_wrong_question">删除</string>
+    
+    <!-- AI助手 -->
+    <string name="ai_assistant">AI小助手</string>
+    <string name="input_message_hint">输入您的问题...</string>
+    <string name="send">发送</string>
+    <string name="thinking">思考中...</string>
+    
+    <!-- 通用 -->
+    <string name="confirm">确认</string>
+    <string name="cancel">取消</string>
+    <string name="loading">加载中...</string>
+    <string name="error">错误</string>
+    <string name="network_error">网络错误，请检查网络连接</string>
+    
+    <!-- 消息提示 -->
+    <string name="please_login">请先登录</string>
+    <string name="login_success">登录成功</string>
+    <string name="register_success">注册成功，请登录</string>
+    <string name="please_input_username_password">请输入用户名和密码</string>
+    <string name="please_input_api_key">请输入API密钥</string>
+    <string name="api_key_saved">API密钥已保存</string>
+    <string name="please_config_api_key">请先配置Deepseek API密钥</string>
+    <string name="please_config_api_key_in_settings">请先在设置中配置Deepseek API密钥</string>
+    <string name="send_failed">发送失败: %1$s</string>
+    <string name="load_failed">加载失败: %1$s</string>
+    
+    <!-- 错误信息 -->
+    <string name="username_exists">用户名已存在</string>
+    <string name="user_not_found">用户不存在</string>
+    <string name="password_wrong">密码错误</string>
+    <string name="api_key_not_set">请先配置Deepseek API密钥</string>
+    
+    <!-- 练习相关 -->
+    <string name="found_questions">找到 %1$d 道题目，可以开始练习</string>
+    <string name="no_questions">暂无题目，请先添加题目数据</string>
+    
+    <!-- 进度相关 -->
+    <string name="total_questions_format">总题数: %1$d</string>
+    <string name="completed_questions_format">已完成: %1$d</string>
+    <string name="accuracy_rate_format">正确率: %.1f%%</string>
+    
+    <!-- 错题本相关 -->
+    <string name="no_wrong_questions">暂无错题</string>
+    <string name="question_id">题目ID: %1$d</string>
+    <string name="your_answer">你的答案: %1$s</string>
+    <string name="time">时间: %1$s</string>
+    <string name="review_count">复习次数: %1$d</string>
+    
+    <!-- 设置 -->
+    <string name="settings">设置</string>
+    <string name="deepseek_api_key">Deepseek API密钥</string>
+    <string name="api_key_hint">请输入Deepseek API密钥</string>
+    <string name="save">保存</string>
+    
+    <!-- AI助手系统提示 -->
+    <string name="ai_system_prompt">你是一个专业的小学课后辅导AI助手，擅长解答1-6年级的语文、数学、英语等科目的问题。请用简洁、易懂的方式回答学生的问题。</string>
+</resources>
