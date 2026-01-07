@@ -18,6 +18,9 @@ public interface QuestionDao {
     @Query("SELECT * FROM questions WHERE subjectId = :subjectId AND grade = :grade")
     List<QuestionEntity> getQuestionsBySubjectAndGrade(int subjectId, int grade);
 
+    @Query("SELECT * FROM questions WHERE id IN (:ids)")
+    List<QuestionEntity> getQuestionsByIds(List<Long> ids);
+
     @Query("SELECT * FROM questions WHERE id = :id LIMIT 1")
     QuestionEntity getQuestionById(long id);
 

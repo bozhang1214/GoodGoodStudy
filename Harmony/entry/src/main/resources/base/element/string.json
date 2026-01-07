@@ -1,0 +1,368 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "好好学习 - 小学课后练习应用"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "好好学习应用主入口"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "好好学习"
+    },
+    {
+      "name": "internet_permission_reason",
+      "value": "需要网络权限以访问AI API"
+    },
+    {
+      "name": "network_info_permission_reason",
+      "value": "需要网络状态权限以检查网络连接"
+    },
+    {
+      "name": "app_name",
+      "value": "好好学习"
+    },
+    {
+      "name": "nav_practice",
+      "value": "练习"
+    },
+    {
+      "name": "nav_progress",
+      "value": "进度"
+    },
+    {
+      "name": "nav_wrong_book",
+      "value": "错题本"
+    },
+    {
+      "name": "nav_ai_assistant",
+      "value": "AI助手"
+    },
+    {
+      "name": "login",
+      "value": "登录"
+    },
+    {
+      "name": "register",
+      "value": "注册"
+    },
+    {
+      "name": "username",
+      "value": "用户名"
+    },
+    {
+      "name": "password",
+      "value": "密码"
+    },
+    {
+      "name": "username_hint",
+      "value": "请输入用户名"
+    },
+    {
+      "name": "password_hint",
+      "value": "请输入密码"
+    },
+    {
+      "name": "select_subject",
+      "value": "选择科目"
+    },
+    {
+      "name": "select_grade",
+      "value": "选择年级"
+    },
+    {
+      "name": "subject_chinese",
+      "value": "语文"
+    },
+    {
+      "name": "subject_math",
+      "value": "数学"
+    },
+    {
+      "name": "subject_english",
+      "value": "英语"
+    },
+    {
+      "name": "grade_one",
+      "value": "一年级"
+    },
+    {
+      "name": "grade_two",
+      "value": "二年级"
+    },
+    {
+      "name": "grade_three",
+      "value": "三年级"
+    },
+    {
+      "name": "grade_four",
+      "value": "四年级"
+    },
+    {
+      "name": "grade_five",
+      "value": "五年级"
+    },
+    {
+      "name": "grade_six",
+      "value": "六年级"
+    },
+    {
+      "name": "start_practice",
+      "value": "开始练习"
+    },
+    {
+      "name": "submit_answer",
+      "value": "提交答案"
+    },
+    {
+      "name": "next_question",
+      "value": "下一题"
+    },
+    {
+      "name": "correct",
+      "value": "正确"
+    },
+    {
+      "name": "wrong",
+      "value": "错误"
+    },
+    {
+      "name": "learning_progress",
+      "value": "学习进度"
+    },
+    {
+      "name": "total_questions",
+      "value": "总题数"
+    },
+    {
+      "name": "completed_questions",
+      "value": "已完成"
+    },
+    {
+      "name": "accuracy_rate",
+      "value": "正确率"
+    },
+    {
+      "name": "wrong_questions",
+      "value": "错题本"
+    },
+    {
+      "name": "review_wrong_question",
+      "value": "复习错题"
+    },
+    {
+      "name": "delete_wrong_question",
+      "value": "删除"
+    },
+    {
+      "name": "ai_assistant",
+      "value": "AI小助手"
+    },
+    {
+      "name": "input_message_hint",
+      "value": "输入您的问题..."
+    },
+    {
+      "name": "send",
+      "value": "发送"
+    },
+    {
+      "name": "thinking",
+      "value": "思考中..."
+    },
+    {
+      "name": "confirm",
+      "value": "确认"
+    },
+    {
+      "name": "cancel",
+      "value": "取消"
+    },
+    {
+      "name": "loading",
+      "value": "加载中..."
+    },
+    {
+      "name": "error",
+      "value": "错误"
+    },
+    {
+      "name": "network_error",
+      "value": "网络错误，请检查网络连接"
+    },
+    {
+      "name": "please_login",
+      "value": "请先登录"
+    },
+    {
+      "name": "login_success",
+      "value": "登录成功"
+    },
+    {
+      "name": "register_success",
+      "value": "注册成功，请登录"
+    },
+    {
+      "name": "please_input_username_password",
+      "value": "请输入用户名和密码"
+    },
+    {
+      "name": "please_input_api_key",
+      "value": "请输入API密钥"
+    },
+    {
+      "name": "api_key_saved",
+      "value": "API密钥已保存"
+    },
+    {
+      "name": "please_config_api_key",
+      "value": "请先配置Deepseek API密钥"
+    },
+    {
+      "name": "please_config_api_key_in_settings",
+      "value": "请先在设置中配置Deepseek API密钥"
+    },
+    {
+      "name": "send_failed",
+      "value": "发送失败: %s"
+    },
+    {
+      "name": "load_failed",
+      "value": "加载失败: %s"
+    },
+    {
+      "name": "username_exists",
+      "value": "用户名已存在"
+    },
+    {
+      "name": "user_not_found",
+      "value": "用户不存在"
+    },
+    {
+      "name": "password_wrong",
+      "value": "密码错误"
+    },
+    {
+      "name": "api_key_not_set",
+      "value": "请先配置Deepseek API密钥"
+    },
+    {
+      "name": "found_questions",
+      "value": "找到 %d 道题目，可以开始练习"
+    },
+    {
+      "name": "no_questions",
+      "value": "暂无题目，请先添加题目数据"
+    },
+    {
+      "name": "total_questions_format",
+      "value": "总题数: %d"
+    },
+    {
+      "name": "completed_questions_format",
+      "value": "已完成: %d"
+    },
+    {
+      "name": "accuracy_rate_format",
+      "value": "正确率: %.1f%%"
+    },
+    {
+      "name": "no_wrong_questions",
+      "value": "暂无错题"
+    },
+    {
+      "name": "question_id",
+      "value": "题目ID: %d"
+    },
+    {
+      "name": "your_answer",
+      "value": "你的答案: %s"
+    },
+    {
+      "name": "time",
+      "value": "时间: %s"
+    },
+    {
+      "name": "review_count",
+      "value": "复习次数: %d"
+    },
+    {
+      "name": "settings",
+      "value": "设置"
+    },
+    {
+      "name": "deepseek_api_key",
+      "value": "Deepseek API密钥"
+    },
+    {
+      "name": "api_key_hint",
+      "value": "请输入Deepseek API密钥"
+    },
+    {
+      "name": "save",
+      "value": "保存"
+    },
+    {
+      "name": "ai_system_prompt",
+      "value": "你是一个专业的小学课后辅导AI助手，擅长解答1-6年级的语文、数学、英语等科目的问题。请用简洁、易懂的方式回答学生的问题。"
+    },
+    {
+      "name": "question_number",
+      "value": "第 %d 题 / 共 %d 题"
+    },
+    {
+      "name": "previous",
+      "value": "上一题"
+    },
+    {
+      "name": "next",
+      "value": "下一题"
+    },
+    {
+      "name": "submit_all",
+      "value": "提交所有答案"
+    },
+    {
+      "name": "answer_correct",
+      "value": "回答正确！"
+    },
+    {
+      "name": "answer_wrong",
+      "value": "回答错误"
+    },
+    {
+      "name": "correct_answer",
+      "value": "正确答案"
+    },
+    {
+      "name": "please_answer_all",
+      "value": "请完成所有题目后再提交"
+    },
+    {
+      "name": "total_answered",
+      "value": "总答题数"
+    },
+    {
+      "name": "correct_count",
+      "value": "正确"
+    },
+    {
+      "name": "wrong_count",
+      "value": "错误"
+    },
+    {
+      "name": "accuracy_display",
+      "value": "正确率"
+    },
+    {
+      "name": "grading_result",
+      "value": "批改结果"
+    },
+    {
+      "name": "input_answer",
+      "value": "请输入答案"
+    }
+  ]
+}

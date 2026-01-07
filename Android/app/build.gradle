@@ -13,12 +13,62 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
+    // 签名配置
+    signingConfigs {
+        // Debug签名配置（使用默认debug keystore）
+        debug {
+            // 使用默认debug keystore，无需配置
+        }
+        
+        // Release签名配置
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // 从gradle.properties或环境变量读取签名信息
+            // 如果keystore文件不存在或未配置，会使用debug签名（仅用于测试）
+            if (project.hasProperty('RELEASE_STORE_FILE')) {
+                def keystoreFile = file(RELEASE_STORE_FILE)
+                if (keystoreFile.exists()) {
+                    storeFile keystoreFile
+                    storePassword RELEASE_STORE_PASSWORD
+                    keyAlias RELEASE_KEY_ALIAS
+                    keyPassword RELEASE_KEY_PASSWORD
+                }
+                // 如果keystore文件不存在，不设置任何值，Gradle会使用debug签名
+            }
+            // 如果没有配置签名信息，不设置任何值，Gradle会使用debug签名
         }
     }
+
+    buildTypes {
+        debug {
+            // Debug版本配置
+            minifyEnabled false
+            shrinkResources false
+            debuggable true
+            signingConfig signingConfigs.debug
+            // Debug版本使用5道题（通过BuildConfig.DEBUG自动判断，无需单独配置）
+        }
+        
+        release {
+            // Release版本配置
+            minifyEnabled true  // 启用代码混淆
+            shrinkResources true  // 启用资源压缩
+            debuggable false
+            signingConfig signingConfigs.release
+            
+            // ProGuard规则
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            
+            // 优化选项
+            zipAlignEnabled true
+            
+            // 应用名称后缀（可选，用于区分不同版本）
+            // applicationIdSuffix ".release"
+            
+            // 版本名称后缀（可选）
+            // versionNameSuffix "-release"
+        }
+    }
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

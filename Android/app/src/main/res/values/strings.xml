@@ -30,9 +30,40 @@
     <string name="grade_six">六年级</string>
     <string name="start_practice">开始练习</string>
     <string name="submit_answer">提交答案</string>
+    <string name="submit_all_answers">提交所有答案</string>
     <string name="next_question">下一题</string>
+    <string name="previous_question">上一题</string>
+    <string name="check_all_answers">检查所有答案</string>
+    <string name="answer_summary">答案汇总</string>
+    <string name="unanswered_question">未答题</string>
+    <string name="please_complete_all_questions">请完成所有题目后再提交</string>
+    <string name="unanswered_questions_count">还有 %1$d 道题未作答，请完成所有题目后再提交</string>
+    <string name="grading_result">批改结果</string>
+    <string name="total_answered">总答题数：%1$d</string>
+    <string name="correct_count">正确：%1$d 题</string>
+    <string name="wrong_count">错误：%1$d 题</string>
+    <string name="accuracy_display">正确率：%1$.1f%%</string>
+    <string name="review_wrong_questions">复习错题</string>
+    <string name="no_wrong_questions_to_review">没有错题需要复习</string>
+    <string name="correct_answer_label">正确答案：</string>
+    <string name="result_correct">✓ 正确</string>
+    <string name="result_wrong">✗ 错误</string>
+    <string name="input_answer_hint">请输入答案</string>
     <string name="correct">正确</string>
     <string name="wrong">错误</string>
+    <string name="question_number">第 %1$d 题 / 共 %2$d 题</string>
+    <string name="answer_correct">回答正确！</string>
+    <string name="answer_wrong">回答错误，正确答案是：%1$s</string>
+    <string name="practice_completed">练习完成！</string>
+    <string name="finish">完成</string>
+    <string name="please_select_answer">请选择答案</string>
+    <string name="please_input_answer">请输入答案</string>
+    <string name="confirm_submit">确认提交</string>
+    <string name="check_answer_before_submit">请检查您的答案</string>
+    <string name="your_answer_label">您的答案：</string>
+    <string name="question_content_label">题目：</string>
+    <string name="submit_confirm">确认提交</string>
+    <string name="modify_answer">修改答案</string>
     
     <!-- 进度 -->
     <string name="learning_progress">学习进度</string>
@@ -62,6 +93,8 @@
     <string name="please_login">请先登录</string>
     <string name="login_success">登录成功</string>
     <string name="register_success">注册成功，请登录</string>
+    <string name="register_success_manual_login">注册成功，请手动登录</string>
+    <string name="register_failed_retry">注册失败，请重试</string>
     <string name="please_input_username_password">请输入用户名和密码</string>
     <string name="please_input_api_key">请输入API密钥</string>
     <string name="api_key_saved">API密钥已保存</string>
@@ -79,6 +112,8 @@
     <!-- 练习相关 -->
     <string name="found_questions">找到 %1$d 道题目，可以开始练习</string>
     <string name="no_questions">暂无题目，请先添加题目数据</string>
+    <string name="generating_questions">正在生成题目...</string>
+    <string name="questions_generated">题目生成完成</string>
     
     <!-- 进度相关 -->
     <string name="total_questions_format">总题数: %1$d</string>

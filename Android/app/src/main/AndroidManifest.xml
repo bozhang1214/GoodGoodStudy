@@ -30,6 +30,10 @@
             android:name=".ui.settings.SettingsActivity"
             android:exported="false"
             android:theme="@style/Theme.GoodGoodStudy" />
+        <activity
+            android:name=".ui.practice.PracticeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GoodGoodStudy" />
     </application>
 
 </manifest>

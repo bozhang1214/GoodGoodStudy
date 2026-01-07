@@ -1,0 +1,20 @@
+# DevEco Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Build
+build/
+.hvigor/
+hvigor/
+.hvigorw/
+*.hprof
+oh_modules/
+
+# Local
+local.properties
+
+# OS
+.DS_Store
+Thumbs.db

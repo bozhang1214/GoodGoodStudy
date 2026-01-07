@@ -42,6 +42,10 @@ public class AppConstants {
     public static final int MIN_DIFFICULTY = 1;
     public static final int MAX_DIFFICULTY = 5;
     
+    // 练习题目数量（根据BuildConfig动态设置）
+    public static final int DEBUG_QUESTIONS_PER_PRACTICE = 5;
+    public static final int RELEASE_QUESTIONS_PER_PRACTICE = 40;
+    
     // 消息角色
     public static final String ROLE_USER = "user";
     public static final String ROLE_ASSISTANT = "assistant";

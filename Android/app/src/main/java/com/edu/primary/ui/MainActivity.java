@@ -8,21 +8,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.edu.primary.R;
-import com.edu.primary.ui.aiassistant.AIAssistantFragment;
-import com.edu.primary.ui.practice.PracticeFragment;
-import com.edu.primary.ui.progress.ProgressFragment;
 import com.edu.primary.ui.settings.SettingsActivity;
-import com.edu.primary.ui.wrongbook.WrongBookFragment;
 import com.edu.primary.repository.UserRepository;
+import com.edu.primary.utils.DatabaseInitializer;
+import com.edu.primary.utils.Logger;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigation;
     private UserRepository userRepository;
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        Logger.d("MainActivity", "onCreate");
         
         // 显示ActionBar
         if (getSupportActionBar() != null) {
@@ -30,9 +34,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         userRepository = new UserRepository(this);
+        
+        // 初始化数学题目数据（使用RxJava）
+        disposables.add(DatabaseInitializer.initializeMathQuestions(this)
+            .subscribe(
+                () -> Logger.d("MainActivity", "Math questions initialized"),
+                error -> Logger.e("MainActivity", "Failed to initialize math questions", error)
+            ));
 
-        // 检查登录状�?
+        // 检查登录状态
         if (!userRepository.isLoggedIn()) {
+            Logger.d("MainActivity", "User not logged in, redirecting to LoginActivity");
             startActivity(new Intent(this, com.edu.primary.ui.login.LoginActivity.class));
             finish();
             return;
@@ -40,23 +52,14 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnItemSelectedListener(item -> {
-            Fragment fragment = null;
-            int itemId = item.getItemId();
+            // 使用工厂模式创建Fragment
+            Fragment fragment = FragmentFactory.createFragment(item.getItemId());
             
-            if (itemId == R.id.nav_practice) {
-                fragment = new PracticeFragment();
-            } else if (itemId == R.id.nav_progress) {
-                fragment = new ProgressFragment();
-            } else if (itemId == R.id.nav_wrong_book) {
-                fragment = new WrongBookFragment();
-            } else if (itemId == R.id.nav_ai_assistant) {
-                fragment = new AIAssistantFragment();
-            }
-
             if (fragment != null) {
                 getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment)
                     .commit();
+                Logger.d("MainActivity", "Fragment switched: " + fragment.getClass().getSimpleName());
                 return true;
             }
             return false;
@@ -65,6 +68,14 @@ public class MainActivity extends AppCompatActivity {
         // 默认显示练习页面
         if (savedInstanceState == null) {
             bottomNavigation.setSelectedItemId(R.id.nav_practice);
+        }
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (disposables != null && !disposables.isDisposed()) {
+            disposables.clear();
         }
     }
 

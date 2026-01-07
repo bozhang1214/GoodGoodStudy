@@ -17,15 +17,20 @@ import java.util.List;
 
 public class AIRepository {
 
-    private AppDatabase database;
-    private SharedPreferences prefs;
-    private DeepseekApiService apiService;
-    private Context context;
+    private final AppDatabase database;
+    private final SharedPreferences prefs;
+    private final DeepseekApiService apiService;
+    private final Context appContext; // 使用ApplicationContext防止内存泄漏
 
+    /**
+     * 构造函数
+     * 使用ApplicationContext防止内存泄漏
+     */
     public AIRepository(Context context) {
-        this.context = context;
-        database = AppDatabase.getInstance(context);
-        prefs = context.getSharedPreferences(AppConstants.PREFS_AI, Context.MODE_PRIVATE);
+        // 使用ApplicationContext防止内存泄漏
+        this.appContext = context.getApplicationContext();
+        database = AppDatabase.getInstance(appContext);
+        prefs = appContext.getSharedPreferences(AppConstants.PREFS_AI, Context.MODE_PRIVATE);
         apiService = ApiClient.getDeepseekApiService();
     }
 
@@ -56,7 +61,7 @@ public class AIRepository {
             List<DeepseekRequest.Message> messages = new ArrayList<>();
             
             messages.add(new DeepseekRequest.Message(AppConstants.ROLE_SYSTEM, 
-                context.getString(com.edu.primary.R.string.ai_system_prompt)));
+                appContext.getString(com.edu.primary.R.string.ai_system_prompt)));
             
             for (ChatMessageEntity msg : history) {
                 messages.add(new DeepseekRequest.Message(msg.role, msg.content));
@@ -90,9 +95,13 @@ public class AIRepository {
         ).subscribeOn(Schedulers.io());
     }
 
-    public void clearChatHistory(long userId) {
-        new Thread(() -> {
-            database.chatMessageDao().clearMessages(userId);
-        }).start();
+    /**
+     * 清空聊天历史
+     * 使用RxJava替代new Thread
+     */
+    public io.reactivex.Completable clearChatHistory(long userId) {
+        return io.reactivex.Completable.fromAction(() ->
+            database.chatMessageDao().clearMessages(userId)
+        ).subscribeOn(io.reactivex.schedulers.Schedulers.io());
     }
 }

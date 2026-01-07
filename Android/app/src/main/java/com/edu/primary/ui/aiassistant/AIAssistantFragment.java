@@ -16,6 +16,7 @@ import com.edu.primary.R;
 import com.edu.primary.database.entity.ChatMessageEntity;
 import com.edu.primary.repository.AIRepository;
 import com.edu.primary.repository.UserRepository;
+import com.edu.primary.utils.Logger;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -38,8 +39,9 @@ public class AIAssistantFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ai_assistant, container, false);
 
-        aiRepository = new AIRepository(requireContext());
-        userRepository = new UserRepository(requireContext());
+        // 使用ApplicationContext防止内存泄漏
+        aiRepository = new AIRepository(requireContext().getApplicationContext());
+        userRepository = new UserRepository(requireContext().getApplicationContext());
 
         recyclerView = view.findViewById(R.id.recycler_view);
         etMessage = view.findViewById(R.id.et_message);
@@ -60,21 +62,30 @@ public class AIAssistantFragment extends Fragment {
         return view;
     }
 
+    /**
+     * 加载聊天历史
+     */
     private void loadChatHistory() {
         long userId = userRepository.getCurrentUserId();
-        if (userId == -1) return;
+        if (userId == -1) {
+            Logger.w("AIAssistantFragment", "User not logged in");
+            return;
+        }
 
+        Logger.d("AIAssistantFragment", "Loading chat history for user: " + userId);
         disposables.add(aiRepository.getChatHistory(userId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 history -> {
+                    Logger.d("AIAssistantFragment", "Loaded " + history.size() + " messages");
                     messages.clear();
                     messages.addAll(history);
                     adapter.notifyDataSetChanged();
                     scrollToBottom();
                 },
                 error -> {
+                    Logger.e("AIAssistantFragment", "Failed to load chat history", error);
                     // Ignore error, may be first time use
                 }
             ));
@@ -127,6 +138,11 @@ public class AIAssistantFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        disposables.clear();
+        if (disposables != null && !disposables.isDisposed()) {
+            disposables.clear();
+        }
+        if (messages != null) {
+            messages.clear();
+        }
     }
 }

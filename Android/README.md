@@ -190,6 +190,75 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 4. **数据库迁移**: 数据库版本升级时需要处理迁移逻辑
 5. **ProGuard**: Release版本建议启用代码混淆
 
+## 代码优化
+
+项目已进行多轮代码优化，涵盖以下方面：
+
+### 设计原则优化
+- ✅ **单一职责原则**: 每个类职责明确（如`PasswordUtil`、`InputValidator`、`Logger`）
+- ✅ **依赖倒置原则**: Repository层抽象数据访问，使用RxJava接口
+- ✅ **开闭原则**: 工厂模式便于扩展（`FragmentFactory`）
+
+### 设计模式应用
+- ✅ **单例模式**: `AppDatabase`和`ApiClient`使用线程安全的单例模式
+- ✅ **工厂模式**: `FragmentFactory`统一管理Fragment创建
+- ✅ **观察者模式**: RxJava实现异步处理和响应式编程
+
+### 内存管理优化
+- ✅ **ApplicationContext**: 所有Repository和Fragment使用ApplicationContext防止内存泄漏
+- ✅ **资源清理**: 在`onDestroy()`中正确清理所有资源（TextWatcher、CompositeDisposable等）
+- ✅ **ViewHolder优化**: RecyclerView Adapter使用ViewHolder模式，避免重复创建视图
+
+### 线程安全优化
+- ✅ **volatile关键字**: 单例模式中的实例变量使用volatile保证可见性
+- ✅ **双重检查锁定**: AppDatabase和ApiClient使用DCL模式保证线程安全
+- ✅ **ConcurrentHashMap**: 多线程环境下的Map操作使用线程安全的实现
+- ✅ **RxJava线程调度**: 统一使用RxJava的线程调度保证线程安全
+
+### 安全性优化
+- ✅ **密码加密**: 使用MD5哈希算法加密密码（生产环境建议使用BCrypt）
+- ✅ **输入验证**: 统一的输入验证机制（用户名、密码、答案等）
+- ✅ **空值检查**: 增强空值检查和防御性编程
+
+### 性能优化
+- ✅ **网络重试**: OkHttpClient添加重试机制
+- ✅ **静态SimpleDateFormat**: Adapter中使用静态SimpleDateFormat避免重复创建
+- ✅ **Repository层**: Fragment使用Repository层替代直接访问Database
+
+### 可维护性优化
+- ✅ **日志记录**: 统一的日志工具类便于调试和错误追踪
+- ✅ **错误处理**: 统一的异常处理机制
+- ✅ **代码复用**: 提取公共逻辑到工具类
+
+详细优化说明请查看 `docs/COMPREHENSIVE_OPTIMIZATION.md` 和 `docs/ADVANCED_OPTIMIZATION.md`。
+
+## 测试
+
+项目包含以下测试：
+
+### 单元测试
+- `QuestionDataGeneratorTest.java` - 题目生成测试
+- `AnswerCheckerTest.java` - 答案检查测试
+- `PasswordUtilTest.java` - 密码加密测试
+- `InputValidatorTest.java` - 输入验证测试
+- `QuestionRepositoryTest.java` - Repository层测试
+
+### 集成测试
+- `UserRepositoryTest.java` - 用户仓库测试
+- `DatabaseTest.java` - 数据库测试
+
+运行测试：
+```bash
+# 运行所有测试
+./gradlew test
+
+# 运行单元测试
+./gradlew testDebugUnitTest
+
+# 运行集成测试
+./gradlew connectedAndroidTest
+```
+
 ## 后续开发建议
 
 1. **题目数据**: 需要接入实际的题目数据源（API或本地JSON）
@@ -197,6 +266,9 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 3. **数据同步**: 实现云端数据同步功能
 4. **UI优化**: 进一步完善UI设计和用户体验
 5. **性能优化**: 优化数据库查询和网络请求性能
+6. **MVVM架构**: 考虑引入ViewModel层进一步分离业务逻辑
+7. **依赖注入**: 考虑使用Dagger等依赖注入框架
+8. **密码加密**: 生产环境建议使用BCrypt替代MD5
 
 ## 许可证
 

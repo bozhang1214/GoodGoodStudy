@@ -1,0 +1,16 @@
+{
+  "name": "goodgoodstudy-harmony",
+  "version": "1.0.0",
+  "description": "好好学习 - 鸿蒙版本",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "harmonyos",
+    "education",
+    "primary"
+  ],
+  "author": "",
+  "license": "ISC"
+}

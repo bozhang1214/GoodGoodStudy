@@ -1,0 +1,1496 @@
+Ôr@Ÿªassertions¤code´customTransformCache¬dependencies¢id¤meta±moduleSideEffects¬originalCode±originalSourcemap«resolvedIds®sourcemapChainµsyntheticNamedExportsµtransformDependencies®transformFiles¨cacheAstÔrAÚSif (!("finalizeConstruction" in ViewPU.prototype)) {
+    Reflect.set(ViewPU.prototype, "finalizeConstruction", () => { });
+}
+import router from '@ohos.router';
+import promptAction from '@ohos.promptAction';
+import { getString } from '../utils/ResourceUtil';
+import { AppConstants } from '../constants/AppConstants';
+import { QuestionRepository } from '../repository/QuestionRepository';
+import { UserRepository } from '../repository/UserRepository';
+import { AnswerChecker } from '../utils/AnswerChecker';
+import { Logger } from '../utils/Logger';
+import { InputValidator } from '../utils/InputValidator';
+export class PracticeActivityPage extends ViewPU {
+    constructor(parent, params, __localStorage, elmtId = -1, paramsLambda = undefined, extraInfo) {
+        super(parent, __localStorage, elmtId, extraInfo);
+        if (typeof paramsLambda === "function") {
+            this.paramsGenerator_ = paramsLambda;
+        }
+        this.__questions = new ObservedPropertyObjectPU([], this, "questions");
+        this.__currentIndex = new ObservedPropertySimplePU(0, this, "currentIndex");
+        this.__selectedAnswer = new ObservedPropertySimplePU('', this, "selectedAnswer");
+        this.__fillAnswer = new ObservedPropertySimplePU('', this, "fillAnswer");
+        this.__allSubmitted = new ObservedPropertySimplePU(false, this, "allSubmitted");
+        this.__isLoading = new ObservedPropertySimplePU(true, this, "isLoading");
+        this.__showResult = new ObservedPropertySimplePU(false, this, "showResult");
+        this.__isCorrect = new ObservedPropertySimplePU(false, this, "isCorrect");
+        this.__explanation = new ObservedPropertySimplePU('', this, "explanation");
+        this.subjectId = AppConstants.SUBJECT_MATH;
+        this.grade = 1;
+        this.isReviewMode = false;
+        this.wrongQuestionIds = [];
+        this.userId = -1;
+        this.tempAnswers = new Map();
+        this.questionRepository = new QuestionRepository();
+        this.userRepository = new UserRepository();
+        this.setInitiallyProvidedValue(params);
+        this.finalizeConstruction();
+    }
+    setInitiallyProvidedValue(params) {
+        if (params.questions !== undefined) {
+            this.questions = params.questions;
+        }
+        if (params.currentIndex !== undefined) {
+            this.currentIndex = params.currentIndex;
+        }
+        if (params.selectedAnswer !== undefined) {
+            this.selectedAnswer = params.selectedAnswer;
+        }
+        if (params.fillAnswer !== undefined) {
+            this.fillAnswer = params.fillAnswer;
+        }
+        if (params.allSubmitted !== undefined) {
+            this.allSubmitted = params.allSubmitted;
+        }
+        if (params.isLoading !== undefined) {
+            this.isLoading = params.isLoading;
+        }
+        if (params.showResult !== undefined) {
+            this.showResult = params.showResult;
+        }
+        if (params.isCorrect !== undefined) {
+            this.isCorrect = params.isCorrect;
+        }
+        if (params.explanation !== undefined) {
+            this.explanation = params.explanation;
+        }
+        if (params.subjectId !== undefined) {
+            this.subjectId = params.subjectId;
+        }
+        if (params.grade !== undefined) {
+            this.grade = params.grade;
+        }
+        if (params.isReviewMode !== undefined) {
+            this.isReviewMode = params.isReviewMode;
+        }
+        if (params.wrongQuestionIds !== undefined) {
+            this.wrongQuestionIds = params.wrongQuestionIds;
+        }
+        if (params.userId !== undefined) {
+            this.userId = params.userId;
+        }
+        if (params.tempAnswers !== undefined) {
+            this.tempAnswers = params.tempAnswers;
+        }
+        if (params.questionRepository !== undefined) {
+            this.questionRepository = params.questionRepository;
+        }
+        if (params.userRepository !== undefined) {
+            this.userRepository = params.userRepository;
+        }
+    }
+    updateStateVars(params) {
+    }
+    purgeVariableDependenciesOnElmtId(rmElmtId) {
+        this.__questions.purgeDependencyOnElmtId(rmElmtId);
+        this.__currentIndex.purgeDependencyOnElmtId(rmElmtId);
+        this.__selectedAnswer.purgeDependencyOnElmtId(rmElmtId);
+        this.__fillAnswer.purgeDependencyOnElmtId(rmElmtId);
+        this.__allSubmitted.purgeDependencyOnElmtId(rmElmtId);
+        this.__isLoading.purgeDependencyOnElmtId(rmElmtId);
+        this.__showResult.purgeDependencyOnElmtId(rmElmtId);
+        this.__isCorrect.purgeDependencyOnElmtId(rmElmtId);
+        this.__explanation.purgeDependencyOnElmtId(rmElmtId);
+    }
+    aboutToBeDeleted() {
+        this.__questions.aboutToBeDeleted();
+        this.__currentIndex.aboutToBeDeleted();
+        this.__selectedAnswer.aboutToBeDeleted();
+        this.__fillAnswer.aboutToBeDeleted();
+        this.__allSubmitted.aboutToBeDeleted();
+        this.__isLoading.aboutToBeDeleted();
+        this.__showResult.aboutToBeDeleted();
+        this.__isCorrect.aboutToBeDeleted();
+        this.__explanation.aboutToBeDeleted();
+        SubscriberManager.Get().delete(this.id__());
+        this.aboutToBeDeletedInternal();
+    }
+    get questions() {
+        return this.__questions.get();
+    }
+    set questions(newValue) {
+        this.__questions.set(newValue);
+    }
+    get currentIndex() {
+        return this.__currentIndex.get();
+    }
+    set currentIndex(newValue) {
+        this.__currentIndex.set(newValue);
+    }
+    get selectedAnswer() {
+        return this.__selectedAnswer.get();
+    }
+    set selectedAnswer(newValue) {
+        this.__selectedAnswer.set(newValue);
+    }
+    get fillAnswer() {
+        return this.__fillAnswer.get();
+    }
+    set fillAnswer(newValue) {
+        this.__fillAnswer.set(newValue);
+    }
+    get allSubmitted() {
+        return this.__allSubmitted.get();
+    }
+    set allSubmitted(newValue) {
+        this.__allSubmitted.set(newValue);
+    }
+    get isLoading() {
+        return this.__isLoading.get();
+    }
+    set isLoading(newValue) {
+        this.__isLoading.set(newValue);
+    }
+    get showResult() {
+        return this.__showResult.get();
+    }
+    set showResult(newValue) {
+        this.__showResult.set(newValue);
+    }
+    get isCorrect() {
+        return this.__isCorrect.get();
+    }
+    set isCorrect(newValue) {
+        this.__isCorrect.set(newValue);
+    }
+    get explanation() {
+        return this.__explanation.get();
+    }
+    set explanation(newValue) {
+        this.__explanation.set(newValue);
+    }
+    aboutToAppear() {
+        this.questionRepository.init();
+        this.userRepository.init();
+        this.initParams();
+        this.userRepository.getCurrentUserId().then((id) => {
+            this.userId = id;
+            this.loadQuestions();
+        });
+    }
+    initParams() {
+        const params = router.getParams();
+        if (params) {
+            this.subjectId = params['subjectId'] || AppConstants.SUBJECT_MATH;
+            this.grade = params['grade'] || 1;
+            this.isReviewMode = params['isReviewMode'] || false;
+            this.wrongQuestionIds = params['wrongQuestionIds'] || [];
+            // éªŒè¯è¾“å…¥
+            if (!InputValidator.isValidSubjectId(this.subjectId)) {
+                this.subjectId = AppConstants.SUBJECT_MATH;
+            }
+            if (!InputValidator.isValidGrade(this.grade)) {
+                this.grade = 1;
+            }
+        }
+    }
+    async loadQuestions() {
+        this.isLoading = true;
+        try {
+            if (this.isReviewMode && this.wrongQuestionIds.length > 0) {
+                // å¤ä¹ æ¨¡å¼ï¼šåŠ è½½é”™é¢˜
+                this.questions = await this.questionRepository.getQuestionsByIds(this.wrongQuestionIds);
+            }
+            else {
+                // æ­£å¸¸æ¨¡å¼ï¼šåŠ è½½æ‰€æœ‰é¢˜ç›®
+                let allQuestions = await this.questionRepository.getQuestions(this.subjectId, this.grade);
+                // é™åˆ¶é¢˜ç›®æ•°é‡
+                const maxQuestions = AppConstants.DEBUG_QUESTIONS_PER_PRACTICE;
+                if (allQuestions.length > maxQuestions) {
+                    // æ‰“ä¹±é¡ºåºå¹¶å–å‰maxQuestionsé“
+                    for (let i = allQuestions.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        const temp = allQuestions[i];
+                        allQuestions[i] = allQuestions[j];
+                        allQuestions[j] = temp;
+                    }
+                    this.questions = allQuestions.slice(0, maxQuestions);
+                }
+                else {
+                    this.questions = allQuestions;
+                }
+            }
+            if (this.questions.length === 0) {
+                this.showToast(getString('no_questions'));
+                router.back();
+                return;
+            }
+            // åŠ è½½ç¬¬ä¸€é¢˜
+            this.loadQuestion();
+        }
+        catch (error) {
+            Logger.errorWithTag('PracticeActivityPage', 'Failed to load questions', error);
+            this.showToast(getString('load_failed'));
+            router.back();
+        }
+        finally {
+            this.isLoading = false;
+        }
+    }
+    async loadSubmittedAnswer() {
+        if (this.userId === -1 || this.currentIndex >= this.questions.length) {
+            return;
+        }
+        const question = this.questions[this.currentIndex];
+        try {
+            const answer = await this.questionRepository.getAnswer(this.userId, question.id);
+            if (answer) {
+                this.selectedAnswer = answer.userAnswer;
+                this.fillAnswer = answer.userAnswer;
+                this.isCorrect = answer.isCorrect;
+                this.showResult = true;
+                this.explanation = question.explanation || '';
+            }
+        }
+        catch (error) {
+            Logger.errorWithTag('PracticeActivityPage', 'Failed to load submitted answer', error);
+        }
+    }
+    initialRender() {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(131:5)", "entry");
+            Column.width('100%');
+            Column.height('100%');
+            Column.padding(20);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            if (this.isLoading) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Column.create();
+                        Column.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(133:9)", "entry");
+                        Column.width('100%');
+                        Column.height('100%');
+                        Column.justifyContent(FlexAlign.Center);
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        LoadingProgress.create();
+                        LoadingProgress.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(134:11)", "entry");
+                    }, LoadingProgress);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(getString('loading'));
+                        Text.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(135:11)", "entry");
+                        Text.margin({ top: 10 });
+                    }, Text);
+                    Text.pop();
+                    Column.pop();
+                });
+            }
+            else if (this.questions.length > 0) {
+                this.ifElseBranchUpdateFunction(1, () => {
+                    this.buildQuestionContent.bind(this)(this.questions[this.currentIndex]);
+                });
+            }
+            else {
+                this.ifElseBranchUpdateFunction(2, () => {
+                });
+            }
+        }, If);
+        If.pop();
+        Column.pop();
+    }
+    buildQuestionContent(question, parent = null) {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(151:5)", "entry");
+            Column.width('100%');
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            // é¢˜ç›®ç¼–å·
+            Text.create(`ç¬¬ ${this.currentIndex + 1} é¢˜ / å…± ${this.questions.length} é¢˜`);
+            Text.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(153:7)", "entry");
+            // é¢˜ç›®ç¼–å·
+            Text.fontSize(16);
+            // é¢˜ç›®ç¼–å·
+            Text.fontColor('#666666');
+            // é¢˜ç›®ç¼–å·
+            Text.margin({ bottom: 20 });
+        }, Text);
+        // é¢˜ç›®ç¼–å·
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            // é¢˜ç›®å†…å®¹
+            Text.create(question.content);
+            Text.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(159:7)", "entry");
+            // é¢˜ç›®å†…å®¹
+            Text.fontSize(18);
+            // é¢˜ç›®å†…å®¹
+            Text.fontWeight(FontWeight.Bold);
+            // é¢˜ç›®å†…å®¹
+            Text.margin({ bottom: 30 });
+        }, Text);
+        // é¢˜ç›®å†…å®¹
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            // æ ¹æ®é¢˜ç›®ç±»å‹æ˜¾ç¤ºä¸åŒçš„è¾“å…¥æ–¹å¼
+            if (question.type === AppConstants.QUESTION_TYPE_SINGLE_CHOICE ||
+                question.type === AppConstants.QUESTION_TYPE_JUDGMENT) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.buildOptions.bind(this)(question);
+                });
+            }
+            else if (question.type === AppConstants.QUESTION_TYPE_FILL_BLANK) {
+                this.ifElseBranchUpdateFunction(1, () => {
+                    this.buildFillBlank.bind(this)(question);
+                });
+            }
+            // ç»“æœæ˜¾ç¤º
+            else {
+                this.ifElseBranchUpdateFunction(2, () => {
+                });
+            }
+        }, If);
+        If.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            // ç»“æœæ˜¾ç¤º
+            if (this.showResult) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.buildResult.bind(this)(question);
+                });
+            }
+            // å¯¼èˆªæŒ‰é’®
+            else {
+                this.ifElseBranchUpdateFunction(1, () => {
+                });
+            }
+        }, If);
+        If.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            // å¯¼èˆªæŒ‰é’®
+            Row.create();
+            Row.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(178:7)", "entry");
+            // å¯¼èˆªæŒ‰é’®
+            Row.width('100%');
+            // å¯¼èˆªæŒ‰é’®
+            Row.justifyContent(FlexAlign.Center);
+            // å¯¼èˆªæŒ‰é’®
+            Row.margin({ top: 30 });
+        }, Row);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Button.createWithLabel(getString('previous'));
+            Button.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(179:9)", "entry");
+            Button.enabled(this.currentIndex > 0 && !this.allSubmitted);
+            Button.onClick(() => {
+                this.saveCurrentAnswer();
+                this.previousQuestion();
+            });
+            Button.margin({ right: 10 });
+        }, Button);
+        Button.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Button.createWithLabel(getString('next'));
+            Button.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(187:9)", "entry");
+            Button.enabled(this.currentIndex < this.questions.length - 1 && !this.allSubmitted);
+            Button.onClick(() => {
+                this.saveCurrentAnswer();
+                this.nextQuestion();
+            });
+            Button.margin({ left: 10 });
+        }, Button);
+        Button.pop();
+        // å¯¼èˆªæŒ‰é’®
+        Row.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            // æäº¤æŒ‰é’®
+            if (!this.allSubmitted) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Button.createWithLabel(this.checkAllAnswered() ? getString('submit_all') : getString('submit_all'));
+                        Button.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(201:9)", "entry");
+                        Button.width('80%');
+                        Button.enabled(this.checkAllAnswered());
+                        Button.onClick(() => {
+                            this.submitAllAnswers();
+                        });
+                        Button.margin({ top: 20 });
+                    }, Button);
+                    Button.pop();
+                });
+            }
+            else {
+                this.ifElseBranchUpdateFunction(1, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(getString('practice_completed'));
+                        Text.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(209:9)", "entry");
+                        Text.fontSize(16);
+                        Text.fontColor('#52C41A');
+                        Text.margin({ top: 20 });
+                    }, Text);
+                    Text.pop();
+                });
+            }
+        }, If);
+        If.pop();
+        Column.pop();
+    }
+    buildOptions(question, parent = null) {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(220:5)", "entry");
+            Column.width('100%');
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            if (question.type === AppConstants.QUESTION_TYPE_JUDGMENT) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        // åˆ¤æ–­é¢˜ï¼šæ­£ç¡®/é”™è¯¯
+                        Column.create();
+                        Column.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(223:9)", "entry");
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Toggle.create({ type: ToggleType.Checkbox, isOn: this.selectedAnswer === 'æ­£ç¡®' });
+                        Toggle.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(224:11)", "entry");
+                        Toggle.onChange((isOn) => {
+                            if (isOn) {
+                                this.selectedAnswer = 'æ­£ç¡®';
+                                this.saveCurrentAnswer();
+                            }
+                        });
+                        Toggle.margin({ bottom: 10 });
+                    }, Toggle);
+                    Toggle.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create('æ­£ç¡®');
+                        Text.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(232:11)", "entry");
+                        Text.fontSize(14);
+                        Text.margin({ left: 10 });
+                    }, Text);
+                    Text.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Toggle.create({ type: ToggleType.Checkbox, isOn: this.selectedAnswer === 'é”™è¯¯' });
+                        Toggle.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(236:11)", "entry");
+                        Toggle.onChange((isOn) => {
+                            if (isOn) {
+                                this.selectedAnswer = 'é”™è¯¯';
+                                this.saveCurrentAnswer();
+                            }
+                        });
+                        Toggle.margin({ bottom: 10 });
+                    }, Toggle);
+                    Toggle.pop();
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create('é”™è¯¯');
+                        Text.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(244:11)", "entry");
+                        Text.fontSize(14);
+                        Text.margin({ left: 10 });
+                    }, Text);
+                    Text.pop();
+                    // åˆ¤æ–­é¢˜ï¼šæ­£ç¡®/é”™è¯¯
+                    Column.pop();
+                });
+            }
+            else {
+                this.ifElseBranchUpdateFunction(1, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        // å•é€‰é¢˜ï¼šæ˜¾ç¤ºé€‰é¡¹
+                        Column.create();
+                        Column.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(250:9)", "entry");
+                    }, Column);
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        ForEach.create();
+                        const forEachItemGenFunction = (_item, index) => {
+                            const option = _item;
+                            this.observeComponentCreation2((elmtId, isInitialRender) => {
+                                Row.create();
+                                Row.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(252:13)", "entry");
+                                Row.width('100%');
+                                Row.margin({ bottom: 10 });
+                            }, Row);
+                            this.observeComponentCreation2((elmtId, isInitialRender) => {
+                                Toggle.create({ type: ToggleType.Checkbox, isOn: this.selectedAnswer === option });
+                                Toggle.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(253:15)", "entry");
+                                Toggle.onChange((isOn) => {
+                                    if (isOn) {
+                                        this.selectedAnswer = option;
+                                        this.saveCurrentAnswer();
+                                    }
+                                });
+                            }, Toggle);
+                            Toggle.pop();
+                            this.observeComponentCreation2((elmtId, isInitialRender) => {
+                                Text.create(option);
+                                Text.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(260:15)", "entry");
+                                Text.fontSize(14);
+                                Text.margin({ left: 10 });
+                            }, Text);
+                            Text.pop();
+                            Row.pop();
+                        };
+                        this.forEachUpdateFunction(elmtId, question.options, forEachItemGenFunction, undefined, true, false);
+                    }, ForEach);
+                    ForEach.pop();
+                    // å•é€‰é¢˜ï¼šæ˜¾ç¤ºé€‰é¡¹
+                    Column.pop();
+                });
+            }
+        }, If);
+        If.pop();
+        Column.pop();
+    }
+    buildFillBlank(question, parent = null) {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            TextInput.create({ placeholder: getString('input_answer'), text: this.fillAnswer });
+            TextInput.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(275:5)", "entry");
+            TextInput.width('100%');
+            TextInput.height(50);
+            TextInput.enabled(!this.allSubmitted);
+            TextInput.onChange((value) => {
+                this.fillAnswer = value;
+                this.saveCurrentAnswer();
+            });
+            TextInput.margin({ bottom: 20 });
+        }, TextInput);
+    }
+    buildResult(question, parent = null) {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(288:5)", "entry");
+            Column.width('100%');
+            Column.padding(15);
+            Column.backgroundColor('#F5F5F5');
+            Column.borderRadius(8);
+            Column.margin({ top: 20, bottom: 20 });
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create(this.isCorrect ? getString('answer_correct') : getString('answer_wrong'));
+            Text.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(289:7)", "entry");
+            Text.fontSize(18);
+            Text.fontWeight(FontWeight.Bold);
+            Text.fontColor(this.isCorrect ? '#52C41A' : '#FF4D4F');
+            Text.margin({ bottom: 10 });
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            if (!this.isCorrect) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(`${getString('correct_answer')}: ${question.correctAnswer}`);
+                        Text.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(296:9)", "entry");
+                        Text.fontSize(16);
+                        Text.fontColor('#666666');
+                        Text.margin({ bottom: 10 });
+                    }, Text);
+                    Text.pop();
+                });
+            }
+            else {
+                this.ifElseBranchUpdateFunction(1, () => {
+                });
+            }
+        }, If);
+        If.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            If.create();
+            if (this.explanation) {
+                this.ifElseBranchUpdateFunction(0, () => {
+                    this.observeComponentCreation2((elmtId, isInitialRender) => {
+                        Text.create(this.explanation);
+                        Text.debugLine("entry/src/main/ets/pages/PracticeActivityPage.ets(303:9)", "entry");
+                        Text.fontSize(14);
+                        Text.fontColor('#999999');
+                    }, Text);
+                    Text.pop();
+                });
+            }
+            else {
+                this.ifElseBranchUpdateFunction(1, () => {
+                });
+            }
+        }, If);
+        If.pop();
+        Column.pop();
+    }
+    saveCurrentAnswer() {
+        if (this.allSubmitted || this.currentIndex >= this.questions.length) {
+            return;
+        }
+        const question = this.questions[this.currentIndex];
+        let answer = '';
+        if (question.type === AppConstants.QUESTION_TYPE_FILL_BLANK) {
+            answer = this.fillAnswer.trim();
+        }
+        else {
+            answer = this.selectedAnswer;
+        }
+        if (answer) {
+            this.tempAnswers.set(question.id, answer);
+        }
+        else {
+            this.tempAnswers.delete(question.id);
+        }
+    }
+    checkAllAnswered() {
+        if (this.questions.length === 0) {
+            return false;
+        }
+        for (const question of this.questions) {
+            const answer = this.tempAnswers.get(question.id);
+            if (!answer || answer.trim().length === 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    async submitAllAnswers() {
+        if (!this.checkAllAnswered()) {
+            this.showToast(getString('please_answer_all'));
+            return;
+        }
+        // ä¿å­˜æ‰€æœ‰ç­”æ¡ˆ
+        this.saveCurrentAnswer();
+        let correctCount = 0;
+        let wrongCount = 0;
+        const wrongQuestionIds = [];
+        // æäº¤æ‰€æœ‰ç­”æ¡ˆ
+        for (const question of this.questions) {
+            const answer = this.tempAnswers.get(question.id) || '';
+            const isCorrect = AnswerChecker.checkAnswer(question, answer, 'æ­£ç¡®');
+            // ä¿å­˜ç­”æ¡ˆ
+            const answerEntity = {
+                userId: this.userId,
+                questionId: question.id,
+                userAnswer: answer,
+                isCorrect: isCorrect,
+                answerTime: Date.now()
+            };
+            try {
+                await this.questionRepository.insertAnswer(answerEntity);
+                if (isCorrect) {
+                    correctCount++;
+                    // å¦‚æœæ˜¯å¤ä¹ æ¨¡å¼ä¸”ç­”å¯¹äº†ï¼Œä»é”™é¢˜æœ¬ä¸­ç§»é™¤
+                    if (this.isReviewMode) {
+                        await this.questionRepository.removeWrongQuestion(this.userId, question.id);
+                    }
+                }
+                else {
+                    wrongCount++;
+                    wrongQuestionIds.push(question.id);
+                    // æ·»åŠ åˆ°é”™é¢˜æœ¬
+                    await this.questionRepository.addWrongQuestion(this.userId, question.id, answer);
+                    // å¦‚æœæ˜¯å¤ä¹ æ¨¡å¼ä¸”ç­”é”™äº†ï¼Œå¢åŠ å¤ä¹ æ¬¡æ•°
+                    if (this.isReviewMode) {
+                        await this.questionRepository.incrementReviewCount(this.userId, question.id);
+                    }
+                }
+            }
+            catch (error) {
+                Logger.errorWithTag('PracticeActivityPage', 'Failed to save answer', error);
+            }
+        }
+        this.allSubmitted = true;
+        this.tempAnswers.clear();
+        // æ˜¾ç¤ºç»“æœ
+        const total = this.questions.length;
+        const accuracy = total > 0 ? (correctCount * 100.0 / total) : 0;
+        const message = `${getString('total_answered')}: ${total}\n${getString('correct_count')}: ${correctCount}\n${getString('wrong_count')}: ${wrongCount}\n${getString('accuracy_display')}: ${accuracy.toFixed(1)}%`;
+        promptAction.showDialog({
+            title: getString('grading_result'),
+            message: message,
+            buttons: [
+                {
+                    text: getString('confirm'),
+                    color: '#007DFF'
+                }
+            ]
+        });
+        // åˆ·æ–°å½“å‰é¢˜ç›®æ˜¾ç¤º
+        this.loadQuestion();
+    }
+    previousQuestion() {
+        if (this.currentIndex > 0) {
+            this.currentIndex--;
+            this.loadQuestion();
+        }
+    }
+    nextQuestion() {
+        if (this.currentIndex < this.questions.length - 1) {
+            this.currentIndex++;
+            this.loadQuestion();
+        }
+    }
+    loadQuestion() {
+        if (this.currentIndex >= this.questions.length) {
+            return;
+        }
+        const question = this.questions[this.currentIndex];
+        this.showResult = false;
+        this.explanation = '';
+        // åŠ è½½ä¸´æ—¶ç­”æ¡ˆæˆ–å·²æäº¤çš„ç­”æ¡ˆ
+        const tempAnswer = this.tempAnswers.get(question.id);
+        if (tempAnswer) {
+            if (question.type === AppConstants.QUESTION_TYPE_FILL_BLANK) {
+                this.fillAnswer = tempAnswer;
+            }
+            else {
+                this.selectedAnswer = tempAnswer;
+            }
+        }
+        else {
+            this.fillAnswer = '';
+            this.selectedAnswer = '';
+        }
+        // å¦‚æœå·²æäº¤ï¼ŒåŠ è½½ç»“æœ
+        if (this.allSubmitted) {
+            this.loadSubmittedAnswer();
+        }
+    }
+    showToast(message) {
+        promptAction.showToast({
+            message: message,
+            duration: 2000
+        });
+    }
+    rerender() {
+        this.updateDirtyElements();
+    }
+    static getEntryName() {
+        return "PracticeActivityPage";
+    }
+}
+registerNamedRoute(() => new PracticeActivityPage(undefined, {}), "", { bundleName: "com.edu.primary", moduleName: "entry", pagePath: "pages/PracticeActivityPage", pageFullPath: "entry/src/main/ets/pages/PracticeActivityPage", integratedHsp: "false", moduleType: "followWithHap" });
+//# sourceMappingURL=PracticeActivityPage.js.mapÂ™Ù` hvigor_ignore_D:_9-Tools_Huawei_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.router.d.tsÙf hvigor_ignore_D:_9-Tools_Huawei_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.promptAction.d.tsÙZD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\utils\ResourceUtil.tsÙ^D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\constants\AppConstants.tsÙeD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\repository\QuestionRepository.tsÙaD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\repository\UserRepository.tsÙ[D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\utils\AnswerChecker.tsÙTD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\utils\Logger.tsÙ\D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\utils\InputValidator.tsÙcD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\pages\PracticeActivityPage.etsÔrB›ªmoduleName±isLocalDependency¯isNodeEntryFile§pkgPath±belongProjectPath§pkgNameªpkgVersion±dependencyPkgInfo°belongModulePath§checker¬shouldEmitJs¥entryÃÂÙ7D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entryÙ1D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony¥entry¥1.0.0Ô  Ù7D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entryÔrCÜ ®¬getNodeCount²getIdentifierCount®getSymbolCount¬getTypeCountµgetInstantiationCountµgetRelationCacheSizes±isUndefinedSymbol±isArgumentsSymbol¯isUnknownSymbol¯getMergedSymbol®getDiagnostics´getGlobalDiagnostics´getRecursionIdentity¶getUnmatchedProperties¹getTypeOfSymbolAtLocation¯getTypeOfSymbolÙ(getSymbolsOfParameterPropertyDeclaration·getDeclaredTypeOfSymbol³getPropertiesOfType±getPropertyOfTypeÙ"getPrivateIdentifierPropertyOfType·getTypeOfPropertyOfType²getIndexInfoOfType³getIndexInfosOfTypeºgetIndexInfosOfIndexSymbol³getSignaturesOfType²getIndexTypeOfType¬getIndexType¬getBaseTypes¸getBaseTypeOfLiteralType®getWidenedType³getTypeFromTypeNode°getParameterTypeÙ$getParameterIdentifierNameAtPosition¸getPromisedTypeOfPromise®getAwaitedType¸getReturnTypeOfSignature®isNullableType¯getNullableType²getNonNullableType²getNonOptionalType°getTypeArguments®typeToTypeNodeÙ$indexInfoToIndexSignatureDeclaration¿signatureToSignatureDeclaration²symbolToEntityName²symbolToExpression¬symbolToNodeÙ!symbolToTypeParameterDeclarations¼symbolToParameterDeclarationºtypeParameterToDeclaration±getSymbolsInScope³getSymbolAtLocation·getIndexInfosAtLocationÙ!getShorthandAssignmentValueSymbolÙ#getExportSpecifierLocalTargetSymbol·getExportSymbolOfSymbol±getTypeAtLocationºgetTypeAtLocationForLinterÙ tryGetTypeAtLocationWithoutCheckºgetTypeOfAssignmentPatternÙ*getPropertySymbolOfDestructuringAssignment±signatureToString¬typeToString®symbolToStringµtypePredicateToString®writeSignature©writeType«writeSymbol²writeTypePredicate¼getAugmentedPropertiesOfType®getRootSymbols²getSymbolOfExpando±getContextualTypeÙ(getContextualTypeForObjectLiteralElementÙ#getContextualTypeForArgumentAtIndexÙ getContextualTypeForJsxAttribute²isContextSensitiveÙ!getTypeOfPropertyOfContextualTypeµgetFullyQualifiedNameÙ#tryGetResolvedSignatureWithoutCheck´getResolvedSignatureÙ/getResolvedSignatureForStringLiteralCompletionsÙ$getResolvedSignatureForSignatureHelpµgetExpandedParameters¹hasEffectiveRestParameterºcontainsArgumentsReference°getConstantValueµisValidPropertyAccessÙ#isValidPropertyAccessForCompletions»getSignatureFromDeclarationºisImplementationOfOverload¹getImmediateAliasedSymbol°getAliasedSymbol¯getEmitResolver²getExportsOfModule¿getExportsAndPropertiesOfModuleÙ forEachExportAndPropertyOfModule¯getSymbolWalker±getAmbientModules¹getJsxIntrinsicTagNamesAt³isOptionalParameter»tryGetMemberInModuleExportsÙ(tryGetMemberInModuleExportsAndProperties´tryFindAmbientModuleÙ(tryFindAmbientModuleWithoutAugmentations¯getApparentType¬getUnionType²isTypeAssignableTo³createAnonymousType¯createSignature¬createSymbol¯createIndexInfoªgetAnyType­getStringType­getNumberType±createPromiseType¯createArrayType¹getElementTypeOfArrayType®getBooleanType¬getFalseType«getTrueType«getVoidType°getUndefinedType«getNullType¯getESSymbolType¬getNeverType¯getOptionalType®getPromiseType²getPromiseLikeType´getAsyncIterableType²isSymbolAccessible«isArrayType«isTupleType¯isArrayLikeTypeÙ#isTypeInvalidDueToUnionDiscriminantºgetExactOptionalProperties¿getAllPossiblePropertiesOfTypesÙ(getSuggestedSymbolForNonexistentPropertyÙ#getSuggestionForNonexistentPropertyÙ,getSuggestedSymbolForNonexistentJSXAttributeÙ&getSuggestedSymbolForNonexistentSymbolÙ!getSuggestionForNonexistentSymbolÙ&getSuggestedSymbolForNonexistentModuleÙ!getSuggestionForNonexistentExportÙ+getSuggestedSymbolForNonexistentClassMember·getBaseConstraintOfType»getDefaultFromTypeParameter«resolveName¯getJsxNamespaceµgetJsxFragmentFactory¸getAccessibleSymbolChain»getTypePredicateOfSignature¹resolveExternalModuleName»resolveExternalModuleSymbol°tryGetThisTypeAt¹getTypeArgumentConstraint¸getSuggestionDiagnostics¸runWithCancellationTokenÙ3getLocalTypeParametersOfClassOrInterfaceOrTypeAlias´isDeclarationVisible´isPropertyAccessible»getTypeOnlyAliasDeclaration¿getMemberOverrideModifierStatusÙ!isTypeParameterPossiblyReferenced²getConstEnumRelate´clearConstEnumRelateµdeleteConstEnumRelateÙ$getTypeArgumentsForResolvedSignatureµgetCheckedSourceFilesÙ"collectHaveTsNoCheckFilesForLinter·clearQualifiedNameCache®isStaticRecord²isStaticSourceFileÔ  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  ÃÃÚ6¿
+import router from '@ohos.router';
+import promptAction from '@ohos.promptAction';
+import { getString } from '../utils/ResourceUtil';
+import { AppConstants } from '../constants/AppConstants';
+import { QuestionRepository } from '../repository/QuestionRepository';
+import { UserRepository } from '../repository/UserRepository';
+import { Question } from '../model/Question';
+import { AnswerChecker } from '../utils/AnswerChecker';
+import { AnswerEntity } from '../database/dao/AnswerDao';
+import { Logger } from '../utils/Logger';
+import { InputValidator } from '../utils/InputValidator';
+
+/**
+ * ç­”é¢˜é¡µé¢
+ */
+@Entry
+@Component
+export struct PracticeActivityPage {
+  @State questions: Question[] = [];
+  @State currentIndex: number = 0;
+  @State selectedAnswer: string = '';
+  @State fillAnswer: string = '';
+  @State allSubmitted: boolean = false;
+  @State isLoading: boolean = true;
+  @State showResult: boolean = false;
+  @State isCorrect: boolean = false;
+  @State explanation: string = '';
+  
+  private subjectId: number = AppConstants.SUBJECT_MATH;
+  private grade: number = 1;
+  private isReviewMode: boolean = false;
+  private wrongQuestionIds: number[] = [];
+  private userId: number = -1;
+  private tempAnswers: Map<number, string> = new Map();
+  
+  private questionRepository: QuestionRepository = new QuestionRepository();
+  private userRepository: UserRepository = new UserRepository();
+
+  aboutToAppear() {
+    this.questionRepository.init();
+    this.userRepository.init();
+    this.initParams();
+    this.userRepository.getCurrentUserId().then((id) => {
+      this.userId = id;
+      this.loadQuestions();
+    });
+  }
+
+  initParams() {
+    const params = router.getParams() as Record<string, Object>;
+    if (params) {
+      this.subjectId = (params['subjectId'] as number) || AppConstants.SUBJECT_MATH;
+      this.grade = (params['grade'] as number) || 1;
+      this.isReviewMode = (params['isReviewMode'] as boolean) || false;
+      this.wrongQuestionIds = (params['wrongQuestionIds'] as number[]) || [];
+      
+      // éªŒè¯è¾“å…¥
+      if (!InputValidator.isValidSubjectId(this.subjectId)) {
+        this.subjectId = AppConstants.SUBJECT_MATH;
+      }
+      if (!InputValidator.isValidGrade(this.grade)) {
+        this.grade = 1;
+      }
+    }
+    
+  }
+
+  async loadQuestions() {
+    this.isLoading = true;
+    try {
+      if (this.isReviewMode && this.wrongQuestionIds.length > 0) {
+        // å¤ä¹ æ¨¡å¼ï¼šåŠ è½½é”™é¢˜
+        this.questions = await this.questionRepository.getQuestionsByIds(this.wrongQuestionIds);
+      } else {
+        // æ­£å¸¸æ¨¡å¼ï¼šåŠ è½½æ‰€æœ‰é¢˜ç›®
+        let allQuestions = await this.questionRepository.getQuestions(this.subjectId, this.grade);
+        // é™åˆ¶é¢˜ç›®æ•°é‡
+        const maxQuestions = AppConstants.DEBUG_QUESTIONS_PER_PRACTICE;
+        if (allQuestions.length > maxQuestions) {
+          // æ‰“ä¹±é¡ºåºå¹¶å–å‰maxQuestionsé“
+          for (let i = allQuestions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = allQuestions[i];
+            allQuestions[i] = allQuestions[j];
+            allQuestions[j] = temp;
+          }
+          this.questions = allQuestions.slice(0, maxQuestions);
+        } else {
+          this.questions = allQuestions;
+        }
+      }
+      
+      if (this.questions.length === 0) {
+        this.showToast(getString('no_questions'));
+        router.back();
+        return;
+      }
+      
+      // åŠ è½½ç¬¬ä¸€é¢˜
+      this.loadQuestion();
+    } catch (error) {
+      Logger.errorWithTag('PracticeActivityPage', 'Failed to load questions', error as Error);
+      this.showToast(getString('load_failed'));
+      router.back();
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async loadSubmittedAnswer() {
+    if (this.userId === -1 || this.currentIndex >= this.questions.length) {
+      return;
+    }
+    const question = this.questions[this.currentIndex];
+    try {
+      const answer = await this.questionRepository.getAnswer(this.userId, question.id);
+      if (answer) {
+        this.selectedAnswer = answer.userAnswer;
+        this.fillAnswer = answer.userAnswer;
+        this.isCorrect = answer.isCorrect;
+        this.showResult = true;
+        this.explanation = question.explanation || '';
+      }
+    } catch (error) {
+      Logger.errorWithTag('PracticeActivityPage', 'Failed to load submitted answer', error as Error);
+    }
+  }
+
+  build() {
+    Column() {
+      if (this.isLoading) {
+        Column() {
+          LoadingProgress()
+          Text(getString('loading'))
+            .margin({ top: 10 })
+        }
+        .width('100%')
+        .height('100%')
+        .justifyContent(FlexAlign.Center)
+      } else if (this.questions.length > 0) {
+        this.buildQuestionContent(this.questions[this.currentIndex])
+      }
+    }
+    .width('100%')
+    .height('100%')
+    .padding(20)
+  }
+  @Builder
+  buildQuestionContent(question: Question) {
+    Column() {
+      // é¢˜ç›®ç¼–å·
+      Text(`ç¬¬ ${this.currentIndex + 1} é¢˜ / å…± ${this.questions.length} é¢˜`)
+        .fontSize(16)
+        .fontColor('#666666')
+        .margin({ bottom: 20 })
+      
+      // é¢˜ç›®å†…å®¹
+      Text(question.content)
+        .fontSize(18)
+        .fontWeight(FontWeight.Bold)
+        .margin({ bottom: 30 })
+      
+      // æ ¹æ®é¢˜ç›®ç±»å‹æ˜¾ç¤ºä¸åŒçš„è¾“å…¥æ–¹å¼
+      if (question.type === AppConstants.QUESTION_TYPE_SINGLE_CHOICE || 
+          question.type === AppConstants.QUESTION_TYPE_JUDGMENT) {
+        this.buildOptions(question)
+      } else if (question.type === AppConstants.QUESTION_TYPE_FILL_BLANK) {
+        this.buildFillBlank(question)
+      }
+      
+      // ç»“æœæ˜¾ç¤º
+      if (this.showResult) {
+        this.buildResult(question)
+      }
+      
+      // å¯¼èˆªæŒ‰é’®
+      Row() {
+        Button(getString('previous'))
+          .enabled(this.currentIndex > 0 && !this.allSubmitted)
+          .onClick(() => {
+            this.saveCurrentAnswer();
+            this.previousQuestion();
+          })
+          .margin({ right: 10 })
+        
+        Button(getString('next'))
+          .enabled(this.currentIndex < this.questions.length - 1 && !this.allSubmitted)
+          .onClick(() => {
+            this.saveCurrentAnswer();
+            this.nextQuestion();
+          })
+          .margin({ left: 10 })
+      }
+      .width('100%')
+      .justifyContent(FlexAlign.Center)
+      .margin({ top: 30 })
+      
+      // æäº¤æŒ‰é’®
+      if (!this.allSubmitted) {
+        Button(this.checkAllAnswered() ? getString('submit_all') : getString('submit_all'))
+          .width('80%')
+          .enabled(this.checkAllAnswered())
+          .onClick(() => {
+            this.submitAllAnswers();
+          })
+          .margin({ top: 20 })
+      } else {
+        Text(getString('practice_completed'))
+          .fontSize(16)
+          .fontColor('#52C41A')
+          .margin({ top: 20 })
+      }
+    }
+    .width('100%')
+  }
+
+  @Builder
+  buildOptions(question: Question) {
+    Column() {
+      if (question.type === AppConstants.QUESTION_TYPE_JUDGMENT) {
+        // åˆ¤æ–­é¢˜ï¼šæ­£ç¡®/é”™è¯¯
+        Column() {
+          Toggle({ type: ToggleType.Checkbox, isOn: this.selectedAnswer === 'æ­£ç¡®' })
+            .onChange((isOn: boolean) => {
+              if (isOn) {
+                this.selectedAnswer = 'æ­£ç¡®';
+                this.saveCurrentAnswer();
+              }
+            })
+            .margin({ bottom: 10 })
+          Text('æ­£ç¡®')
+            .fontSize(14)
+            .margin({ left: 10 })
+          
+          Toggle({ type: ToggleType.Checkbox, isOn: this.selectedAnswer === 'é”™è¯¯' })
+            .onChange((isOn: boolean) => {
+              if (isOn) {
+                this.selectedAnswer = 'é”™è¯¯';
+                this.saveCurrentAnswer();
+              }
+            })
+            .margin({ bottom: 10 })
+          Text('é”™è¯¯')
+            .fontSize(14)
+            .margin({ left: 10 })
+        }
+      } else {
+        // å•é€‰é¢˜ï¼šæ˜¾ç¤ºé€‰é¡¹
+        Column() {
+          ForEach(question.options, (option: string, index: number) => {
+            Row() {
+              Toggle({ type: ToggleType.Checkbox, isOn: this.selectedAnswer === option })
+                .onChange((isOn: boolean) => {
+                  if (isOn) {
+                    this.selectedAnswer = option;
+                    this.saveCurrentAnswer();
+                  }
+                })
+              Text(option)
+                .fontSize(14)
+                .margin({ left: 10 })
+            }
+            .width('100%')
+            .margin({ bottom: 10 })
+          })
+        }
+      }
+    }
+    .width('100%')
+  }
+
+  @Builder
+  buildFillBlank(question: Question) {
+    TextInput({ placeholder: getString('input_answer'), text: this.fillAnswer })
+      .width('100%')
+      .height(50)
+      .enabled(!this.allSubmitted)
+      .onChange((value: string) => {
+        this.fillAnswer = value;
+        this.saveCurrentAnswer();
+      })
+      .margin({ bottom: 20 })
+  }
+
+  @Builder
+  buildResult(question: Question) {
+    Column() {
+      Text(this.isCorrect ? getString('answer_correct') : getString('answer_wrong'))
+        .fontSize(18)
+        .fontWeight(FontWeight.Bold)
+        .fontColor(this.isCorrect ? '#52C41A' : '#FF4D4F')
+        .margin({ bottom: 10 })
+      
+      if (!this.isCorrect) {
+        Text(`${getString('correct_answer')}: ${question.correctAnswer}`)
+          .fontSize(16)
+          .fontColor('#666666')
+          .margin({ bottom: 10 })
+      }
+      
+      if (this.explanation) {
+        Text(this.explanation)
+          .fontSize(14)
+          .fontColor('#999999')
+      }
+    }
+    .width('100%')
+    .padding(15)
+    .backgroundColor('#F5F5F5')
+    .borderRadius(8)
+    .margin({ top: 20, bottom: 20 })
+  }
+
+  saveCurrentAnswer() {
+    if (this.allSubmitted || this.currentIndex >= this.questions.length) {
+      return;
+    }
+    const question = this.questions[this.currentIndex];
+    let answer = '';
+    
+    if (question.type === AppConstants.QUESTION_TYPE_FILL_BLANK) {
+      answer = this.fillAnswer.trim();
+    } else {
+      answer = this.selectedAnswer;
+    }
+    
+    if (answer) {
+      this.tempAnswers.set(question.id, answer);
+    } else {
+      this.tempAnswers.delete(question.id);
+    }
+  }
+
+  checkAllAnswered(): boolean {
+    if (this.questions.length === 0) {
+      return false;
+    }
+    for (const question of this.questions) {
+      const answer = this.tempAnswers.get(question.id);
+      if (!answer || answer.trim().length === 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  async submitAllAnswers() {
+    if (!this.checkAllAnswered()) {
+      this.showToast(getString('please_answer_all'));
+      return;
+    }
+    
+    // ä¿å­˜æ‰€æœ‰ç­”æ¡ˆ
+    this.saveCurrentAnswer();
+    
+    let correctCount = 0;
+    let wrongCount = 0;
+    const wrongQuestionIds: number[] = [];
+    
+    // æäº¤æ‰€æœ‰ç­”æ¡ˆ
+    for (const question of this.questions) {
+      const answer = this.tempAnswers.get(question.id) || '';
+      const isCorrect = AnswerChecker.checkAnswer(question, answer, 'æ­£ç¡®');
+      
+      // ä¿å­˜ç­”æ¡ˆ
+      const answerEntity: AnswerEntity = {
+        userId: this.userId,
+        questionId: question.id,
+        userAnswer: answer,
+        isCorrect: isCorrect,
+        answerTime: Date.now()
+      };
+      
+      try {
+        await this.questionRepository.insertAnswer(answerEntity);
+        
+        if (isCorrect) {
+          correctCount++;
+          // å¦‚æœæ˜¯å¤ä¹ æ¨¡å¼ä¸”ç­”å¯¹äº†ï¼Œä»é”™é¢˜æœ¬ä¸­ç§»é™¤
+          if (this.isReviewMode) {
+            await this.questionRepository.removeWrongQuestion(this.userId, question.id);
+          }
+        } else {
+          wrongCount++;
+          wrongQuestionIds.push(question.id);
+          // æ·»åŠ åˆ°é”™é¢˜æœ¬
+          await this.questionRepository.addWrongQuestion(this.userId, question.id, answer);
+          // å¦‚æœæ˜¯å¤ä¹ æ¨¡å¼ä¸”ç­”é”™äº†ï¼Œå¢åŠ å¤ä¹ æ¬¡æ•°
+          if (this.isReviewMode) {
+            await this.questionRepository.incrementReviewCount(this.userId, question.id);
+          }
+        }
+      } catch (error) {
+        Logger.errorWithTag('PracticeActivityPage', 'Failed to save answer', error as Error);
+      }
+    }
+    
+    this.allSubmitted = true;
+    this.tempAnswers.clear();
+    
+    // æ˜¾ç¤ºç»“æœ
+    const total = this.questions.length;
+    const accuracy = total > 0 ? (correctCount * 100.0 / total) : 0;
+    const message = `${getString('total_answered')}: ${total}\n${getString('correct_count')}: ${correctCount}\n${getString('wrong_count')}: ${wrongCount}\n${getString('accuracy_display')}: ${accuracy.toFixed(1)}%`;
+    
+    promptAction.showDialog({
+      title: getString('grading_result'),
+      message: message,
+      buttons: [
+        {
+          text: getString('confirm'),
+          color: '#007DFF'
+        }
+      ]
+    });
+    
+    // åˆ·æ–°å½“å‰é¢˜ç›®æ˜¾ç¤º
+    this.loadQuestion();
+  }
+
+  previousQuestion() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+      this.loadQuestion();
+    }
+  }
+
+  nextQuestion() {
+    if (this.currentIndex < this.questions.length - 1) {
+      this.currentIndex++;
+      this.loadQuestion();
+    }
+  }
+
+  loadQuestion() {
+    if (this.currentIndex >= this.questions.length) {
+      return;
+    }
+    
+    const question = this.questions[this.currentIndex];
+    this.showResult = false;
+    this.explanation = '';
+    
+    // åŠ è½½ä¸´æ—¶ç­”æ¡ˆæˆ–å·²æäº¤çš„ç­”æ¡ˆ
+    const tempAnswer = this.tempAnswers.get(question.id);
+    if (tempAnswer) {
+      if (question.type === AppConstants.QUESTION_TYPE_FILL_BLANK) {
+        this.fillAnswer = tempAnswer;
+      } else {
+        this.selectedAnswer = tempAnswer;
+      }
+    } else {
+      this.fillAnswer = '';
+      this.selectedAnswer = '';
+    }
+    
+    // å¦‚æœå·²æäº¤ï¼ŒåŠ è½½ç»“æœ
+    if (this.allSubmitted) {
+      this.loadSubmittedAnswer();
+    }
+  }
+
+  showToast(message: string) {
+    promptAction.showToast({
+      message: message,
+      duration: 2000
+    });
+  }
+}
+ÀÔrD™¬@ohos.router²@ohos.promptActionµ../utils/ResourceUtil¼../repository/UserRepository¹../constants/AppConstantsÙ ../repository/QuestionRepository¶../utils/AnswerChecker¯../utils/Logger·../utils/InputValidatorÔrE—ªassertions¨external¢id¤meta±moduleSideEffectsªresolvedByµsyntheticNamedExportsAÃÙ` hvigor_ignore_D:_9-Tools_Huawei_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.router.d.tsAÃªoh-resolveÂEAÃÙf hvigor_ignore_D:_9-Tools_Huawei_DevEco Studio_sdk_default_openharmony_ets_api_@ohos.promptAction.d.tsAÃªoh-resolveÂEAÂÙZD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\utils\ResourceUtil.tsAÃªoh-resolveÂEAÂÙaD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\repository\UserRepository.tsAÃªoh-resolveÂEAÂÙ^D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\constants\AppConstants.tsAÃªoh-resolveÂEAÂÙeD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\repository\QuestionRepository.tsAÃªoh-resolveÂEAÂÙ[D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\utils\AnswerChecker.tsAÃªoh-resolveÂEAÂÙTD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\utils\Logger.tsAÃªoh-resolveÂEAÂÙ\D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\utils\InputValidator.tsAÃªoh-resolveÂ“ÔrF–§version¤fileªsourceRoot§sources¥names¨mappings·PracticeActivityPage.js ‘¸PracticeActivityPage.etsÜ÷–”   ” ” ” ”! !”" "–”   ” ” ” ”- -”. .˜”   ” ”	 	” ” ” ”1 1”2 2˜”   ” ”	 	” ” ” ”8 8”9 9˜”   ” ”	 	” ” ”# #”ÌE ÌE”ÌF ÌF˜”   ” ”	 	” ” ” ”= =”> >˜”   ” ”	 	” ” ” ”6 6”7 7˜”  
+ ” 
+”	 
+	” 
+” 
+” 
+”( 
+(”) 
+)˜”   ” ”	 	” ” ” ”8 8”9 9””   ” ” ”! "‘”  ’”8 !”: #’”;  ”< !’”= "”? $’”9 ”;  ’”; !”Ì@ &’”8 ”< "’”9 ”> $’”8 ”= #’”: ”< !”” ”% *”& +”2 7’” ” ’” "”! '’”   '”"  )“” !” !” !”” "-” "1”" "4”$ "6””" $3”& $7”8 $ÌI”: $ÌK”” %+”" %/”0 %=”2 %?‘” 9’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” 	” ’” '” '˜” (” (” (	” (”  (”$ ( ”& ("”' (#˜” )” )” )	” )” )”  )”" )”# )–” *” *” *	” *” *” *” +” +” +	” +” +”, +(”. +*”/ ++”3 +/”4 +0”5 +1”7 +3”9 +5”; +7—” ,” ,
+” ,” ,” ,” ,” ,–” -” -
+” -” -”  -”! -”” .”	 .”
+ .” .’” /” /’” 1” 1™” 2” 2
+” 2” 2” 2” 2”' 2#”) 2?”* 2Ì@”” 3” 3” 3” 3” 4” 4
+” 4” 4” 4”# 4”$ 4”/ 4*”0 46”4 4:”Ì@ 4ÌF”ÌA 4ÌG”ÌM 4ÌS”ÌN 4ÌTœ” 5” 5
+” 5” 5” 5” 5”  5”' 5"”( 5.”, 52”- 53”. 54œ” 6” 6
+” 6” 6”  6”& 6!”' 6"”5 60”6 6=”: 6ÌA”? 6ÌF”Ì@ 6ÌGœ” 7” 7
+” 7”! 7”$ 7”* 7%”+ 7&”= 78”> 7ÌF”ÌB 7ÌJ”ÌD 7ÌL”ÌE 7ÌM’” 9” 9œ” :” :
+” :” :”  :”0 :*”1 :+”5 :/”6 :0”? :9”Ì@ ::”ÌB :<™” ;” ;” ;” ;”! ;”- ;%”. ;&”: ;2”; ;3‘” <œ” =” =
+” =” =”  =”, =&”- ='”1 =+”2 =,”7 =1”8 =2”: =4—” >” >” >” >” >” >” >‘” ?‘”	 Ì@’” ÌB” ÌB”” ÌD”	 ÌD”
+ ÌD” ÌD—” ÌE” ÌE” ÌE	” ÌE” ÌE” ÌE” ÌE’” ÌF” ÌF” ÌG” ÌG
+” ÌG” ÌG”! ÌG”% ÌG”) ÌG#”* ÌG$”: ÌG4”; ÌG5”ÌA ÌG;”ÌD ÌG>”ÌE ÌG?”ÌG ÌGÌA’” ÌH” ÌHÜ ” ÌI” ÌI” ÌI” ÌI”! ÌI”' ÌI”+ ÌI#”, ÌI$”> ÌI6”? ÌI7”ÌP ÌIÌH”ÌQ ÌIÌI”ÌU ÌIÌM”ÌV ÌIÌN”Ìf ÌIÌ^”Ìg ÌIÌ_”Ìh ÌIÌ`‘” ÌJ‘” ÌJ’” ÌK” ÌKÜ ” ÌL” ÌL”  ÌL”# ÌL”) ÌL!”- ÌL%”. ÌL&”Ì@ ÌL8”ÌA ÌL9”ÌM ÌLÌE”ÌN ÌLÌF”ÌR ÌLÌJ”ÌS ÌLÌK”Ì\ ÌLÌT”Ì^ ÌLÌV”Ìb ÌLÌZ”Ìc ÌLÌ[”Ìh ÌLÌ`”Ìi ÌLÌa”Ìj ÌLÌb’” ÌM” ÌM˜” ÌN” ÌN”" ÌN”% ÌN”1 ÌN)”2 ÌN*”ÌN ÌNÌF”ÌO ÌNÌG˜” ÌO” ÌO”  ÌO”! ÌO”' ÌO”* ÌO"”6 ÌO.”8 ÌO0’” ÌP
+”+ ÌP!Ü ” ÌQ
+” ÌQ” ÌQ” ÌQ”! ÌQ”- ÌQ#”. ÌQ$”4 ÌQ*”7 ÌQ-”8 ÌQ.”: ÌQ0”; ÌQ1”> ÌQ4”? ÌQ5”ÌA ÌQ7”ÌB ÌQ8”ÌD ÌQ:”ÌF ÌQ<Ü ” ÌR” ÌR” ÌR”" ÌR”& ÌR”' ÌR”, ÌR ”- ÌR!”1 ÌR%”2 ÌR&”8 ÌR,”: ÌR.”= ÌR1”> ÌR2”? ÌR3”ÌB ÌR6”ÌC ÌR7”ÌD ÌR8”ÌE ÌR9”ÌF ÌR:™” ÌS” ÌS”" ÌS”% ÌS”1 ÌS%”2 ÌS&”3 ÌS'”4 ÌS(”5 ÌS)›” ÌT”$ ÌT”% ÌT”& ÌT”' ÌT”* ÌT”6 ÌT*”7 ÌT+”8 ÌT,”9 ÌT-”: ÌT.˜” ÌU”$ ÌU”% ÌU”& ÌU”' ÌU”* ÌU”. ÌU"”/ ÌU#‘” ÌV” ÌW
+” ÌW” ÌW”" ÌW”% ÌW”1 ÌW'”2 ÌW(”7 ÌW-”8 ÌW.”9 ÌW/”; ÌW1”ÌG ÌW=”ÌH ÌW>”ÌI ÌW?‘” ÌX	‘” ÌX—” ÌY
+” ÌY” ÌY”" ÌY”% ÌY”1 ÌY'”2 ÌY(‘” ÌZ	‘” Ì[š” Ì]” Ì]
+” Ì]” Ì]” Ì]” Ì]”% Ì]”* Ì]$”+ Ì]%”- Ì]'›” Ì^” Ì^” Ì^” Ì^” Ì^”( Ì^ ”) Ì^!”7 Ì^/”8 Ì^0”9 Ì^1”: Ì^2–” Ì_” Ì_” Ì_” Ì_” Ì_” Ì_’” Ì`” Ì`‘” Ìa’” Ìc” Ìc–” Ìd” Ìd
+” Ìd” Ìd” Ìd”  Ìd‘”	 Ìe”” Ìe” Ìe” Ìe” Ìeœ” Ìf” Ìf” Ìf” Ìf”  Ìf”6 Ìf0”8 Ìf2”ÌR ÌfÌL”ÌT ÌfÌN”ÌY ÌfÌ\”ÌZ ÌfÌ]”Ì[ ÌfÌ^›” Ìg” Ìg
+” Ìg” Ìg” Ìg”$ Ìg”% Ìg”2 Ìg,”3 Ìg-”4 Ìg.”5 Ìg/–” Ìh” Ìh” Ìh” Ìh” Ìh” Ìh‘”	 Ìi‘” Ìi—” Ìj” Ìj
+” Ìj” Ìj” Ìj”" Ìj”# Ìj‘”	 Ìk’” Ìl” Ìl”” Ìn”	 Ìn”
+ Ìn” ÌnÜ ” Ìo” Ìo” Ìo” Ìo” Ìo” Ìo” Ìo” Ìo”" Ìo”& Ìo"”' Ìo#”3 Ìo/”7 Ìo3”; Ìo7”< Ìo8”ÌE ÌoÌA”ÌF ÌoÌB”ÌL ÌoÌH”ÌN ÌoÌJ’” Ìp” Ìp‘”	 Ìq” Ìr” Ìr
+” Ìr” Ìr” Ìr” Ìr”' Ìr#”( Ìr$”, Ìr(”- Ìr)”9 Ìr5”: Ìr6”; Ìr7’” Ìs” ÌsÜ ” Ìt” Ìt” Ìt” Ìt”! Ìt”% Ìt”& Ìt ”8 Ìt2”9 Ìt3”ÌB Ìt<”ÌC Ìt=”ÌG ÌtÌA”ÌH ÌtÌB”ÌN ÌtÌH”ÌP ÌtÌJ”ÌX ÌtÌR”ÌY ÌtÌS”Ì[ ÌtÌU”Ì\ ÌtÌV”Ì] ÌtÌW”” Ìu” Ìu
+” Ìu” Ìu™” Ìv” Ìv” Ìv”# Ìv”& Ìv”, Ìv$”- Ìv%”7 Ìv/”8 Ìv0™” Ìw” Ìw” Ìw” Ìw”" Ìw”( Ìw ”) Ìw!”3 Ìw+”4 Ìw,™” Ìx” Ìx” Ìx” Ìx”! Ìx”' Ìx”( Ìx ”1 Ìx)”2 Ìx*—” Ìy” Ìy” Ìy” Ìy”" Ìy”& Ìy”' Ìy›” Ìz” Ìz” Ìz”  Ìz”# Ìz”+ Ìz#”, Ìz$”7 Ìz/”; Ìz3”= Ìz5”> Ìz6‘” Ì{‘”	 Ì|”” Ì|” Ì|” Ì|” Ì|œ” Ì}” Ì}” Ì}” Ì}”  Ì}”6 Ì}0”8 Ì}2”ÌY Ì}ÌS”Ì[ Ì}ÌU”Ì` Ì}Ìc”Ìa Ì}Ìd”Ìb Ì}Ìe‘”	 Ì~’” Ì” Ì‘” Ì’” Ì‚” Ì‚
+–” Ì‚” Ì‚
+” Ì” Ì
+” Ì” Ì–” Ì‚” Ì‚
+” Ì‘” Ì‘” Ì‘”  Ì‘–” Ì‚” Ì‚
+” Ì’” Ì’” Ì’” Ì’–” Ìƒ” Ìƒ
+” Ìƒ” Ìƒ” Ìƒ”  Ìƒ’” Ì„” Ì„–” Ì„” Ì„” Ì‰	”$ Ì‰”% Ì‰”+ Ì‰–” Ì„” Ì„” ÌŠ	”% ÌŠ”& ÌŠ”, ÌŠ˜” Ì„” Ì„” Ì‹	”- Ì‹”. Ì‹”7 Ì‹!”8 Ì‹"”> Ì‹(’” Ì…
+”' Ì…—” Ì†
+” Ì†”$ Ì†”- Ì†”. Ì†”7 Ì†"”8 Ì†#š” Ì†
+” Ì†” Ì‡”# Ì‡”$ Ì‡”& Ì‡”) Ì‡”+ Ì‡”- Ì‡”/ Ì‡’” Ì†
+” Ì†’” Ì„” Ì„‘” ÌŒš” ÌŒ” ÌŒ” ÌŒ” ÌŒ”# ÌŒ”$ ÌŒ ”* ÌŒ&”- ÌŒ)”. ÌŒ*”0 ÌŒ,” Ì” Ì” Ì”- Ì!”9 Ì"”= Ì&”> Ì'”ÌG Ì0”ÌH Ì1”ÌL Ì5”ÌM Ì6”ÌY ÌÌB”ÌZ ÌÌC”Ì[ ÌÌD‘” Ì‘” Ì’” Ì‚” Ì‚
+‘” Ì“”” Ì•” Ì•” Ì•”! Ì•)’” Ì–” Ì–
+–” Ì–” Ì–
+” ÌÖ” ÌÖ
+” ÌÖ” ÌÖ’” Ì—” Ì—Ü ” Ì˜” Ì˜
+” Ì˜” Ì˜”! Ì˜”" Ì˜”. Ì˜!”1 Ì˜$”2 Ì˜%”< Ì˜/”Ì@ Ì˜3”ÌA Ì˜4”ÌJ Ì˜=”ÌK Ì˜>”ÌQ Ì˜ÌD”ÌU Ì˜ÌH’” Ì—” Ì—–” Ì˜” Ì˜
+” Ì™	” Ì™” Ì™” Ì™’” Ì—” Ì—–” Ì˜” Ì˜
+” Ìš	” Ìš” Ìš”$ Ìš’” Ì—” Ì—š” Ì˜” Ì˜
+” Ì›	” Ì›” Ì›” Ì›”  Ì›”" Ì›”$ Ì›”& Ì›’” Ì—” Ì—’” Ì˜” Ì˜
+’” Ì” Ì–” Ì” Ì
+” Ì”  Ì”! Ì”( Ì’” Ì” Ì–” Ì” Ì
+” ÌŸ	” ÌŸ” ÌŸ” ÌŸ’” Ì” Ì˜” Ì” Ì
+” Ì 	” Ì ” Ì ”& Ì ”' Ì ”+ Ì #’” Ì” Ìš” Ì” Ì
+” Ì¡	” Ì¡” Ì¡” Ì¡”  Ì¡”" Ì¡”$ Ì¡”& Ì¡’” Ì” Ì’” Ì” Ì
+’” Ì£” Ì£™” Ì¤” Ì¤
+” Ì¤” Ì¤” Ì¤”" Ì¤”. Ì¤(”/ Ì¤)”ÌJ Ì¤ÌD™” Ì¥
+” Ì¥” Ì¥” Ì¥”" Ì¥”. Ì¥(”/ Ì¥)”ÌE Ì¥?”ÌG Ì¥ÌA—” Ì¦” Ì¦” Ì¦”% Ì¦”1 Ì¦”9 Ì¦"”: Ì¦#‘” Ì§š” Ì§” Ì§” Ì§” Ì§”" Ì§”' Ì§#”3 Ì§/”4 Ì§0”ÌL Ì§ÌH”ÌN Ì§ÌJ—” Ì¨” Ì¨” Ì¨”' Ì¨”3 Ì¨”; Ì¨$”< Ì¨%‘” Ì©’” Ì«” Ì«‘” Ì©’” Ì«” Ì«–” Ì¬” Ì¬
+” Ì¬” Ì¬” Ì¬”! Ì¬—” Ì­” Ì­” Ì­”$ Ì­”0 Ì­”8 Ì­!”9 Ì­"‘” Ì®’” Ì°” Ì°‘” Ì®’” Ì°” Ì°’” Ì±” Ì±	’” Ì°” Ì°–” Ì±” Ì±	” ÌÂ” ÌÂ” ÌÂ” ÌÂ’” Ì°” Ì°˜” Ì±” Ì±	” ÌÃ” ÌÃ” ÌÃ”( ÌÃ”) ÌÃ ”/ ÌÃ&’” Ì°” Ì°š” Ì±” Ì±	” ÌÄ” ÌÄ” ÌÄ” ÌÄ” ÌÄ” ÌÄ”  ÌÄ”" ÌÄ—” Ì²” Ì²”# Ì²”, Ì²”- Ì²”7 Ì²#”8 Ì²$Ÿ” Ì²” Ì²” Ì³” Ì³” Ì³” Ì³”  Ì³”, Ì³$”/ Ì³'”0 Ì³(”4 Ì³,”5 Ì³-”9 Ì³1”: Ì³2”ÌF Ì³>—” Ì²” Ì²” Ì´” Ì´” Ì´” Ì´”  Ì´–” Ìµ” Ìµ” Ìµ”& Ìµ"”( Ìµ$”) Ìµ%–” Ì¶” Ì¶” Ì¶”% Ì¶!”' Ì¶#”( Ì¶$’” Ì·
+” Ì·š” Ì²” Ì²” Ì¸” Ì¸” Ì¸” Ì¸”! Ì¸”# Ì¸”% Ì¸”' Ì¸’” Ì²” Ì²—” Ìº” Ìº”# Ìº”, Ìº”- Ìº”3 Ìº”4 Ìº Ü ” Ìº” Ìº” Ì»” Ì»” Ì»” Ì»”  Ì»”, Ì»$”/ Ì»'”3 Ì»+”4 Ì»,”= Ì»5”> Ì»6”ÌD Ì»<”ÌG Ì»?”ÌH Ì»Ì@”ÌL Ì»ÌD”ÌM Ì»ÌE”ÌQ Ì»ÌI”ÌR Ì»ÌJ”Ì^ Ì»ÌV—” Ìº” Ìº” Ì¼” Ì¼” Ì¼” Ì¼”  Ì¼–” Ì½” Ì½” Ì½”& Ì½"”( Ì½$”) Ì½%–” Ì¾” Ì¾” Ì¾”! Ì¾”# Ì¾”$ Ì¾ ’” Ì¿
+” Ì¿š” Ìº” Ìº” ÌÀ” ÌÀ” ÌÀ” ÌÀ”  ÌÀ”" ÌÀ”$ ÌÀ”& ÌÀ’” Ìº” Ìº’” Ì°” Ì°’” Ì±” Ì±	’” ÌÆ” ÌÆ—” ÌÇ” ÌÇ
+” ÌÇ” ÌÇ” ÌÇ”" ÌÇ”$ ÌÇÜ ” ÌÈ” ÌÈ”/ ÌÈ”3 ÌÈ”4 ÌÈ”ÌD ÌÈ$”ÌF ÌÈ&”ÌG ÌÈ'”ÌH ÌÈ(”ÌI ÌÈ)”ÌR ÌÈ2”ÌS ÌÈ3”Ì_ ÌÈ?”Ì` ÌÈÌ@”Ìa ÌÈÌA”Ìb ÌÈÌB”Ìc ÌÈÌC”Ìl ÌÈÌL”Ìm ÌÈÌM”Ìy ÌÈÌY”Ìz ÌÈÌZ–” ÌÈ” ÌÈ” ÌÉ”$ ÌÉ”% ÌÉ”* ÌÉ™” ÌÈ” ÌÈ” ÌÊ”& ÌÊ”' ÌÊ”+ ÌÊ”, ÌÊ”< ÌÊ(”> ÌÊ*—” ÌÈ” ÌÈ” ÌË”& ÌË”' ÌË”* ÌË”, ÌË–” ÌÌ”  ÌÌ”! ÌÌ”1 ÌÌ!”3 ÌÌ#”4 ÌÌ$’” ÌÍ
+” ÌÍš” ÌÈ” ÌÈ” ÌÎ”% ÌÎ”& ÌÎ”( ÌÎ”+ ÌÎ”- ÌÎ”/ ÌÎ”1 ÌÎ’” ÌÈ” ÌÈ‘” ÌÏ‘” ÌÏ—” ÌĞ” ÌĞ”$ ÌĞ”- ÌĞ”. ÌĞ”ÌB ÌĞ+”ÌC ÌĞ,–” ÌĞ” ÌĞ” ÌÑ”% ÌÑ”& ÌÑ”( ÌÑ–” ÌĞ” ÌĞ” ÌÒ”& ÌÒ”' ÌÒ”0 ÌÒš” ÌĞ” ÌĞ” ÌÓ”# ÌÓ”$ ÌÓ”& ÌÓ”) ÌÓ”+ ÌÓ”- ÌÓ”/ ÌÓ’” ÌĞ” ÌĞ‘” ÌÔ’” Ì–” Ì–
+‘” Ì×”” ÌÚ” ÌÚ” ÌÚ” ÌÚ!’” ÌÛ” ÌÛ
+–” ÌÛ” ÌÛ
+” Í” Í
+” Í” Íš” ÌÜ” ÌÜ
+” ÌÜ” ÌÜ” ÌÜ”" ÌÜ”. ÌÜ(”/ ÌÜ)”ÌE ÌÜ?”ÌG ÌÜÌA’” Ìİ”$ Ìİ’” ÌŞ” ÌŞÜ ” Ìß
+” Ìß”& Ìß”( Ìß”, Ìß”. Ìß”8 Ìß#”9 Ìß$”ÌA Ìß,”ÌC Ìß.”ÌG Ìß2”ÌI Ìß4”ÌM Ìß8”ÌN Ìß9”Ì\ ÌßÌG”Ìa ÌßÌL”Ìe ÌßÌP”Ìg ÌßÌR™” Ìß
+” Ìß” Ìà”' Ìà”( Ìà”) Ìà”- Ìà$”/ Ìà&”1 Ìà(”” Ìá”  Ìá”$ Ìá”& Ìá—”  Ìâ”$ Ìâ”% Ìâ”3 Ìâ#”6 Ìâ&”: Ìâ*”; Ìâ+–”  Ìã”$ Ìã”% Ìã”6 Ìã&”8 Ìã(”9 Ìã)‘” Ìä’” Ìå” Ìåš” Ìß
+” Ìß” Ìæ”% Ìæ”& Ìæ”( Ìæ”. Ìæ”0 Ìæ”2 Ìæ ”4 Ìæ"’” Ìß
+” Ìß”” Ìç
+” Ìç”$ Ìç”( Ìç–” Ìç
+” Ìç” Ìè”% Ìè”& Ìè”( Ìèš” Ìç
+” Ìç” Ìé”# Ìé”$ Ìé”& Ìé”* Ìé”, Ìé”. Ìé”0 Ìé ’” Ìç
+” ÌçÜ ” Ìë
+” Ìë”& Ìë”( Ìë”, Ìë”. Ìë”8 Ìë#”9 Ìë$”ÌA Ìë,”ÌC Ìë.”ÌG Ìë2”ÌI Ìë4”ÌM Ìë8”ÌN Ìë9”Ì\ ÌëÌG”Ìa ÌëÌL”Ìe ÌëÌP”Ìg ÌëÌR™” Ìë
+” Ìë” Ìì”' Ìì”( Ìì”) Ìì”- Ìì$”/ Ìì&”1 Ìì(”” Ìí”  Ìí”$ Ìí”& Ìí—”  Ìî”$ Ìî”% Ìî”3 Ìî#”6 Ìî&”: Ìî*”; Ìî+–”  Ìï”$ Ìï”% Ìï”6 Ìï&”8 Ìï(”9 Ìï)‘” Ìğ’” Ìñ” Ìñš” Ìë
+” Ìë” Ìò”% Ìò”& Ìò”( Ìò”. Ìò”0 Ìò”2 Ìò ”4 Ìò"’” Ìë
+” Ìë”” Ìó
+” Ìó”$ Ìó”( Ìó–” Ìó
+” Ìó” Ìô”% Ìô”& Ìô”( Ìôš” Ìó
+” Ìó” Ìõ”# Ìõ”$ Ìõ”& Ìõ”* Ìõ”, Ìõ”. Ìõ”0 Ìõ ’” Ìó
+” Ìó’” Ìİ”  Ìİ’” ÌŞ” ÌŞ‘” Ì÷‘” Ì÷’” Ìø”# Ìø’” Ìù” Ìù’” Ìú
+” Ìú’”? Ìú5”ÌD ÌúÌB’”  Ìû”# Ìû–”  Ìû”# Ìû”$ Í”) Í”* Í”0 Íš”  Ìû”# Ìû”$ Í”* Í”+ Í”- Í”3 Í”5 Í”7 Í ”9 Í"Ü ”  Ìü”& Ìü”. Ìü”0 Ìü”4 Ìü”6 Ìü”Ì@ Ìü'”ÌA Ìü(”ÌI Ìü0”ÌK Ìü2”ÌO Ìü6”ÌQ Ìü8”ÌU Ìü<”ÌV Ìü=”Ìd ÌüÌK”Ìi ÌüÌP”Ìo ÌüÌV”Ìq ÌüÌX™”  Ìü”& Ìü”' Ìı”/ Ìı”0 Ìı”1 Ìı”5 Ìı(”7 Ìı*”9 Ìı,””$ Ìş”( Ìş”, Ìş”. Ìş—”( Ìÿ”, Ìÿ”- Ìÿ”; Ìÿ'”> Ìÿ*”ÌD Ìÿ0”ÌE Ìÿ1–”( Í ”, Í ”- Í ”> Í *”Ì@ Í ,”ÌA Í -‘”% Í’”  Í”! Í’” Ìü”" Ìü””  Í”$ Í”, Í”2 Í–”  Í”$ Í”% Í”- Í”. Í”0 Íš”  Í”$ Í”% Í”+ Í”, Í”. Í”2 Í”4 Í ”6 Í"”8 Í$’” Í”  Í’” Ìû” Ìû””; Ìú”ÌC Ìú”ÌD Ìú”ÌK Ìú"’” Ìú
+” Ìú’” Ìø” Ìø’” Ìù” Ìù‘” Í’” ÌÛ” ÌÛ
+‘” Í”” Í” Í” Í” Í#Ü ” Í” Í” Í” Í”* Í”, Í”5 Í&”6 Í'”ÌD Í5”ÌE Í6”ÌG Í8”ÌK Í<”ÌM Í>”ÌQ ÍÌB”ÌR ÍÌC”Ì\ ÍÌM”Ì^ ÍÌO–” Í” Í” Í” Í” Í”" Í–” Í” Í” Í” Í” Í” Í™” Í” Í” Í” Í” Í” Í”# Í”$ Í”0 Í!™” Í” Í” Í” Í” Í”  Í”% Í”' Í ”) Í"—” Í” Í” Í” Í”" Í”' Í”( Í –” Í” Í” Í”& Í”( Í ”) Í!’” Í” Íš” Í” Í” Í” Í” Í” Í”% Í”' Í”) Í”+ Í‘” Í”” Í” Í” Í” Í ’” Í” Í
+–” Í” Í
+” Í3” Í3
+” Í3” Í3–” Í” Í
+” Í4” Í4” Í4” Í4–” Í” Í
+” Í5”" Í5”# Í5”, Í5–” Í” Í
+” Í6” Í6”  Í6”! Í6” Í” Í
+” Í7” Í7” Í7” Í7” Í7”! Í7”# Í7”% Í7”+ Í7”- Í7”/ Í7!”1 Í7#Ü ” Í ” Í 
+” Í ” Í ” Í ”& Í ”' Í ”( Í ”) Í ”2 Í %”3 Í &”ÌC Í 6”ÌD Í 7”ÌE Í 8”ÌF Í 9”ÌG Í :”ÌP Í ÌC”ÌQ Í ÌD”Ì_ Í ÌR”Ì` Í ÌS–” Í ” Í 
+” Í!	” Í!” Í!” Í!˜” Í ” Í 
+” Í"	” Í"” Í"”& Í"”' Í"”+ Í"#Ü ” Í ” Í 
+” Í#	” Í#” Í#” Í#”  Í#”) Í#!”* Í#"”+ Í##”, Í#$”5 Í#-”6 Í#.”7 Í#/”8 Í#0”ÌA Í#9š” Í ” Í 
+” Í$	” Í$” Í$” Í$”  Í$”" Í$”$ Í$”& Í$’” Í ” Í 
+—” Í&” Í&
+” Í&” Í&” Í&” Í&”! Í&” Í'” Í'”$ Í'”' Í'”0 Í'”1 Í'”ÌA Í'*”ÌB Í'+”ÌG Í'0”ÌO Í'8”ÌP Í'9”Ì] Í'ÌF”Ì_ Í'ÌH–” Í'” Í'” Í(”% Í(”& Í(”( Í(–” Í'” Í'” Í)”& Í)”' Í)”0 Í)š” Í'” Í'” Í*”# Í*”$ Í*”& Í*”, Í*”. Í*”0 Í*”2 Í* ’” Í'” Í'‘” Í+‘” Í+–” Í-” Í-
+” Í-” Í-”  Í-”" Í-–” Í.” Í.”$ Í.”( Í.”) Í.”4 Í.–” Í.” Í.” Í/”% Í/”& Í/”( Í/–” Í.” Í.” Í0”& Í0”' Í0”0 Í0’” Í.” Í.‘” Í1‘” Í1’” Í” Í
+‘” Í8’” Í:” Í:Ü ” Í;” Í;” Í;” Í;” Í;”! Í;”% Í;!”& Í;"”2 Í;.”6 Í;2”: Í;6”; Í;7”ÌD Í;Ì@”ÌE Í;ÌA”ÌK Í;ÌG”ÌM Í;ÌI’” Í<” Í<‘”	 Í=” Í>” Í>
+” Í>” Í>” Í>” Í>”' Í>#”( Í>$”, Í>(”- Í>)”9 Í>5”: Í>6”; Í>7–” Í?” Í?” Í?” Í?” Í?” Í?š” ÍA” ÍA” ÍA” ÍA” ÍA” ÍA”* ÍA&”+ ÍA'”ÌC ÍA?”ÌE ÍAÌAš” ÍB” ÍB” ÍB” ÍB” ÍB”$ ÍB”% ÍB”) ÍB#”+ ÍB%”, ÍB&‘”	 ÍC‘” ÍC—” ÍD” ÍD” ÍD” ÍD” ÍD”( ÍD"”) ÍD#‘”	 ÍE”” ÍG” ÍG” ÍG” ÍG” ÍH” ÍH
+” ÍH” ÍH” ÍH”  ÍH”! ÍH”) ÍH#”* ÍH$”, ÍH&”. ÍH(”4 ÍH.”5 ÍH/”6 ÍH0‘”	 ÍI‘” ÍIœ” ÍJ” ÍJ
+” ÍJ” ÍJ” ÍJ”# ÍJ”$ ÍJ”, ÍJ&”- ÍJ'”/ ÍJ)”0 ÍJ*”1 ÍJ+‘”	 ÍK’” ÍL” ÍL’” ÍN” ÍNš” ÍO” ÍO” ÍO” ÍO” ÍO” ÍO”! ÍO”& ÍO"”' ÍO#”) ÍO%”” ÍP” ÍP” ÍP” ÍP‘”	 ÍQ™” ÍR” ÍR	” ÍR” ÍR” ÍR”# ÍR”$ ÍR ”- ÍR)”/ ÍR+Ÿ” ÍS” ÍS” ÍS” ÍS” ÍS”  ÍS”+ ÍS%”, ÍS&”/ ÍS)”0 ÍS*”8 ÍS2”9 ÍS3”; ÍS5”< ÍS6”= ÍS7” ÍT” ÍT
+” ÍT” ÍT” ÍT”! ÍT”" ÍT”& ÍT ”( ÍT"”) ÍT#”/ ÍT)”4 ÍT.”5 ÍT/”7 ÍT1”” ÍU” ÍU” ÍU” ÍU‘” ÍV‘”	 ÍW”” ÍX” ÍX” ÍX” ÍX’” ÍY” ÍY”” Í[”	 Í[”
+ Í[” Í[˜” Í\” Í\” Í\	” Í\” Í\”" Í\”$ Í\ ”& Í\"›” Í]” Í]
+” Í]” Í]” Í]”$ Í]”% Í]”8 Í]2”9 Í]3”: Í]4”; Í]5’” Í^” Í^‘”	 Í_’” Ía” Ía–” Íb” Íb” Íb	” Íb”  Íb”! Íb–” Íd” Íd” Íd” Íd” Íd” Íd–” Íe” Íe” Íe” Íe” Íe” Íe–” Íf” Íf
+” Íf”! Íf'”# Íf)”$ Íf*’” Íh” Íh™” Íi” Íi	” Íi” Íi” Íi”# Íi”$ Íi ”- Íi)”/ Íi+Ü ” Íj” Íj” Íj” Íj” Íj”  Íj”+ Íj%”, Íj&”/ Íj)”0 Íj*”8 Íj2”9 Íj3”; Íj5”< Íj6”Ì@ Íj:”ÌB Íj<”ÌC Íj=Ÿ” Ík” Ík” Ík” Ík”+ Ík%”, Ík&”7 Ík1”8 Ík2”Ì@ Ík:”ÌB Ík<”ÌH ÍkÌB”ÌJ ÍkÌD”ÌN ÍkÌH”ÌO ÍkÌI”ÌP ÍkÌJ’” Ím” Ím”” Ín” Ín” Ín”! Ín)–” Ío” Ío” Ío” Ío” Ío”# Ío–” Íp” Íp” Íp”$ Íp”% Íp”' Íp”” Íq” Íq” Íq”" Íq”” Ír” Ír” Ír”$ Ír—” Ís” Ís” Ís”  Ís”! Ís”$ Ís”& Ís’” Ít” Ít’” Ív” Ív
+›” Íw” Íw” Íw” Íw”- Íw%”. Íw&”: Íw2”; Íw3”ÌG Íw?”ÌH ÍwÌ@”ÌI ÍwÌA”” Íy” Íy” Íy” Íy”” Íz
+”  Íz”" Íz”# Íz’” Í{
+”* Í{ –” Í|
+” Í|” Í|” Í|”) Í|”+ Í|!Ü ” Í}” Í}”" Í}”# Í}”5 Í})”6 Í}*”ÌI Í}=”ÌJ Í}>”ÌN Í}ÌB”ÌO Í}ÌC”ÌU Í}ÌI”ÌW Í}ÌK”Ì_ Í}ÌS”Ì` Í}ÌT”Ìb Í}ÌV”Ìc Í}ÌW”Ìd Í}ÌX‘” Í~‘” Í	‘” Í”” Í€
+” Í€”  Í€”! Í€š” Í
+”$ Í”% Í”) Í”* Í ”2 Í(”3 Í)”5 Í+”6 Í,”7 Í-’” Í‚
+” Í‚Ü ” Íƒ
+” Íƒ” Íƒ” Íƒ”1 Íƒ'”2 Íƒ(”ÌB Íƒ8”ÌC Íƒ9”ÌG Íƒ=”ÌH Íƒ>”ÌN ÍƒÌD”ÌP ÍƒÌF”ÌX ÍƒÌN”ÌY ÍƒÌO”Ì[ ÍƒÌQ”Ì] ÍƒÌS”Ìc ÍƒÌY”Ìd ÍƒÌZ”Ìe ÍƒÌ[’” Í„
+”) Í„–” Í…
+” Í…” Í…” Í…”) Í…”+ Í…!Ü ” Í†” Í†”" Í†”# Í†”5 Í†)”6 Í†*”ÌJ Í†>”ÌK Í†?”ÌO Í†ÌC”ÌP Í†ÌD”ÌV Í†ÌJ”ÌX Í†ÌL”Ì` Í†ÌT”Ìa Í†ÌU”Ìc Í†ÌW”Ìd Í†ÌX”Ìe Í†ÌY‘” Í‡‘” Íˆ	‘” Í‰”” Í‰” Í‰” Í‰” Í‰œ” ÍŠ” ÍŠ” ÍŠ”# ÍŠ”$ ÍŠ”: ÍŠ2”< ÍŠ4”ÌS ÍŠÌK”ÌU ÍŠÌM”ÌZ ÍŠÌ[”Ì[ ÍŠÌ\”Ì\ ÍŠÌ]‘” Í‹‘”	 ÍŒ—” Í” Í” Í	” Í” Í”  Í”! Í˜” Í” Í” Í	” Í” Í” Í”  Í”! Í’” Í‘” Í‘š” Í’” Í’
+” Í’” Í’” Í’” Í’”$ Í’ ”% Í’!”+ Í’'”, Í’(Ü ” Í“” Í“
+” Í“” Í“” Í“”! Í“”" Í“”# Í“”$ Í“ ”% Í“!”& Í“"”2 Í“.”5 Í“1”: Í“6”= Í“9”ÌB Í“>”ÌC Í“?”ÌD Í“Ì@”ÌE Í“ÌA”ÌF Í“ÌB”ÌG Í“ÌC”ÌH Í“ÌDÜ '” Í”” Í”
+” Í”” Í”” Í””$ Í” ”% Í”!”5 Í”1”6 Í”2”; Í”7”Ì@ Í”<”ÌE Í”ÌA”ÌN Í”ÌJ”ÌO Í”ÌK”Ì^ Í”ÌZ”Ì_ Í”Ì[”Ìd Í”Ì`”Ìp Í”Ìl”Ìu Í”Ìq”Ì~ Í”Ìz”Ì Í”Ì{”ÌŒ Í”Ìˆ”Ì Í”Ì‰”Ì’ Í”Ì”Ìœ Í”Ì˜”Ì¡ Í”Ì”Ìª Í”Ì¦”Ì« Í”Ì§”Ì½ Í”Ì¹”Ì¾ Í”Ìº”ÌÃ Í”Ì¿”ÌË Í”ÌÇ”ÌÌ Í”ÌÈ”ÌÓ Í”ÌÏ”ÌÔ Í”ÌĞ”ÌÕ Í”ÌÑ”ÌÖ Í”ÌÒ”ÌÙ Í”ÌÕ”ÌÚ Í”ÌÖ•” Í–” Í–” Í–” Í–”  Í–—” Í—” Í—” Í—” Í—” Í—”- Í—'”. Í—(”” Í˜” Í˜” Í˜” Í˜“” Í™” Í™” Í™‘” Íš—” Í›
+” Í›” Í›”# Í›”$ Í›”- Í›#”. Í›$”” Íœ
+” Íœ” Íœ”$ Íœ‘” Í	‘” Í“”	 ÍŸ”
+ ÍŸ” ÍŸ’” Í¡” Í¡–” Í¢” Í¢” Í¢	” Í¢” Í¢” Í¢’” Í£” Í£’” Í¥” Í¥˜” Í¦” Í¦” Í¦” Í¦” Í¦”  Í¦”! Í¦”# Í¦–” Í§” Í§
+” Í§” Í§” Í§”  Í§–” Í¨” Í¨
+” Í¨” Í¨” Í¨”  Í¨‘”	 Í©’” Íª” Íª’” Í¬” Í¬” Í­” Í­” Í­” Í­” Í­”  Í­”$ Í­ ”% Í­!”. Í­*”/ Í­+”5 Í­1”8 Í­4”9 Í­5”; Í­7–” Í®” Í®
+” Í®” Í®” Í®”  Í®–” Í¯” Í¯
+” Í¯” Í¯” Í¯”  Í¯‘”	 Í°’” Í±” Í±’” Í³” Í³œ” Í´” Í´” Í´” Í´” Í´”! Í´”% Í´!”& Í´"”/ Í´+”0 Í´,”6 Í´2”8 Í´4’” Íµ” Íµ‘”	 Í¶” Í¸” Í¸
+” Í¸” Í¸” Í¸” Í¸”' Í¸#”( Í¸$”, Í¸(”- Í¸)”9 Í¸5”: Í¸6”; Í¸7—” Í¹” Í¹” Í¹	” Í¹” Í¹” Í¹”  Í¹—” Íº” Íº” Íº	” Íº” Íº” Íº” Íº’” Í¼” Í¼Ÿ” Í½” Í½
+” Í½” Í½” Í½”  Í½”+ Í½'”, Í½(”/ Í½+”0 Í½,”8 Í½4”9 Í½5”; Í½7”< Í½8”= Í½9”” Í¾” Í¾” Í¾” Í¾š” Í¿” Í¿
+” Í¿” Í¿” Í¿”" Í¿”. Í¿(”/ Í¿)”ÌG Í¿ÌA”ÌI Í¿ÌC—” ÍÀ” ÍÀ” ÍÀ” ÍÀ”" ÍÀ”, ÍÀ$”- ÍÀ%‘” ÍÁ‘” ÍÁ—” ÍÂ” ÍÂ” ÍÂ”# ÍÂ”& ÍÂ”0 ÍÂ(”1 ÍÂ)‘” ÍÃ‘”	 ÍÄ‘” ÍÄ—” ÍÅ” ÍÅ
+” ÍÅ” ÍÅ” ÍÅ”  ÍÅ”! ÍÅ—” ÍÆ” ÍÆ
+” ÍÆ” ÍÆ”" ÍÆ”$ ÍÆ”% ÍÆ‘”	 ÍÇ’” ÍÉ” ÍÉ–” ÍÊ” ÍÊ” ÍÊ” ÍÊ” ÍÊ” ÍÊ–” ÍË” ÍË
+” ÍË”$ ÍË”& ÍË ”' ÍË!‘”	 ÍÌ’” ÍÍ” ÍÍ”” ÍÏ” ÍÏ” ÍÏ” ÍÏ•” ÍĞ” ÍĞ” ÍĞ” ÍĞ” ÍĞ”” ÍÑ” ÍÑ” ÍÑ” ÍÑ”” ÍÒ” ÍÒ” ÍÒ” ÍÒ“”	 ÍÓ”
+ ÍÓ” ÍÓ’” ÍÔ” ÍÔÔrG–§version¤file§sources®sourcesContent¥names¨mappingsÀ‘À‘ÀÜ ‘”    ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”  	 ‘”  
+ ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”    ‘”  ! ‘”  " ‘”  # ‘”  $ ‘”  % ‘”  & ‘”  ' ‘”  ( ‘”  ) ‘”  * ‘”  + ‘”  , ‘”  - ‘”  . ‘”  / ‘”  0 ‘”  1 ‘”  2 ‘”  3 ‘”  4 ‘”  5 ‘”  6 ‘”  7 ‘”  8 ‘”  9 ‘”  : ‘”  ; ‘”  < ‘”  = ‘”  > ‘”  ? ‘”  Ì@ ‘”  ÌA ‘”  ÌB ‘”  ÌC ‘”  ÌD ‘”  ÌE ‘”  ÌF ‘”  ÌG ‘”  ÌH ‘”  ÌI ‘”  ÌJ ‘”  ÌK ‘”  ÌL ‘”  ÌM ‘”  ÌN ‘”  ÌO ‘”  ÌP ‘”  ÌQ ‘”  ÌR ‘”  ÌS ‘”  ÌT ‘”  ÌU ‘”  ÌV ‘”  ÌW ‘”  ÌX ‘”  ÌY ‘”  ÌZ ‘”  Ì[ ‘”  Ì\ ‘”  Ì] ‘”  Ì^ ‘”  Ì_ ‘”  Ì` ‘”  Ìa ‘”  Ìb ‘”  Ìc ‘”  Ìd ‘”  Ìe ‘”  Ìf ‘”  Ìg ‘”  Ìh ‘”  Ìi ‘”  Ìj ‘”  Ìk ‘”  Ìl ‘”  Ìm ‘”  Ìn ‘”  Ìo ‘”  Ìp ‘”  Ìq ‘”  Ìr ‘”  Ìs ‘”  Ìt ‘”  Ìu ‘”  Ìv ‘”  Ìw ‘”  Ìx ‘”  Ìy ‘”  Ìz ‘”  Ì{ ‘”  Ì| ‘”  Ì} ‘”  Ì~ ‘”  Ì ‘”  Ì€ ‘”  Ì ‘”  Ì‚ ‘”  Ìƒ ‘”  Ì„ ‘”  Ì… ‘”  Ì† ‘”  Ì‡ ‘”  Ìˆ ‘”  Ì‰ ‘”  ÌŠ ‘”  Ì‹ ‘”  ÌŒ ‘”  Ì ‘”  Ì ‘”  Ì ‘”  Ì ‘”  Ì‘ ‘”  Ì’ ‘”  Ì“ ‘”  Ì” ‘”  Ì• ‘”  Ì– ‘”  Ì— ‘”  Ì˜ ‘”  Ì™ ‘”  Ìš ‘”  Ì› ‘”  Ìœ ‘”  Ì ‘”  Ì ‘”  ÌŸ ‘”  Ì  ‘”  Ì¡ ‘”  Ì¢ ‘”  Ì£ ‘”  Ì¤ ‘”  Ì¥ ‘”  Ì¦ ‘”  Ì§ ‘”  Ì¨ ‘”  Ì© ‘”  Ìª ‘”  Ì« ‘”  Ì¬ ‘”  Ì­ ‘”  Ì® ‘”  Ì¯ ‘”  Ì° ‘”  Ì± ‘”  Ì² ‘”  Ì³ ‘”  Ì´ ‘”  Ìµ ‘”  Ì¶ ‘”  Ì· ‘”  Ì¸ ‘”  Ì¹ ‘”  Ìº ‘”  Ì» ‘”  Ì¼ ‘”  Ì½ ‘”  Ì¾ ‘”  Ì¿ ‘”  ÌÀ ‘”  ÌÁ ‘”  ÌÂ ‘”  ÌÃ ‘”  ÌÄ ‘”  ÌÅ ‘”  ÌÆ ‘”  ÌÇ ‘”  ÌÈ ‘”  ÌÉ ‘”  ÌÊ ‘”  ÌË ‘”  ÌÌ ‘”  ÌÍ ‘”  ÌÎ ‘”  ÌÏ ‘”  ÌĞ ‘”  ÌÑ ‘”  ÌÒ ‘”  ÌÓ ‘”  ÌÔ ‘”  ÌÕ ‘”  ÌÖ ‘”  Ì× ‘”  ÌØ ‘”  ÌÙ ‘”  ÌÚ ‘”  ÌÛ ‘”  ÌÜ ‘”  Ìİ ‘”  ÌŞ ‘”  Ìß ‘”  Ìà ‘”  Ìá ‘”  Ìâ ‘”  Ìã ‘”  Ìä ‘”  Ìå ‘”  Ìæ ‘”  Ìç ‘”  Ìè ‘”  Ìé ‘”  Ìê ‘”  Ìë ‘”  Ìì ‘”  Ìí ‘”  Ìî ‘”  Ìï ‘”  Ìğ ‘”  Ìñ ‘”  Ìò ‘”  Ìó ‘”  Ìô ‘”  Ìõ ‘”  Ìö ‘”  Ì÷ ‘”  Ìø ‘”  Ìù ‘”  Ìú ‘”  Ìû ‘”  Ìü ‘”  Ìı ‘”  Ìş ‘”  Ìÿ ‘”  Í  ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í	 ‘”  Í
+ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í  ‘”  Í! ‘”  Í" ‘”  Í# ‘”  Í$ ‘”  Í% ‘”  Í& ‘”  Í' ‘”  Í( ‘”  Í) ‘”  Í* ‘”  Í+ ‘”  Í, ‘”  Í- ‘”  Í. ‘”  Í/ ‘”  Í0 ‘”  Í1 ‘”  Í2 ‘”  Í3 ‘”  Í4 ‘”  Í5 ‘”  Í6 ‘”  Í7 ‘”  Í8 ‘”  Í9 ‘”  Í: ‘”  Í; ‘”  Í< ‘”  Í= ‘”  Í> ‘”  Í? ‘”  Í@ ‘”  ÍA ‘”  ÍB ‘”  ÍC ‘”  ÍD ‘”  ÍE ‘”  ÍF ‘”  ÍG ‘”  ÍH ‘”  ÍI ‘”  ÍJ ‘”  ÍK ‘”  ÍL ‘”  ÍM ‘”  ÍN ‘”  ÍO ‘”  ÍP ‘”  ÍQ ‘”  ÍR ‘”  ÍS ‘”  ÍT ‘”  ÍU ‘”  ÍV ‘”  ÍW ‘”  ÍX ‘”  ÍY ‘”  ÍZ ‘”  Í[ ‘”  Í\ ‘”  Í] ‘”  Í^ ‘”  Í_ ‘”  Í` ‘”  Ía ‘”  Íb ‘”  Íc ‘”  Íd ‘”  Íe ‘”  Íf ‘”  Íg ‘”  Íh ‘”  Íi ‘”  Íj ‘”  Ík ‘”  Íl ‘”  Ím ‘”  Ín ‘”  Ío ‘”  Íp ‘”  Íq ‘”  Ír ‘”  Ís ‘”  Ít ‘”  Íu ‘”  Ív ‘”  Íw ‘”  Íx ‘”  Íy ‘”  Íz ‘”  Í{ ‘”  Í| ‘”  Í} ‘”  Í~ ‘”  Í ‘”  Í€ ‘”  Í ‘”  Í‚ ‘”  Íƒ ‘”  Í„ ‘”  Í… ‘”  Í† ‘”  Í‡ ‘”  Íˆ ‘”  Í‰ ‘”  ÍŠ ‘”  Í‹ ‘”  ÍŒ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í‘ ‘”  Í’ ‘”  Í“ ‘”  Í” ‘”  Í• ‘”  Í– ‘”  Í— ‘”  Í˜ ‘”  Í™ ‘”  Íš ‘”  Í› ‘”  Íœ ‘”  Í ‘”  Í ‘”  ÍŸ ‘”  Í  ‘”  Í¡ ‘”  Í¢ ‘”  Í£ ‘”  Í¤ ‘”  Í¥ ‘”  Í¦ ‘”  Í§ ‘”  Í¨ ‘”  Í© ‘”  Íª ‘”  Í« ‘”  Í¬ ‘”  Í­ ‘”  Í® ‘”  Í¯ ‘”  Í° ‘”  Í± ‘”  Í² ‘”  Í³ ‘”  Í´ ‘”  Íµ ‘”  Í¶ ‘”  Í· ‘”  Í¸ ‘”  Í¹ ‘”  Íº ‘”  Í» ‘”  Í¼ ‘”  Í½ ‘”  Í¾ ‘”  Í¿ ‘”  ÍÀ ‘”  ÍÁ ‘”  ÍÂ ‘”  ÍÃ ‘”  ÍÄ ‘”  ÍÅ ‘”  ÍÆ ‘”  ÍÇ ‘”  ÍÈ ‘”  ÍÉ ‘”  ÍÊ ‘”  ÍË ‘”  ÍÌ ‘”  ÍÍ ‘”  ÍÎ ‘”  ÍÏ ‘”  ÍĞ ‘”  ÍÑ ‘”  ÍÒ ‘”  ÍÓ ‘”  ÍÔ ‘”  ÍÕ ‘”  ÍÖ ‘”  Í× ‘”  ÍØ ‘”  ÍÙ ‘”  ÍÚ ‘”  ÍÛ ‘”  ÍÜ ‘”  Íİ ‘”  ÍŞ ‘”  Íß ‘”  Íà ‘”  Íá ‘”  Íâ ‘”  Íã ‘”  Íä ‘”  Íå ‘”  Íæ ‘”  Íç ‘”  Íè ‘”  Íé ‘”  Íê ‘”  Íë ‘”  Íì ‘”  Íí ‘”  Íî ‘”  Íï ‘”  Íğ ‘”  Íñ ‘”  Íò ‘”  Íó ‘”  Íô ‘”  Íõ ‘”  Íö ‘”  Í÷ ‘”  Íø ‘”  Íù ‘”  Íú ‘”  Íû ‘”  Íü ‘”  Íı ‘”  Íş ‘”  Íÿ ‘”  Í  ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í	 ‘”  Í
+ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í  ‘”  Í! ‘”  Í" ‘”  Í# ‘”  Í$ ‘”  Í% ‘”  Í& ‘”  Í' ‘”  Í( ‘”  Í) ‘”  Í* ‘”  Í+ ‘”  Í, ‘”  Í- ‘”  Í. ‘”  Í/ ‘”  Í0 ‘”  Í1 ‘”  Í2 ‘”  Í3 ‘”  Í4 ‘”  Í5 ‘”  Í6 ‘”  Í7 ‘”  Í8 ‘”  Í9 ‘”  Í: ‘”  Í; ‘”  Í< ‘”  Í= ‘”  Í> ‘”  Í? ‘”  Í@ ‘”  ÍA ‘”  ÍB ‘”  ÍC ‘”  ÍD ‘”  ÍE ‘”  ÍF ‘”  ÍG ‘”  ÍH ‘”  ÍI ‘”  ÍJ ‘”  ÍK ‘”  ÍL ‘”  ÍM ‘”  ÍN ‘”  ÍO ‘”  ÍP ‘”  ÍQ ‘”  ÍR ‘”  ÍS ‘”  ÍT ‘”  ÍU ‘”  ÍV ‘”  ÍW ‘”  ÍX ‘”  ÍY ‘”  ÍZ ‘”  Í[ ‘”  Í\ ‘”  Í] ‘”  Í^ ‘”  Í_ ‘”  Í` ‘”  Ía ‘”  Íb ‘”  Íc ‘”  Íd ‘”  Íe ‘”  Íf ‘”  Íg ‘”  Íh ‘”  Íi ‘”  Íj ‘”  Ík ‘”  Íl ‘”  Ím ‘”  Ín ‘”  Ío ‘”  Íp ‘”  Íq ‘”  Ír ‘”  Ís ‘”  Ít ‘”  Íu ‘”  Ív ‘”  Íw ‘”  Íx ‘”  Íy ‘”  Íz ‘”  Í{ ‘”  Í| ‘”  Í} ‘”  Í~ ‘”  Í ‘”  Í€ ‘”  Í ‘”  Í‚ ‘”  Íƒ ‘”  Í„ ‘”  Í… ‘”  Í† ‘”  Í‡ ‘”  Íˆ ‘”  Í‰ ‘”  ÍŠ ‘”  Í‹ ‘”  ÍŒ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í‘ ‘”  Í’ ‘”  Í“ ‘”  Í” ‘”  Í• ‘”  Í– ‘”  Í— ‘”  Í˜ ‘”  Í™ ‘”  Íš ‘”  Í› ‘”  Íœ ‘”  Í ‘”  Í ‘”  ÍŸ ‘”  Í  ‘”  Í¡ ‘”  Í¢ ‘”  Í£ ‘”  Í¤ ‘”  Í¥ ‘”  Í¦ ‘”  Í§ ‘”  Í¨ ‘”  Í© ‘”  Íª ‘”  Í« ‘”  Í¬ ‘”  Í­ ‘”  Í® ‘”  Í¯ ‘”  Í° ‘”  Í± ‘”  Í² ‘”  Í³ ‘”  Í´ ‘”  Íµ ‘”  Í¶ ‘”  Í· ‘”  Í¸ ‘”  Í¹ ‘”  Íº ‘”  Í» ‘”  Í¼ ‘”  Í½ ‘”  Í¾ ‘”  Í¿ ‘”  ÍÀ ‘”  ÍÁ ‘”  ÍÂ ‘”  ÍÃ ‘”  ÍÄ ‘”  ÍÅ ‘”  ÍÆ ‘”  ÍÇ ‘”  ÍÈ ‘”  ÍÉ ‘”  ÍÊ ‘”  ÍË ‘”  ÍÌ ‘”  ÍÍ ‘”  ÍÎ ‘”  ÍÏ ‘”  ÍĞ ‘”  ÍÑ ‘”  ÍÒ ‘”  ÍÓ ‘”  ÍÔ ‘”  ÍÕ ‘”  ÍÖ ‘”  Í× ‘”  ÍØ ‘”  ÍÙ ‘”  ÍÚ ‘”  ÍÛ ‘”  ÍÜ ‘”  Íİ ‘”  ÍŞ ‘”  Íß ‘”  Íà ‘”  Íá ‘”  Íâ ‘”  Íã ‘”  Íä ‘”  Íå ‘”  Íæ ‘”  Íç ‘”  Íè ‘”  Íé ‘”  Íê ‘”  Íë ‘”  Íì ‘”  Íí ‘”  Íî ‘”  Íï ‘”  Íğ ‘”  Íñ ‘”  Íò ‘”  Íó ‘”  Íô ‘”  Íõ ‘”  Íö ‘”  Í÷ ‘”  Íø ‘”  Íù ‘”  Íú ‘”  Íû ‘”  Íü ‘”  Íı ‘”  Íş ‘”  Íÿ ÔrH’§missing¦pluginÃ¦genAbcÂÔ  ÔrI”²dynamicImportCache¹exportAllDeclarationCache»exportNamedDeclarationCache«importCache‘ÔrJ–¤type¥start£end«declarationªspecifiers¦source¶ExportNamedDeclarationÍjÍ}ÙÔrK–¤type¥start£end¢idªsuperClass¤body°ClassDeclarationÍqÍ}ÙÔrL”¤type¥start£end¤nameªIdentifierÍwÍ‹´PracticeActivityPageLªIdentifierÍ”Íš¦ViewPUÔrM”¤type¥start£end¤body©ClassBodyÍ›Í}ÙÜ )ÔrN˜¤type¥start£end¦static¨computed£key¤kind¥value°MethodDefinitionÍ¢ÍWÂÂLªIdentifierÍ¢Í­«constructor«constructorÔrO™¤type¥start£end¢idªexpression©generator¥async¦params¤body²FunctionExpressionÍ­ÍWÀÂÂÂ–LªIdentifierÍ®Í´¦parentLªIdentifierÍ¶Í¼¦paramsLªIdentifierÍ¾ÍÌ®__localStorageÔrP•¤type¥start£end¤left¥right±AssignmentPatternÍÎÍÙLªIdentifierÍÎÍÔ¦elmtIdÔrQ–¤type¥start£end¨operator¦prefix¨argument¯UnaryExpressionÍ×ÍÙ¡-ÃÔrR•¤type¥start£end¥value£raw§LiteralÍØÍÙ¡1P±AssignmentPatternÍÛÍóLªIdentifierÍÛÍç¬paramsLambdaLªIdentifierÍêÍó©undefinedLªIdentifierÍõÍş©extraInfoM®BlockStatementÍ ÍWÜ ÔrS”¤type¥start£endªexpression³ExpressionStatementÍÍ<ÔrT–¤type¥start£end¦callee©arguments¨optional®CallExpressionÍÍ;ÔrU“¤type¥start£end¥SuperÍÍ”LªIdentifierÍÍ¦parentLªIdentifierÍÍ'®__localStorageLªIdentifierÍ)Í/¦elmtIdLªIdentifierÍ1Í:©extraInfoÂÔrV–¤type¥start£end¤testªconsequent©alternate«IfStatementÍFÍ­ÔrW–¤type¥start£end¤left¨operator¥right°BinaryExpressionÍJÍlQ¯UnaryExpressionÍJÍ]¦typeofÃLªIdentifierÍQÍ]¬paramsLambda£===R§LiteralÍbÍl¨functionª"function"M®BlockStatementÍnÍ­‘S³ExpressionStatementÍ}Í¢ÔrX–¤type¥start£end¨operator¤left¥right´AssignmentExpressionÍ}Í¡¡=ÔrY—¤type¥start£end¦object¨property¨computed¨optional°MemberExpressionÍ}Í’U®ThisExpressionÍ}ÍLªIdentifierÍ‚Í’°paramsGenerator_ÂÂLªIdentifierÍ•Í¡¬paramsLambdaÀS³ExpressionStatementÍ·ÍşX´AssignmentExpressionÍ·Íı¡=Y°MemberExpressionÍ·ÍÇU®ThisExpressionÍ·Í»LªIdentifierÍ¼ÍÇ«__questionsÂÂÔrZ•¤type¥start£end¦callee©arguments­NewExpressionÍÊÍıLªIdentifierÍÎÍæ¸ObservedPropertyObjectPU“Ôr[”¤type¥start£end¨elements¯ArrayExpressionÍçÍéU®ThisExpressionÍëÍïR§LiteralÍñÍü©questions«"questions"S³ExpressionStatementÍÍTX´AssignmentExpressionÍÍS¡=Y°MemberExpressionÍÍU®ThisExpressionÍÍLªIdentifierÍÍ®__currentIndexÂÂZ­NewExpressionÍÍSLªIdentifierÍ"Í:¸ObservedPropertySimplePU“R§LiteralÍ;Í< ¡0U®ThisExpressionÍ>ÍBR§LiteralÍDÍR¬currentIndex®"currentIndex"S³ExpressionStatementÍ^Í¯X´AssignmentExpressionÍ^Í®¡=Y°MemberExpressionÍ^ÍsU®ThisExpressionÍ^ÍbLªIdentifierÍcÍs°__selectedAnswerÂÂZ­NewExpressionÍvÍ®LªIdentifierÍzÍ’¸ObservedPropertySimplePU“R§LiteralÍ“Í• ¢''U®ThisExpressionÍ—Í›R§LiteralÍÍ­®selectedAnswer°"selectedAnswer"S³ExpressionStatementÍ¹ÍX´AssignmentExpressionÍ¹Í¡=Y°MemberExpressionÍ¹ÍÊU®ThisExpressionÍ¹Í½LªIdentifierÍ¾ÍÊ¬__fillAnswerÂÂZ­NewExpressionÍÍÍLªIdentifierÍÑÍé¸ObservedPropertySimplePU“R§LiteralÍêÍì ¢''U®ThisExpressionÍîÍòR§LiteralÍôÍ ªfillAnswer¬"fillAnswer"S³ExpressionStatementÍÍ\X´AssignmentExpressionÍÍ[¡=Y°MemberExpressionÍÍU®ThisExpressionÍÍLªIdentifierÍÍ®__allSubmittedÂÂZ­NewExpressionÍ"Í[LªIdentifierÍ&Í>¸ObservedPropertySimplePU“R§LiteralÍ?ÍDÂ¥falseU®ThisExpressionÍFÍJR§LiteralÍLÍZ¬allSubmitted®"allSubmitted"S³ExpressionStatementÍfÍ¯X´AssignmentExpressionÍfÍ®¡=Y°MemberExpressionÍfÍvU®ThisExpressionÍfÍjLªIdentifierÍkÍv«__isLoadingÂÂZ­NewExpressionÍyÍ®LªIdentifierÍ}Í•¸ObservedPropertySimplePU“R§LiteralÍ–ÍšÃ¤trueU®ThisExpressionÍœÍ R§LiteralÍ¢Í­©isLoading«"isLoading"S³ExpressionStatementÍ¹ÍX´AssignmentExpressionÍ¹Í¡=Y°MemberExpressionÍ¹ÍÊU®ThisExpressionÍ¹Í½LªIdentifierÍ¾ÍÊ¬__showResultÂÂZ­NewExpressionÍÍÍLªIdentifierÍÑÍé¸ObservedPropertySimplePU“R§LiteralÍêÍïÂ¥falseU®ThisExpressionÍñÍõR§LiteralÍ÷ÍªshowResult¬"showResult"S³ExpressionStatementÍÍYX´AssignmentExpressionÍÍX¡=Y°MemberExpressionÍÍU®ThisExpressionÍÍLªIdentifierÍÍ«__isCorrectÂÂZ­NewExpressionÍ"ÍXLªIdentifierÍ&Í>¸ObservedPropertySimplePU“R§LiteralÍ?ÍDÂ¥falseU®ThisExpressionÍFÍJR§LiteralÍLÍW©isCorrect«"isCorrect"S³ExpressionStatementÍcÍ®X´AssignmentExpressionÍcÍ­¡=Y°MemberExpressionÍcÍuU®ThisExpressionÍcÍgLªIdentifierÍhÍu­__explanationÂÂZ­NewExpressionÍxÍ­LªIdentifierÍ|Í”¸ObservedPropertySimplePU“R§LiteralÍ•Í— ¢''U®ThisExpressionÍ™ÍR§LiteralÍŸÍ¬«explanation­"explanation"S³ExpressionStatementÍ¸ÍãX´AssignmentExpressionÍ¸Íâ¡=Y°MemberExpressionÍ¸ÍÆU®ThisExpressionÍ¸Í¼LªIdentifierÍ½ÍÆ©subjectIdÂÂY°MemberExpressionÍÉÍâLªIdentifierÍÉÍÕ¬AppConstantsLªIdentifierÍÖÍâ¬SUBJECT_MATHÂÂS³ExpressionStatementÍíÍüX´AssignmentExpressionÍíÍû¡=Y°MemberExpressionÍíÍ÷U®ThisExpressionÍíÍñLªIdentifierÍòÍ÷¥gradeÂÂR§LiteralÍúÍû¡1S³ExpressionStatementÍÍ X´AssignmentExpressionÍÍ¡=Y°MemberExpressionÍÍU®ThisExpressionÍÍ
+LªIdentifierÍÍ¬isReviewModeÂÂR§LiteralÍÍÂ¥falseS³ExpressionStatementÍ*ÍEX´AssignmentExpressionÍ*ÍD¡=Y°MemberExpressionÍ*Í?U®ThisExpressionÍ*Í.LªIdentifierÍ/Í?°wrongQuestionIdsÂÂ[¯ArrayExpressionÍBÍDS³ExpressionStatementÍOÍ`X´AssignmentExpressionÍOÍ_¡=Y°MemberExpressionÍOÍZU®ThisExpressionÍOÍSLªIdentifierÍTÍZ¦userIdÂÂQ¯UnaryExpressionÍ]Í_¡-ÃR§LiteralÍ^Í_¡1S³ExpressionStatementÍjÍ‡X´AssignmentExpressionÍjÍ†¡=Y°MemberExpressionÍjÍzU®ThisExpressionÍjÍnLªIdentifierÍoÍz«tempAnswersÂÂZ­NewExpressionÍ}Í†LªIdentifierÍÍ„£MapS³ExpressionStatementÍ‘ÍÄX´AssignmentExpressionÍ‘ÍÃ¡=Y°MemberExpressionÍ‘Í¨U®ThisExpressionÍ‘Í•LªIdentifierÍ–Í¨²questionRepositoryÂÂZ­NewExpressionÍ«ÍÃLªIdentifierÍ¯ÍÁ²QuestionRepositoryS³ExpressionStatementÍÎÍùX´AssignmentExpressionÍÎÍø¡=Y°MemberExpressionÍÎÍáU®ThisExpressionÍÎÍÒLªIdentifierÍÓÍá®userRepositoryÂÂZ­NewExpressionÍäÍøLªIdentifierÍèÍö®UserRepositoryS³ExpressionStatementÍÍ*T®CallExpressionÍÍ)Y°MemberExpressionÍÍ!U®ThisExpressionÍÍLªIdentifierÍÍ!¹setInitiallyProvidedValueÂÂ‘LªIdentifierÍ"Í(¦paramsÂS³ExpressionStatementÍ4ÍPT®CallExpressionÍ4ÍOY°MemberExpressionÍ4ÍMU®ThisExpressionÍ4Í8LªIdentifierÍ9ÍM´finalizeConstructionÂÂÂN°MethodDefinitionÍ]Í÷ÂÂLªIdentifierÍ]Ív¹setInitiallyProvidedValue¦methodO²FunctionExpressionÍvÍ÷ÀÂÂÂ‘LªIdentifierÍwÍ}¦paramsM®BlockStatementÍÍ÷Ü V«IfStatementÍŠÍêW°BinaryExpressionÍÍ¬Y°MemberExpressionÍÍLªIdentifierÍÍ”¦paramsLªIdentifierÍ•Í©questionsÂÂ£!==LªIdentifierÍ£Í¬©undefinedM®BlockStatementÍ®Íê‘S³ExpressionStatementÍ½ÍßX´AssignmentExpressionÍ½ÍŞ¡=Y°MemberExpressionÍ½ÍËU®ThisExpressionÍ½ÍÁLªIdentifierÍÂÍË©questionsÂÂY°MemberExpressionÍÎÍŞLªIdentifierÍÎÍÔ¦paramsLªIdentifierÍÕÍŞ©questionsÂÂÀV«IfStatementÍôÍ	]W°BinaryExpressionÍøÍ	Y°MemberExpressionÍøÍ	LªIdentifierÍøÍş¦paramsLªIdentifierÍÿÍ	¬currentIndexÂÂ£!==LªIdentifierÍ	Í	©undefinedM®BlockStatementÍ	Í	]‘S³ExpressionStatementÍ	*Í	RX´AssignmentExpressionÍ	*Í	Q¡=Y°MemberExpressionÍ	*Í	;U®ThisExpressionÍ	*Í	.LªIdentifierÍ	/Í	;¬currentIndexÂÂY°MemberExpressionÍ	>Í	QLªIdentifierÍ	>Í	D¦paramsLªIdentifierÍ	EÍ	Q¬currentIndexÂÂÀV«IfStatementÍ	gÍ	ÖW°BinaryExpressionÍ	kÍ	Y°MemberExpressionÍ	kÍ	€LªIdentifierÍ	kÍ	q¦paramsLªIdentifierÍ	rÍ	€®selectedAnswerÂÂ£!==LªIdentifierÍ	…Í	©undefinedM®BlockStatementÍ	Í	Ö‘S³ExpressionStatementÍ	ŸÍ	ËX´AssignmentExpressionÍ	ŸÍ	Ê¡=Y°MemberExpressionÍ	ŸÍ	²U®ThisExpressionÍ	ŸÍ	£LªIdentifierÍ	¤Í	²®selectedAnswerÂÂY°MemberExpressionÍ	µÍ	ÊLªIdentifierÍ	µÍ	»¦paramsLªIdentifierÍ	¼Í	Ê®selectedAnswerÂÂÀV«IfStatementÍ	àÍ
+CW°BinaryExpressionÍ	äÍ
+Y°MemberExpressionÍ	äÍ	õLªIdentifierÍ	äÍ	ê¦paramsLªIdentifierÍ	ëÍ	õªfillAnswerÂÂ£!==LªIdentifierÍ	úÍ
+©undefinedM®BlockStatementÍ
+Í
+C‘S³ExpressionStatementÍ
+Í
+8X´AssignmentExpressionÍ
+Í
+7¡=Y°MemberExpressionÍ
+Í
+#U®ThisExpressionÍ
+Í
+LªIdentifierÍ
+Í
+#ªfillAnswerÂÂY°MemberExpressionÍ
+&Í
+7LªIdentifierÍ
+&Í
+,¦paramsLªIdentifierÍ
+-Í
+7ªfillAnswerÂÂÀV«IfStatementÍ
+MÍ
+¶W°BinaryExpressionÍ
+QÍ
+rY°MemberExpressionÍ
+QÍ
+dLªIdentifierÍ
+QÍ
+W¦paramsLªIdentifierÍ
+XÍ
+d¬allSubmittedÂÂ£!==LªIdentifierÍ
+iÍ
+r©undefinedM®BlockStatementÍ
+tÍ
+¶‘S³ExpressionStatementÍ
+ƒÍ
+«X´AssignmentExpressionÍ
+ƒÍ
+ª¡=Y°MemberExpressionÍ
+ƒÍ
+”U®ThisExpressionÍ
+ƒÍ
+‡LªIdentifierÍ
+ˆÍ
+”¬allSubmittedÂÂY°MemberExpressionÍ
+—Í
+ªLªIdentifierÍ
+—Í
+¦paramsLªIdentifierÍ
+Í
+ª¬allSubmittedÂÂÀV«IfStatementÍ
+ÀÍ W°BinaryExpressionÍ
+ÄÍ
+âY°MemberExpressionÍ
+ÄÍ
+ÔLªIdentifierÍ
+ÄÍ
+Ê¦paramsLªIdentifierÍ
+ËÍ
+Ô©isLoadingÂÂ£!==LªIdentifierÍ
+ÙÍ
+â©undefinedM®BlockStatementÍ
+äÍ ‘S³ExpressionStatementÍ
+óÍX´AssignmentExpressionÍ
+óÍ¡=Y°MemberExpressionÍ
+óÍU®ThisExpressionÍ
+óÍ
+÷LªIdentifierÍ
+øÍ©isLoadingÂÂY°MemberExpressionÍÍLªIdentifierÍÍ
+¦paramsLªIdentifierÍÍ©isLoadingÂÂÀV«IfStatementÍ*ÍW°BinaryExpressionÍ.ÍMY°MemberExpressionÍ.Í?LªIdentifierÍ.Í4¦paramsLªIdentifierÍ5Í?ªshowResultÂÂ£!==LªIdentifierÍDÍM©undefinedM®BlockStatementÍOÍ‘S³ExpressionStatementÍ^Í‚X´AssignmentExpressionÍ^Í¡=Y°MemberExpressionÍ^ÍmU®ThisExpressionÍ^ÍbLªIdentifierÍcÍmªshowResultÂÂY°MemberExpressionÍpÍLªIdentifierÍpÍv¦paramsLªIdentifierÍwÍªshowResultÂÂÀV«IfStatementÍ—Í÷W°BinaryExpressionÍ›Í¹Y°MemberExpressionÍ›Í«LªIdentifierÍ›Í¡¦paramsLªIdentifierÍ¢Í«©isCorrectÂÂ£!==LªIdentifierÍ°Í¹©undefinedM®BlockStatementÍ»Í÷‘S³ExpressionStatementÍÊÍìX´AssignmentExpressionÍÊÍë¡=Y°MemberExpressionÍÊÍØU®ThisExpressionÍÊÍÎLªIdentifierÍÏÍØ©isCorrectÂÂY°MemberExpressionÍÛÍëLªIdentifierÍÛÍá¦paramsLªIdentifierÍâÍë©isCorrectÂÂÀV«IfStatementÍÍgW°BinaryExpressionÍÍ%Y°MemberExpressionÍÍLªIdentifierÍÍ¦paramsLªIdentifierÍÍ«explanationÂÂ£!==LªIdentifierÍÍ%©undefinedM®BlockStatementÍ'Íg‘S³ExpressionStatementÍ6Í\X´AssignmentExpressionÍ6Í[¡=Y°MemberExpressionÍ6ÍFU®ThisExpressionÍ6Í:LªIdentifierÍ;ÍF«explanationÂÂY°MemberExpressionÍIÍ[LªIdentifierÍIÍO¦paramsLªIdentifierÍPÍ[«explanationÂÂÀV«IfStatementÍqÍÑW°BinaryExpressionÍuÍ“Y°MemberExpressionÍuÍ…LªIdentifierÍuÍ{¦paramsLªIdentifierÍ|Í…©subjectIdÂÂ£!==LªIdentifierÍŠÍ“©undefinedM®BlockStatementÍ•ÍÑ‘S³ExpressionStatementÍ¤ÍÆX´AssignmentExpressionÍ¤ÍÅ¡=Y°MemberExpressionÍ¤Í²U®ThisExpressionÍ¤Í¨LªIdentifierÍ©Í²©subjectIdÂÂY°MemberExpressionÍµÍÅLªIdentifierÍµÍ»¦paramsLªIdentifierÍ¼ÍÅ©subjectIdÂÂÀV«IfStatementÍÛÍ/W°BinaryExpressionÍßÍùY°MemberExpressionÍßÍëLªIdentifierÍßÍå¦paramsLªIdentifierÍæÍë¥gradeÂÂ£!==LªIdentifierÍğÍù©undefinedM®BlockStatementÍûÍ/‘S³ExpressionStatementÍ
+Í$X´AssignmentExpressionÍ
+Í#¡=Y°MemberExpressionÍ
+ÍU®ThisExpressionÍ
+ÍLªIdentifierÍÍ¥gradeÂÂY°MemberExpressionÍÍ#LªIdentifierÍÍ¦paramsLªIdentifierÍÍ#¥gradeÂÂÀV«IfStatementÍ9Í¢W°BinaryExpressionÍ=Í^Y°MemberExpressionÍ=ÍPLªIdentifierÍ=ÍC¦paramsLªIdentifierÍDÍP¬isReviewModeÂÂ£!==LªIdentifierÍUÍ^©undefinedM®BlockStatementÍ`Í¢‘S³ExpressionStatementÍoÍ—X´AssignmentExpressionÍoÍ–¡=Y°MemberExpressionÍoÍ€U®ThisExpressionÍoÍsLªIdentifierÍtÍ€¬isReviewModeÂÂY°MemberExpressionÍƒÍ–LªIdentifierÍƒÍ‰¦paramsLªIdentifierÍŠÍ–¬isReviewModeÂÂÀV«IfStatementÍ¬Í!W°BinaryExpressionÍ°ÍÕY°MemberExpressionÍ°ÍÇLªIdentifierÍ°Í¶¦paramsLªIdentifierÍ·ÍÇ°wrongQuestionIdsÂÂ£!==LªIdentifierÍÌÍÕ©undefinedM®BlockStatementÍ×Í!‘S³ExpressionStatementÍæÍX´AssignmentExpressionÍæÍ¡=Y°MemberExpressionÍæÍûU®ThisExpressionÍæÍêLªIdentifierÍëÍû°wrongQuestionIdsÂÂY°MemberExpressionÍşÍLªIdentifierÍşÍ¦paramsLªIdentifierÍÍ°wrongQuestionIdsÂÂÀV«IfStatementÍ+Í‚W°BinaryExpressionÍ/ÍJY°MemberExpressionÍ/Í<LªIdentifierÍ/Í5¦paramsLªIdentifierÍ6Í<¦userIdÂÂ£!==LªIdentifierÍAÍJ©undefinedM®BlockStatementÍLÍ‚‘S³ExpressionStatementÍ[ÍwX´AssignmentExpressionÍ[Ív¡=Y°MemberExpressionÍ[ÍfU®ThisExpressionÍ[Í_LªIdentifierÍ`Íf¦userIdÂÂY°MemberExpressionÍiÍvLªIdentifierÍiÍo¦paramsLªIdentifierÍpÍv¦userIdÂÂÀV«IfStatementÍŒÍòW°BinaryExpressionÍÍ°Y°MemberExpressionÍÍ¢LªIdentifierÍÍ–¦paramsLªIdentifierÍ—Í¢«tempAnswersÂÂ£!==LªIdentifierÍ§Í°©undefinedM®BlockStatementÍ²Íò‘S³ExpressionStatementÍÁÍçX´AssignmentExpressionÍÁÍæ¡=Y°MemberExpressionÍÁÍÑU®ThisExpressionÍÁÍÅLªIdentifierÍÆÍÑ«tempAnswersÂÂY°MemberExpressionÍÔÍæLªIdentifierÍÔÍÚ¦paramsLªIdentifierÍÛÍæ«tempAnswersÂÂÀV«IfStatementÍüÍwW°BinaryExpressionÍ Í'Y°MemberExpressionÍ ÍLªIdentifierÍ Í¦paramsLªIdentifierÍÍ²questionRepositoryÂÂ£!==LªIdentifierÍÍ'©undefinedM®BlockStatementÍ)Íw‘S³ExpressionStatementÍ8ÍlX´AssignmentExpressionÍ8Ík¡=Y°MemberExpressionÍ8ÍOU®ThisExpressionÍ8Í<LªIdentifierÍ=ÍO²questionRepositoryÂÂY°MemberExpressionÍRÍkLªIdentifierÍRÍX¦paramsLªIdentifierÍYÍk²questionRepositoryÂÂÀV«IfStatementÍÍğW°BinaryExpressionÍ…Í¨Y°MemberExpressionÍ…ÍšLªIdentifierÍ…Í‹¦paramsLªIdentifierÍŒÍš®userRepositoryÂÂ£!==LªIdentifierÍŸÍ¨©undefinedM®BlockStatementÍªÍğ‘S³ExpressionStatementÍ¹ÍåX´AssignmentExpressionÍ¹Íä¡=Y°MemberExpressionÍ¹ÍÌU®ThisExpressionÍ¹Í½LªIdentifierÍ¾ÍÌ®userRepositoryÂÂY°MemberExpressionÍÏÍäLªIdentifierÍÏÍÕ¦paramsLªIdentifierÍÖÍä®userRepositoryÂÂÀN°MethodDefinitionÍıÍÂÂLªIdentifierÍıÍ¯updateStateVars¦methodO²FunctionExpressionÍÍÀÂÂÂ‘LªIdentifierÍÍ¦paramsM®BlockStatementÍÍN°MethodDefinitionÍ#Í‹ÂÂLªIdentifierÍ#ÍDÙ!purgeVariableDependenciesOnElmtId¦methodO²FunctionExpressionÍDÍ‹ÀÂÂÂ‘LªIdentifierÍEÍM¨rmElmtIdM®BlockStatementÍOÍ‹™S³ExpressionStatementÍZÍT®CallExpressionÍZÍŒY°MemberExpressionÍZÍ‚Y°MemberExpressionÍZÍjU®ThisExpressionÍZÍ^LªIdentifierÍ_Íj«__questionsÂÂLªIdentifierÍkÍ‚·purgeDependencyOnElmtIdÂÂ‘LªIdentifierÍƒÍ‹¨rmElmtIdÂS³ExpressionStatementÍ—ÍÍT®CallExpressionÍ—ÍÌY°MemberExpressionÍ—ÍÂY°MemberExpressionÍ—ÍªU®ThisExpressionÍ—Í›LªIdentifierÍœÍª®__currentIndexÂÂLªIdentifierÍ«ÍÂ·purgeDependencyOnElmtIdÂÂ‘LªIdentifierÍÃÍË¨rmElmtIdÂS³ExpressionStatementÍ×ÍT®CallExpressionÍ×ÍY°MemberExpressionÍ×ÍY°MemberExpressionÍ×ÍìU®ThisExpressionÍ×ÍÛLªIdentifierÍÜÍì°__selectedAnswerÂÂLªIdentifierÍíÍ·purgeDependencyOnElmtIdÂÂ‘LªIdentifierÍÍ¨rmElmtIdÂS³ExpressionStatementÍÍMT®CallExpressionÍÍLY°MemberExpressionÍÍBY°MemberExpressionÍÍ*U®ThisExpressionÍÍLªIdentifierÍÍ*¬__fillAnswerÂÂLªIdentifierÍ+ÍB·purgeDependencyOnElmtIdÂÂ‘LªIdentifierÍCÍK¨rmElmtIdÂS³ExpressionStatementÍWÍT®CallExpressionÍWÍŒY°MemberExpressionÍWÍ‚Y°MemberExpressionÍWÍjU®ThisExpressionÍWÍ[LªIdentifierÍ\Íj®__allSubmittedÂÂLªIdentifierÍkÍ‚·purgeDependencyOnElmtIdÂÂ‘LªIdentifierÍƒÍ‹¨rmElmtIdÂS³ExpressionStatementÍ—ÍÊT®CallExpressionÍ—ÍÉY°MemberExpressionÍ—Í¿Y°MemberExpressionÍ—Í§U®ThisExpressionÍ—Í›LªIdentifierÍœÍ§«__isLoadingÂÂLªIdentifierÍ¨Í¿·purgeDependencyOnElmtIdÂÂ‘LªIdentifierÍÀÍÈ¨rmElmtIdÂS³ExpressionStatementÍÔÍT®CallExpressionÍÔÍY°MemberExpressionÍÔÍıY°MemberExpressionÍÔÍåU®ThisExpressionÍÔÍØLªIdentifierÍÙÍå¬__showResultÂÂLªIdentifierÍæÍı·purgeDependencyOnElmtIdÂÂ‘LªIdentifierÍşÍ¨rmElmtIdÂS³ExpressionStatementÍÍET®CallExpressionÍÍDY°MemberExpressionÍÍ:Y°MemberExpressionÍÍ"U®ThisExpressionÍÍLªIdentifierÍÍ"«__isCorrectÂÂLªIdentifierÍ#Í:·purgeDependencyOnElmtIdÂÂ‘LªIdentifierÍ;ÍC¨rmElmtIdÂS³ExpressionStatementÍOÍ„T®CallExpressionÍOÍƒY°MemberExpressionÍOÍyY°MemberExpressionÍOÍaU®ThisExpressionÍOÍSLªIdentifierÍTÍa­__explanationÂÂLªIdentifierÍbÍy·purgeDependencyOnElmtIdÂÂ‘LªIdentifierÍzÍ‚¨rmElmtIdÂN°MethodDefinitionÍ‘Í¹ÂÂLªIdentifierÍ‘Í¡°aboutToBeDeleted¦methodO²FunctionExpressionÍ¡Í¹ÀÂÂÂM®BlockStatementÍ¤Í¹›S³ExpressionStatementÍ¯ÍÓT®CallExpressionÍ¯ÍÒY°MemberExpressionÍ¯ÍĞY°MemberExpressionÍ¯Í¿U®ThisExpressionÍ¯Í³LªIdentifierÍ´Í¿«__questionsÂÂLªIdentifierÍÀÍĞ°aboutToBeDeletedÂÂÂS³ExpressionStatementÍİÍT®CallExpressionÍİÍY°MemberExpressionÍİÍY°MemberExpressionÍİÍğU®ThisExpressionÍİÍáLªIdentifierÍâÍğ®__currentIndexÂÂLªIdentifierÍñÍ°aboutToBeDeletedÂÂÂS³ExpressionStatementÍÍ7T®CallExpressionÍÍ6Y°MemberExpressionÍÍ4Y°MemberExpressionÍÍ#U®ThisExpressionÍÍLªIdentifierÍÍ#°__selectedAnswerÂÂLªIdentifierÍ$Í4°aboutToBeDeletedÂÂÂS³ExpressionStatementÍAÍfT®CallExpressionÍAÍeY°MemberExpressionÍAÍcY°MemberExpressionÍAÍRU®ThisExpressionÍAÍELªIdentifierÍFÍR¬__fillAnswerÂÂLªIdentifierÍSÍc°aboutToBeDeletedÂÂÂS³ExpressionStatementÍpÍ—T®CallExpressionÍpÍ–Y°MemberExpressionÍpÍ”Y°MemberExpressionÍpÍƒU®ThisExpressionÍpÍtLªIdentifierÍuÍƒ®__allSubmittedÂÂLªIdentifierÍ„Í”°aboutToBeDeletedÂÂÂS³ExpressionStatementÍ¡ÍÅT®CallExpressionÍ¡ÍÄY°MemberExpressionÍ¡ÍÂY°MemberExpressionÍ¡Í±U®ThisExpressionÍ¡Í¥LªIdentifierÍ¦Í±«__isLoadingÂÂLªIdentifierÍ²ÍÂ°aboutToBeDeletedÂÂÂS³ExpressionStatementÍÏÍôT®CallExpressionÍÏÍóY°MemberExpressionÍÏÍñY°MemberExpressionÍÏÍàU®ThisExpressionÍÏÍÓLªIdentifierÍÔÍà¬__showResultÂÂLªIdentifierÍáÍñ°aboutToBeDeletedÂÂÂS³ExpressionStatementÍşÍ"T®CallExpressionÍşÍ!Y°MemberExpressionÍşÍY°MemberExpressionÍşÍU®ThisExpressionÍşÍLªIdentifierÍÍ«__isCorrectÂÂLªIdentifierÍÍ°aboutToBeDeletedÂÂÂS³ExpressionStatementÍ,ÍRT®CallExpressionÍ,ÍQY°MemberExpressionÍ,ÍOY°MemberExpressionÍ,Í>U®ThisExpressionÍ,Í0LªIdentifierÍ1Í>­__explanationÂÂLªIdentifierÍ?ÍO°aboutToBeDeletedÂÂÂS³ExpressionStatementÍ\ÍˆT®CallExpressionÍ\Í‡Y°MemberExpressionÍ\ÍzT®CallExpressionÍ\ÍsY°MemberExpressionÍ\ÍqLªIdentifierÍ\Ím±SubscriberManagerLªIdentifierÍnÍq£GetÂÂÂLªIdentifierÍtÍz¦deleteÂÂ‘T®CallExpressionÍ{Í†Y°MemberExpressionÍ{Í„U®ThisExpressionÍ{ÍLªIdentifierÍ€Í„¤id__ÂÂÂÂS³ExpressionStatementÍ’Í²T®CallExpressionÍ’Í±Y°MemberExpressionÍ’Í¯U®ThisExpressionÍ’Í–LªIdentifierÍ—Í¯¸aboutToBeDeletedInternalÂÂÂN°MethodDefinitionÍ¿ÍÿÂÂLªIdentifierÍÃÍÌ©questions£getO²FunctionExpressionÍÌÍÿÀÂÂÂM®BlockStatementÍÏÍÿ‘Ôr\”¤type¥start£end¨argument¯ReturnStatementÍÚÍøT®CallExpressionÍáÍ÷Y°MemberExpressionÍáÍõY°MemberExpressionÍáÍñU®ThisExpressionÍáÍåLªIdentifierÍæÍñ«__questionsÂÂLªIdentifierÍòÍõ£getÂÂÂN°MethodDefinitionÍÍNÂÂLªIdentifierÍ	Í©questions£setO²FunctionExpressionÍÍNÀÂÂÂ‘LªIdentifierÍÍ¨newValueM®BlockStatementÍÍN‘S³ExpressionStatementÍ(ÍGT®CallExpressionÍ(ÍFY°MemberExpressionÍ(Í<Y°MemberExpressionÍ(Í8U®ThisExpressionÍ(Í,LªIdentifierÍ-Í8«__questionsÂÂLªIdentifierÍ9Í<£setÂÂ‘LªIdentifierÍ=ÍE¨newValueÂN°MethodDefinitionÍTÍšÂÂLªIdentifierÍXÍd¬currentIndex£getO²FunctionExpressionÍdÍšÀÂÂÂM®BlockStatementÍgÍš‘\¯ReturnStatementÍrÍ“T®CallExpressionÍyÍ’Y°MemberExpressionÍyÍY°MemberExpressionÍyÍŒU®ThisExpressionÍyÍ}LªIdentifierÍ~ÍŒ®__currentIndexÂÂLªIdentifierÍÍ£getÂÂÂN°MethodDefinitionÍ ÍïÂÂLªIdentifierÍ¤Í°¬currentIndex£setO²FunctionExpressionÍ°ÍïÀÂÂÂ‘LªIdentifierÍ±Í¹¨newValueM®BlockStatementÍ»Íï‘S³ExpressionStatementÍÆÍèT®CallExpressionÍÆÍçY°MemberExpressionÍÆÍİY°MemberExpressionÍÆÍÙU®ThisExpressionÍÆÍÊLªIdentifierÍËÍÙ®__currentIndexÂÂLªIdentifierÍÚÍİ£setÂÂ‘LªIdentifierÍŞÍæ¨newValueÂN°MethodDefinitionÍõÍ?ÂÂLªIdentifierÍùÍ®selectedAnswer£getO²FunctionExpressionÍÍ?ÀÂÂÂM®BlockStatementÍ
+Í?‘\¯ReturnStatementÍÍ8T®CallExpressionÍÍ7Y°MemberExpressionÍÍ5Y°MemberExpressionÍÍ1U®ThisExpressionÍÍ LªIdentifierÍ!Í1°__selectedAnswerÂÂLªIdentifierÍ2Í5£getÂÂÂN°MethodDefinitionÍEÍ˜ÂÂLªIdentifierÍIÍW®selectedAnswer£setO²FunctionExpressionÍWÍ˜ÀÂÂÂ‘LªIdentifierÍXÍ`¨newValueM®BlockStatementÍbÍ˜‘S³ExpressionStatementÍmÍ‘T®CallExpressionÍmÍY°MemberExpressionÍmÍ†Y°MemberExpressionÍmÍ‚U®ThisExpressionÍmÍqLªIdentifierÍrÍ‚°__selectedAnswerÂÂLªIdentifierÍƒÍ†£setÂÂ‘LªIdentifierÍ‡Í¨newValueÂN°MethodDefinitionÍÍàÂÂLªIdentifierÍ¢Í¬ªfillAnswer£getO²FunctionExpressionÍ¬ÍàÀÂÂÂM®BlockStatementÍ¯Íà‘\¯ReturnStatementÍºÍÙT®CallExpressionÍÁÍØY°MemberExpressionÍÁÍÖY°MemberExpressionÍÁÍÒU®ThisExpressionÍÁÍÅLªIdentifierÍÆÍÒ¬__fillAnswerÂÂLªIdentifierÍÓÍÖ£getÂÂÂN°MethodDefinitionÍæÍ1ÂÂLªIdentifierÍêÍôªfillAnswer£setO²FunctionExpressionÍôÍ1ÀÂÂÂ‘LªIdentifierÍõÍı¨newValueM®BlockStatementÍÿÍ1‘S³ExpressionStatementÍ
+Í*T®CallExpressionÍ
+Í)Y°MemberExpressionÍ
+ÍY°MemberExpressionÍ
+ÍU®ThisExpressionÍ
+ÍLªIdentifierÍÍ¬__fillAnswerÂÂLªIdentifierÍÍ£setÂÂ‘LªIdentifierÍ Í(¨newValueÂN°MethodDefinitionÍ7Í}ÂÂLªIdentifierÍ;ÍG¬allSubmitted£getO²FunctionExpressionÍGÍ}ÀÂÂÂM®BlockStatementÍJÍ}‘\¯ReturnStatementÍUÍvT®CallExpressionÍ\ÍuY°MemberExpressionÍ\ÍsY°MemberExpressionÍ\ÍoU®ThisExpressionÍ\Í`LªIdentifierÍaÍo®__allSubmittedÂÂLªIdentifierÍpÍs£getÂÂÂN°MethodDefinitionÍƒÍÒÂÂLªIdentifierÍ‡Í“¬allSubmitted£setO²FunctionExpressionÍ“ÍÒÀÂÂÂ‘LªIdentifierÍ”Íœ¨newValueM®BlockStatementÍÍÒ‘S³ExpressionStatementÍ©ÍËT®CallExpressionÍ©ÍÊY°MemberExpressionÍ©ÍÀY°MemberExpressionÍ©Í¼U®ThisExpressionÍ©Í­LªIdentifierÍ®Í¼®__allSubmittedÂÂLªIdentifierÍ½ÍÀ£setÂÂ‘LªIdentifierÍÁÍÉ¨newValueÂN°MethodDefinitionÍØÍÂÂLªIdentifierÍÜÍå©isLoading£getO²FunctionExpressionÍåÍÀÂÂÂM®BlockStatementÍèÍ‘\¯ReturnStatementÍóÍT®CallExpressionÍúÍY°MemberExpressionÍúÍY°MemberExpressionÍúÍ
+U®ThisExpressionÍúÍşLªIdentifierÍÿÍ
+«__isLoadingÂÂLªIdentifierÍÍ£getÂÂÂN°MethodDefinitionÍÍgÂÂLªIdentifierÍ"Í+©isLoading£setO²FunctionExpressionÍ+ÍgÀÂÂÂ‘LªIdentifierÍ,Í4¨newValueM®BlockStatementÍ6Íg‘S³ExpressionStatementÍAÍ`T®CallExpressionÍAÍ_Y°MemberExpressionÍAÍUY°MemberExpressionÍAÍQU®ThisExpressionÍAÍELªIdentifierÍFÍQ«__isLoadingÂÂLªIdentifierÍRÍU£setÂÂ‘LªIdentifierÍVÍ^¨newValueÂN°MethodDefinitionÍmÍ¯ÂÂLªIdentifierÍqÍ{ªshowResult£getO²FunctionExpressionÍ{Í¯ÀÂÂÂM®BlockStatementÍ~Í¯‘\¯ReturnStatementÍ‰Í¨T®CallExpressionÍÍ§Y°MemberExpressionÍÍ¥Y°MemberExpressionÍÍ¡U®ThisExpressionÍÍ”LªIdentifierÍ•Í¡¬__showResultÂÂLªIdentifierÍ¢Í¥£getÂÂÂN°MethodDefinitionÍµÍ ÂÂLªIdentifierÍ¹ÍÃªshowResult£setO²FunctionExpressionÍÃÍ ÀÂÂÂ‘LªIdentifierÍÄÍÌ¨newValueM®BlockStatementÍÎÍ ‘S³ExpressionStatementÍÙÍùT®CallExpressionÍÙÍøY°MemberExpressionÍÙÍîY°MemberExpressionÍÙÍêU®ThisExpressionÍÙÍİLªIdentifierÍŞÍê¬__showResultÂÂLªIdentifierÍëÍî£setÂÂ‘LªIdentifierÍïÍ÷¨newValueÂN°MethodDefinitionÍÍFÂÂLªIdentifierÍ
+Í©isCorrect£getO²FunctionExpressionÍÍFÀÂÂÂM®BlockStatementÍÍF‘\¯ReturnStatementÍ!Í?T®CallExpressionÍ(Í>Y°MemberExpressionÍ(Í<Y°MemberExpressionÍ(Í8U®ThisExpressionÍ(Í,LªIdentifierÍ-Í8«__isCorrectÂÂLªIdentifierÍ9Í<£getÂÂÂN°MethodDefinitionÍLÍ•ÂÂLªIdentifierÍPÍY©isCorrect£setO²FunctionExpressionÍYÍ•ÀÂÂÂ‘LªIdentifierÍZÍb¨newValueM®BlockStatementÍdÍ•‘S³ExpressionStatementÍoÍT®CallExpressionÍoÍY°MemberExpressionÍoÍƒY°MemberExpressionÍoÍU®ThisExpressionÍoÍsLªIdentifierÍtÍ«__isCorrectÂÂLªIdentifierÍ€Íƒ£setÂÂ‘LªIdentifierÍ„ÍŒ¨newValueÂN°MethodDefinitionÍ›ÍßÂÂLªIdentifierÍŸÍª«explanation£getO²FunctionExpressionÍªÍßÀÂÂÂM®BlockStatementÍ­Íß‘\¯ReturnStatementÍ¸ÍØT®CallExpressionÍ¿Í×Y°MemberExpressionÍ¿ÍÕY°MemberExpressionÍ¿ÍÑU®ThisExpressionÍ¿ÍÃLªIdentifierÍÄÍÑ­__explanationÂÂLªIdentifierÍÒÍÕ£getÂÂÂN°MethodDefinitionÍåÍ2ÂÂLªIdentifierÍéÍô«explanation£setO²FunctionExpressionÍôÍ2ÀÂÂÂ‘LªIdentifierÍõÍı¨newValueM®BlockStatementÍÿÍ2‘S³ExpressionStatementÍ
+Í+T®CallExpressionÍ
+Í*Y°MemberExpressionÍ
+Í Y°MemberExpressionÍ
+ÍU®ThisExpressionÍ
+ÍLªIdentifierÍÍ­__explanationÂÂLªIdentifierÍÍ £setÂÂ‘LªIdentifierÍ!Í)¨newValueÂN°MethodDefinitionÍ8ÍHÂÂLªIdentifierÍ8ÍE­aboutToAppear¦methodO²FunctionExpressionÍEÍHÀÂÂÂM®BlockStatementÍHÍH”S³ExpressionStatementÍSÍrT®CallExpressionÍSÍqY°MemberExpressionÍSÍoY°MemberExpressionÍSÍjU®ThisExpressionÍSÍWLªIdentifierÍXÍj²questionRepositoryÂÂLªIdentifierÍkÍo¤initÂÂÂS³ExpressionStatementÍ|Í—T®CallExpressionÍ|Í–Y°MemberExpressionÍ|Í”Y°MemberExpressionÍ|ÍU®ThisExpressionÍ|Í€LªIdentifierÍÍ®userRepositoryÂÂLªIdentifierÍÍ”¤initÂÂÂS³ExpressionStatementÍ¡Í³T®CallExpressionÍ¡Í²Y°MemberExpressionÍ¡Í°U®ThisExpressionÍ¡Í¥LªIdentifierÍ¦Í°ªinitParamsÂÂÂS³ExpressionStatementÍ½ÍAT®CallExpressionÍ½Í@Y°MemberExpressionÍ½ÍèT®CallExpressionÍ½ÍãY°MemberExpressionÍ½ÍáY°MemberExpressionÍ½ÍĞU®ThisExpressionÍ½ÍÁLªIdentifierÍÂÍĞ®userRepositoryÂÂLªIdentifierÍÑÍá°getCurrentUserIdÂÂÂLªIdentifierÍäÍè¤thenÂÂ‘O·ArrowFunctionExpressionÍéÍ?ÀÂÂÂ‘LªIdentifierÍêÍì¢idM®BlockStatementÍñÍ?’S³ExpressionStatementÍ ÍX´AssignmentExpressionÍ Í¡=Y°MemberExpressionÍ ÍU®ThisExpressionÍ ÍLªIdentifierÍÍ¦userIdÂÂLªIdentifierÍÍ¢idS³ExpressionStatementÍÍ4T®CallExpressionÍÍ3Y°MemberExpressionÍÍ1U®ThisExpressionÍÍ#LªIdentifierÍ$Í1­loadQuestionsÂÂÂÂN°MethodDefinitionÍNÍÍÂÂLªIdentifierÍNÍXªinitParams¦methodO²FunctionExpressionÍXÍÍÀÂÂÂM®BlockStatementÍ[ÍÍ’Ôr]•¤type¥start£end¬declarations¤kind³VariableDeclarationÍfÍˆ‘Ôr^•¤type¥start£end¢id¤init²VariableDeclaratorÍlÍ‡LªIdentifierÍlÍr¦paramsT®CallExpressionÍuÍ‡Y°MemberExpressionÍuÍ…LªIdentifierÍuÍ{¦routerLªIdentifierÍ|Í…©getParamsÂÂÂ¥constV«IfStatementÍ’ÍÆLªIdentifierÍ–Íœ¦paramsM®BlockStatementÍÍÆ–S³ExpressionStatementÍ­ÍïX´AssignmentExpressionÍ­Íî¡=Y°MemberExpressionÍ­Í»U®ThisExpressionÍ­Í±LªIdentifierÍ²Í»©subjectIdÂÂW±LogicalExpressionÍ¾ÍîY°MemberExpressionÍ¾ÍÑLªIdentifierÍ¾ÍÄ¦paramsR§LiteralÍÅÍĞ©subjectId«'subjectId'ÃÂ¢||Y°MemberExpressionÍÕÍîLªIdentifierÍÕÍá¬AppConstantsLªIdentifierÍâÍî¬SUBJECT_MATHÂÂS³ExpressionStatementÍıÍX´AssignmentExpressionÍıÍ¡=Y°MemberExpressionÍıÍU®ThisExpressionÍıÍLªIdentifierÍÍ¥gradeÂÂW±LogicalExpressionÍ
+ÍY°MemberExpressionÍ
+ÍLªIdentifierÍ
+Í¦paramsR§LiteralÍÍ¥grade§'grade'ÃÂ¢||R§LiteralÍÍ¡1S³ExpressionStatementÍ-ÍaX´AssignmentExpressionÍ-Í`¡=Y°MemberExpressionÍ-Í>U®ThisExpressionÍ-Í1LªIdentifierÍ2Í>¬isReviewModeÂÂW±LogicalExpressionÍAÍ`Y°MemberExpressionÍAÍWLªIdentifierÍAÍG¦paramsR§LiteralÍHÍV¬isReviewMode®'isReviewMode'ÃÂ¢||R§LiteralÍ[Í`Â¥falseS³ExpressionStatementÍoÍ¨X´AssignmentExpressionÍoÍ§¡=Y°MemberExpressionÍoÍ„U®ThisExpressionÍoÍsLªIdentifierÍtÍ„°wrongQuestionIdsÂÂW±LogicalExpressionÍ‡Í§Y°MemberExpressionÍ‡Í¡LªIdentifierÍ‡Í¦paramsR§LiteralÍÍ °wrongQuestionIds²'wrongQuestionIds'ÃÂ¢||[¯ArrayExpressionÍ¥Í§V«IfStatementÍËÍNQ¯UnaryExpressionÍÏÍÿ¡!ÃT®CallExpressionÍĞÍÿY°MemberExpressionÍĞÍïLªIdentifierÍĞÍŞ®InputValidatorLªIdentifierÍßÍï°isValidSubjectIdÂÂ‘Y°MemberExpressionÍğÍşU®ThisExpressionÍğÍôLªIdentifierÍõÍş©subjectIdÂÂÂM®BlockStatementÍÍN‘S³ExpressionStatementÍÍ?X´AssignmentExpressionÍÍ>¡=Y°MemberExpressionÍÍ"U®ThisExpressionÍÍLªIdentifierÍÍ"©subjectIdÂÂY°MemberExpressionÍ%Í>LªIdentifierÍ%Í1¬AppConstantsLªIdentifierÍ2Í>¬SUBJECT_MATHÂÂÀV«IfStatementÍ\Í»Q¯UnaryExpressionÍ`Íˆ¡!ÃT®CallExpressionÍaÍˆY°MemberExpressionÍaÍ|LªIdentifierÍaÍo®InputValidatorLªIdentifierÍpÍ|¬isValidGradeÂÂ‘Y°MemberExpressionÍ}Í‡U®ThisExpressionÍ}ÍLªIdentifierÍ‚Í‡¥gradeÂÂÂM®BlockStatementÍŠÍ»‘S³ExpressionStatementÍÍ¬X´AssignmentExpressionÍÍ«¡=Y°MemberExpressionÍÍ§U®ThisExpressionÍÍ¡LªIdentifierÍ¢Í§¥gradeÂÂR§LiteralÍªÍ«¡1ÀÀN°MethodDefinitionÍÓÍ$›ÂÂLªIdentifierÍÙÍæ­loadQuestions¦methodO²FunctionExpressionÍæÍ$›ÀÂÂÃM®BlockStatementÍéÍ$›’S³ExpressionStatementÍôÍ
+X´AssignmentExpressionÍôÍ	¡=Y°MemberExpressionÍôÍU®ThisExpressionÍôÍøLªIdentifierÍùÍ©isLoadingÂÂR§LiteralÍÍ	Ã¤trueÔr_–¤type¥start£end¥block§handler©finalizer¬TryStatementÍÍ$”M®BlockStatementÍÍ#}“V«IfStatementÍ'Í"†W±LogicalExpressionÍ+Í`Y°MemberExpressionÍ+Í<U®ThisExpressionÍ+Í/LªIdentifierÍ0Í<¬isReviewModeÂÂ¢&&W°BinaryExpressionÍ@Í`Y°MemberExpressionÍ@Í\Y°MemberExpressionÍ@ÍUU®ThisExpressionÍ@ÍDLªIdentifierÍEÍU°wrongQuestionIdsÂÂLªIdentifierÍVÍ\¦lengthÂÂ¡>R§LiteralÍ_Í` ¡0M®BlockStatementÍbÍú‘S³ExpressionStatementÍ“ÍëX´AssignmentExpressionÍ“Íê¡=Y°MemberExpressionÍ“Í¡U®ThisExpressionÍ“Í—LªIdentifierÍ˜Í¡©questionsÂÂ\¯AwaitExpressionÍ¤ÍêT®CallExpressionÍªÍêY°MemberExpressionÍªÍÓY°MemberExpressionÍªÍÁU®ThisExpressionÍªÍ®LªIdentifierÍ¯ÍÁ²questionRepositoryÂÂLªIdentifierÍÂÍÓ±getQuestionsByIdsÂÂ‘Y°MemberExpressionÍÔÍéU®ThisExpressionÍÔÍØLªIdentifierÍÙÍé°wrongQuestionIdsÂÂÂM®BlockStatementÍÍ"†“]³VariableDeclarationÍ@Íš‘^²VariableDeclaratorÍDÍ™LªIdentifierÍDÍP¬allQuestions\¯AwaitExpressionÍSÍ™T®CallExpressionÍYÍ™Y°MemberExpressionÍYÍ}Y°MemberExpressionÍYÍpU®ThisExpressionÍYÍ]LªIdentifierÍ^Íp²questionRepositoryÂÂLªIdentifierÍqÍ}¬getQuestionsÂÂ’Y°MemberExpressionÍ~ÍŒU®ThisExpressionÍ~Í‚LªIdentifierÍƒÍŒ©subjectIdÂÂY°MemberExpressionÍÍ˜U®ThisExpressionÍÍ’LªIdentifierÍ“Í˜¥gradeÂÂÂ£let]³VariableDeclarationÍÇÍ ‘^²VariableDeclaratorÍÍÍ LªIdentifierÍÍÍÙ¬maxQuestionsY°MemberExpressionÍÜÍ LªIdentifierÍÜÍè¬AppConstantsLªIdentifierÍéÍ ¼DEBUG_QUESTIONS_PER_PRACTICEÂÂ¥constV«IfStatementÍ Í"wW°BinaryExpressionÍ Í >Y°MemberExpressionÍ Í /LªIdentifierÍ Í (¬allQuestionsLªIdentifierÍ )Í /¦lengthÂÂ¡>LªIdentifierÍ 2Í >¬maxQuestionsM®BlockStatementÍ @Í"’Ôr`—¤type¥start£end¤init¤test¦update¤body¬ForStatementÍ „Í!º]³VariableDeclarationÍ ‰Í ¨‘^²VariableDeclaratorÍ Í ¨LªIdentifierÍ Í ¡iW°BinaryExpressionÍ ‘Í ¨Y°MemberExpressionÍ ‘Í ¤LªIdentifierÍ ‘Í ¬allQuestionsLªIdentifierÍ Í ¤¦lengthÂÂ¡-R§LiteralÍ §Í ¨¡1£letW°BinaryExpressionÍ ªÍ ¯LªIdentifierÍ ªÍ «¡i¡>R§LiteralÍ ®Í ¯ ¡0Q°UpdateExpressionÍ ±Í ´¢--ÂLªIdentifierÍ ±Í ²¡iM®BlockStatementÍ ¶Í!º”]³VariableDeclarationÍ ÑÍ ÿ‘^²VariableDeclaratorÍ ×Í şLªIdentifierÍ ×Í Ø¡jT®CallExpressionÍ ÛÍ şY°MemberExpressionÍ ÛÍ åLªIdentifierÍ ÛÍ ß¤MathLªIdentifierÍ àÍ å¥floorÂÂ‘W°BinaryExpressionÍ æÍ ıT®CallExpressionÍ æÍ óY°MemberExpressionÍ æÍ ñLªIdentifierÍ æÍ ê¤MathLªIdentifierÍ ëÍ ñ¦randomÂÂÂ¡*W°BinaryExpressionÍ ÷Í üLªIdentifierÍ ÷Í ø¡i¡+R§LiteralÍ ûÍ ü¡1Â¥const]³VariableDeclarationÍ!Í!6‘^²VariableDeclaratorÍ!Í!5LªIdentifierÍ!Í!#¤tempY°MemberExpressionÍ!&Í!5LªIdentifierÍ!&Í!2¬allQuestionsLªIdentifierÍ!3Í!4¡iÃÂ¥constS³ExpressionStatementÍ!PÍ!rX´AssignmentExpressionÍ!PÍ!q¡=Y°MemberExpressionÍ!PÍ!_LªIdentifierÍ!PÍ!\¬allQuestionsLªIdentifierÍ!]Í!^¡iÃÂY°MemberExpressionÍ!bÍ!qLªIdentifierÍ!bÍ!n¬allQuestionsLªIdentifierÍ!oÍ!p¡jÃÂS³ExpressionStatementÍ!ŒÍ!£X´AssignmentExpressionÍ!ŒÍ!¢¡=Y°MemberExpressionÍ!ŒÍ!›LªIdentifierÍ!ŒÍ!˜¬allQuestionsLªIdentifierÍ!™Í!š¡jÃÂLªIdentifierÍ!Í!¢¤tempS³ExpressionStatementÍ!ĞÍ"X´AssignmentExpressionÍ!ĞÍ"¡=Y°MemberExpressionÍ!ĞÍ!ŞU®ThisExpressionÍ!ĞÍ!ÔLªIdentifierÍ!ÕÍ!Ş©questionsÂÂT®CallExpressionÍ!áÍ"Y°MemberExpressionÍ!áÍ!óLªIdentifierÍ!áÍ!í¬allQuestionsLªIdentifierÍ!îÍ!ó¥sliceÂÂ’R§LiteralÍ!ôÍ!õ ¡0LªIdentifierÍ!÷Í"¬maxQuestionsÂM®BlockStatementÍ"/Í"w‘S³ExpressionStatementÍ"FÍ"dX´AssignmentExpressionÍ"FÍ"c¡=Y°MemberExpressionÍ"FÍ"TU®ThisExpressionÍ"FÍ"JLªIdentifierÍ"KÍ"T©questionsÂÂLªIdentifierÍ"WÍ"c¬allQuestionsV«IfStatementÍ"”Í#:W°BinaryExpressionÍ"˜Í"³Y°MemberExpressionÍ"˜Í"­Y°MemberExpressionÍ"˜Í"¦U®ThisExpressionÍ"˜Í"œLªIdentifierÍ"Í"¦©questionsÂÂLªIdentifierÍ"§Í"­¦lengthÂÂ£===R§LiteralÍ"²Í"³ ¡0M®BlockStatementÍ"µÍ#:“S³ExpressionStatementÍ"ÈÍ"òT®CallExpressionÍ"ÈÍ"ñY°MemberExpressionÍ"ÈÍ"ÖU®ThisExpressionÍ"ÈÍ"ÌLªIdentifierÍ"ÍÍ"Ö©showToastÂÂ‘T®CallExpressionÍ"×Í"ğLªIdentifierÍ"×Í"à©getString‘R§LiteralÍ"áÍ"ï¬no_questions®'no_questions'ÂÂS³ExpressionStatementÍ#Í#T®CallExpressionÍ#Í#Y°MemberExpressionÍ#Í#LªIdentifierÍ#Í#
+¦routerLªIdentifierÍ#Í#¤backÂÂÂ\¯ReturnStatementÍ#$Í#+ÀÀS³ExpressionStatementÍ#^Í#rT®CallExpressionÍ#^Í#qY°MemberExpressionÍ#^Í#oU®ThisExpressionÍ#^Í#bLªIdentifierÍ#cÍ#o¬loadQuestionÂÂÂÔra•¤type¥start£end¥param¤body«CatchClauseÍ#‡Í$QLªIdentifierÍ#Í#“¥errorM®BlockStatementÍ#•Í$Q“S³ExpressionStatementÍ#¤Í#óT®CallExpressionÍ#¤Í#òY°MemberExpressionÍ#¤Í#·LªIdentifierÍ#¤Í#ª¦LoggerLªIdentifierÍ#«Í#·¬errorWithTagÂÂ“R§LiteralÍ#¸Í#Î´PracticeActivityPage¶'PracticeActivityPage'R§LiteralÍ#ĞÍ#ê¸Failed to load questionsº'Failed to load questions'LªIdentifierÍ#ìÍ#ñ¥errorÂS³ExpressionStatementÍ$Í$*T®CallExpressionÍ$Í$)Y°MemberExpressionÍ$Í$U®ThisExpressionÍ$Í$LªIdentifierÍ$Í$©showToastÂÂ‘T®CallExpressionÍ$Í$(LªIdentifierÍ$Í$©getString‘R§LiteralÍ$Í$'«load_failed­'load_failed'ÂÂS³ExpressionStatementÍ$8Í$FT®CallExpressionÍ$8Í$EY°MemberExpressionÍ$8Í$CLªIdentifierÍ$8Í$>¦routerLªIdentifierÍ$?Í$C¤backÂÂÂM®BlockStatementÍ$cÍ$”‘S³ExpressionStatementÍ$rÍ$‰X´AssignmentExpressionÍ$rÍ$ˆ¡=Y°MemberExpressionÍ$rÍ$€U®ThisExpressionÍ$rÍ$vLªIdentifierÍ$wÍ$€©isLoadingÂÂR§LiteralÍ$ƒÍ$ˆÂ¥falseN°MethodDefinitionÍ$¡Í'«ÂÂLªIdentifierÍ$§Í$º³loadSubmittedAnswer¦methodO²FunctionExpressionÍ$ºÍ'«ÀÂÂÃM®BlockStatementÍ$½Í'«“V«IfStatementÍ$ÈÍ%/W±LogicalExpressionÍ$ÌÍ%W°BinaryExpressionÍ$ÌÍ$ŞY°MemberExpressionÍ$ÌÍ$×U®ThisExpressionÍ$ÌÍ$ĞLªIdentifierÍ$ÑÍ$×¦userIdÂÂ£===Q¯UnaryExpressionÍ$ÜÍ$Ş¡-ÃR§LiteralÍ$İÍ$Ş¡1¢||W°BinaryExpressionÍ$âÍ%Y°MemberExpressionÍ$âÍ$óU®ThisExpressionÍ$âÍ$æLªIdentifierÍ$çÍ$ó¬currentIndexÂÂ¢>=Y°MemberExpressionÍ$÷Í%Y°MemberExpressionÍ$÷Í%U®ThisExpressionÍ$÷Í$ûLªIdentifierÍ$üÍ%©questionsÂÂLªIdentifierÍ%Í%¦lengthÂÂM®BlockStatementÍ%Í%/‘\¯ReturnStatementÍ%Í%$ÀÀ]³VariableDeclarationÍ%9Í%l‘^²VariableDeclaratorÍ%?Í%kLªIdentifierÍ%?Í%G¨questionY°MemberExpressionÍ%JÍ%kY°MemberExpressionÍ%JÍ%XU®ThisExpressionÍ%JÍ%NLªIdentifierÍ%OÍ%X©questionsÂÂY°MemberExpressionÍ%YÍ%jU®ThisExpressionÍ%YÍ%]LªIdentifierÍ%^Í%j¬currentIndexÂÂÃÂ¥const_¬TryStatementÍ%vÍ'¤M®BlockStatementÍ%zÍ'’]³VariableDeclarationÍ%‰Í%Ú‘^²VariableDeclaratorÍ%Í%ÙLªIdentifierÍ%Í%•¦answer\¯AwaitExpressionÍ%˜Í%ÙT®CallExpressionÍ%Í%ÙY°MemberExpressionÍ%Í%¿Y°MemberExpressionÍ%Í%µU®ThisExpressionÍ%Í%¢LªIdentifierÍ%£Í%µ²questionRepositoryÂÂLªIdentifierÍ%¶Í%¿©getAnswerÂÂ’Y°MemberExpressionÍ%ÀÍ%ËU®ThisExpressionÍ%ÀÍ%ÄLªIdentifierÍ%ÅÍ%Ë¦userIdÂÂY°MemberExpressionÍ%ÍÍ%ØLªIdentifierÍ%ÍÍ%Õ¨questionLªIdentifierÍ%ÖÍ%Ø¢idÂÂÂ¥constV«IfStatementÍ%èÍ'LªIdentifierÍ%ìÍ%ò¦answerM®BlockStatementÍ%ôÍ'•S³ExpressionStatementÍ&Í&/X´AssignmentExpressionÍ&Í&.¡=Y°MemberExpressionÍ&Í&U®ThisExpressionÍ&Í&LªIdentifierÍ&Í&®selectedAnswerÂÂY°MemberExpressionÍ&Í&.LªIdentifierÍ&Í&#¦answerLªIdentifierÍ&$Í&.ªuserAnswerÂÂS³ExpressionStatementÍ&AÍ&eX´AssignmentExpressionÍ&AÍ&d¡=Y°MemberExpressionÍ&AÍ&PU®ThisExpressionÍ&AÍ&ELªIdentifierÍ&FÍ&PªfillAnswerÂÂY°MemberExpressionÍ&SÍ&dLªIdentifierÍ&SÍ&Y¦answerLªIdentifierÍ&ZÍ&dªuserAnswerÂÂS³ExpressionStatementÍ&wÍ&™X´AssignmentExpressionÍ&wÍ&˜¡=Y°MemberExpressionÍ&wÍ&…U®ThisExpressionÍ&wÍ&{LªIdentifierÍ&|Í&…©isCorrectÂÂY°MemberExpressionÍ&ˆÍ&˜LªIdentifierÍ&ˆÍ&¦answerLªIdentifierÍ&Í&˜©isCorrectÂÂS³ExpressionStatementÍ&«Í&ÂX´AssignmentExpressionÍ&«Í&Á¡=Y°MemberExpressionÍ&«Í&ºU®ThisExpressionÍ&«Í&¯LªIdentifierÍ&°Í&ºªshowResultÂÂR§LiteralÍ&½Í&ÁÃ¤trueS³ExpressionStatementÍ&ÔÍ'X´AssignmentExpressionÍ&ÔÍ'¡=Y°MemberExpressionÍ&ÔÍ&äU®ThisExpressionÍ&ÔÍ&ØLªIdentifierÍ&ÙÍ&ä«explanationÂÂW±LogicalExpressionÍ&çÍ'Y°MemberExpressionÍ&çÍ&ûLªIdentifierÍ&çÍ&ï¨questionLªIdentifierÍ&ğÍ&û«explanationÂÂ¢||R§LiteralÍ&ÿÍ' ¢''Àa«CatchClauseÍ'&Í'¤LªIdentifierÍ'-Í'2¥errorM®BlockStatementÍ'4Í'¤‘S³ExpressionStatementÍ'CÍ'™T®CallExpressionÍ'CÍ'˜Y°MemberExpressionÍ'CÍ'VLªIdentifierÍ'CÍ'I¦LoggerLªIdentifierÍ'JÍ'V¬errorWithTagÂÂ“R§LiteralÍ'WÍ'm´PracticeActivityPage¶'PracticeActivityPage'R§LiteralÍ'oÍ'¿Failed to load submitted answerÙ!'Failed to load submitted answer'LªIdentifierÍ'’Í'—¥errorÂÀN°MethodDefinitionÍ'±Í0 ÂÂLªIdentifierÍ'±Í'¾­initialRender¦methodO²FunctionExpressionÍ'¾Í0 ÀÂÂÂM®BlockStatementÍ'ÁÍ0 ”S³ExpressionStatementÍ'ÌÍ)T®CallExpressionÍ'ÌÍ)Y°MemberExpressionÍ'ÌÍ'êU®ThisExpressionÍ'ÌÍ'ĞLªIdentifierÍ'ÑÍ'ê¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ'ëÍ(şÀÂÂÂ’LªIdentifierÍ'ìÍ'ò¦elmtIdLªIdentifierÍ'ôÍ(¯isInitialRenderM®BlockStatementÍ(Í(ş•S³ExpressionStatementÍ(Í('T®CallExpressionÍ(Í(&Y°MemberExpressionÍ(Í($LªIdentifierÍ(Í(¦ColumnLªIdentifierÍ(Í($¦createÂÂÂS³ExpressionStatementÍ(5Í(‹T®CallExpressionÍ(5Í(ŠY°MemberExpressionÍ(5Í(ELªIdentifierÍ(5Í(;¦ColumnLªIdentifierÍ(<Í(E©debugLineÂÂ’R§LiteralÍ(FÍ(€Ù8entry/src/main/ets/pages/PracticeActivityPage.ets(131:5)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(131:5)"R§LiteralÍ(‚Í(‰¥entry§"entry"ÂS³ExpressionStatementÍ(™Í(®T®CallExpressionÍ(™Í(­Y°MemberExpressionÍ(™Í(¥LªIdentifierÍ(™Í(Ÿ¦ColumnLªIdentifierÍ( Í(¥¥widthÂÂ‘R§LiteralÍ(¦Í(¬¤100%¦'100%'ÂS³ExpressionStatementÍ(¼Í(ÒT®CallExpressionÍ(¼Í(ÑY°MemberExpressionÍ(¼Í(ÉLªIdentifierÍ(¼Í(Â¦ColumnLªIdentifierÍ(ÃÍ(É¦heightÂÂ‘R§LiteralÍ(ÊÍ(Ğ¤100%¦'100%'ÂS³ExpressionStatementÍ(àÍ(óT®CallExpressionÍ(àÍ(òY°MemberExpressionÍ(àÍ(îLªIdentifierÍ(àÍ(æ¦ColumnLªIdentifierÍ(çÍ(î§paddingÂÂ‘R§LiteralÍ(ïÍ(ñ¢20ÂLªIdentifierÍ) Í)¦ColumnÂS³ExpressionStatementÍ)Í/ÏT®CallExpressionÍ)Í/ÎY°MemberExpressionÍ)Í)0U®ThisExpressionÍ)Í)LªIdentifierÍ)Í)0¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ)1Í/ÉÀÂÂÂ’LªIdentifierÍ)2Í)8¦elmtIdLªIdentifierÍ):Í)I¯isInitialRenderM®BlockStatementÍ)NÍ/É’S³ExpressionStatementÍ)]Í)iT®CallExpressionÍ)]Í)hY°MemberExpressionÍ)]Í)fLªIdentifierÍ)]Í)_¢IfLªIdentifierÍ)`Í)f¦createÂÂÂV«IfStatementÍ)wÍ/¾Y°MemberExpressionÍ){Í)‰U®ThisExpressionÍ){Í)LªIdentifierÍ)€Í)‰©isLoadingÂÂM®BlockStatementÍ)‹Í.Y‘S³ExpressionStatementÍ)Í.JT®CallExpressionÍ)Í.IY°MemberExpressionÍ)Í)½U®ThisExpressionÍ)Í)¢LªIdentifierÍ)£Í)½ºifElseBranchUpdateFunctionÂÂ’R§LiteralÍ)¾Í)¿ ¡0O·ArrowFunctionExpressionÍ)ÁÍ.HÀÂÂÂM®BlockStatementÍ)ÇÍ.H•S³ExpressionStatementÍ)ŞÍ+wT®CallExpressionÍ)ŞÍ+vY°MemberExpressionÍ)ŞÍ)üU®ThisExpressionÍ)ŞÍ)âLªIdentifierÍ)ãÍ)ü¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ)ıÍ+mÀÂÂÂ’LªIdentifierÍ)şÍ*¦elmtIdLªIdentifierÍ*Í*¯isInitialRenderM®BlockStatementÍ*Í+m•S³ExpressionStatementÍ*5Í*ET®CallExpressionÍ*5Í*DY°MemberExpressionÍ*5Í*BLªIdentifierÍ*5Í*;¦ColumnLªIdentifierÍ*<Í*B¦createÂÂÂS³ExpressionStatementÍ*_Í*µT®CallExpressionÍ*_Í*´Y°MemberExpressionÍ*_Í*oLªIdentifierÍ*_Í*e¦ColumnLªIdentifierÍ*fÍ*o©debugLineÂÂ’R§LiteralÍ*pÍ*ªÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(133:9)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(133:9)"R§LiteralÍ*¬Í*³¥entry§"entry"ÂS³ExpressionStatementÍ*ÏÍ*äT®CallExpressionÍ*ÏÍ*ãY°MemberExpressionÍ*ÏÍ*ÛLªIdentifierÍ*ÏÍ*Õ¦ColumnLªIdentifierÍ*ÖÍ*Û¥widthÂÂ‘R§LiteralÍ*ÜÍ*â¤100%¦'100%'ÂS³ExpressionStatementÍ*şÍ+T®CallExpressionÍ*şÍ+Y°MemberExpressionÍ*şÍ+LªIdentifierÍ*şÍ+¦ColumnLªIdentifierÍ+Í+¦heightÂÂ‘R§LiteralÍ+Í+¤100%¦'100%'ÂS³ExpressionStatementÍ+.Í+VT®CallExpressionÍ+.Í+UY°MemberExpressionÍ+.Í+CLªIdentifierÍ+.Í+4¦ColumnLªIdentifierÍ+5Í+C®justifyContentÂÂ‘Y°MemberExpressionÍ+DÍ+TLªIdentifierÍ+DÍ+M©FlexAlignLªIdentifierÍ+NÍ+T¦CenterÂÂÂLªIdentifierÍ+oÍ+u¦ColumnÂS³ExpressionStatementÍ+Í,¡T®CallExpressionÍ+Í, Y°MemberExpressionÍ+Í+«U®ThisExpressionÍ+Í+‘LªIdentifierÍ+’Í+«¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ+¬Í,ÀÂÂÂ’LªIdentifierÍ+­Í+³¦elmtIdLªIdentifierÍ+µÍ+Ä¯isInitialRenderM®BlockStatementÍ+ÉÍ,’S³ExpressionStatementÍ+äÍ+ıT®CallExpressionÍ+äÍ+üY°MemberExpressionÍ+äÍ+úLªIdentifierÍ+äÍ+ó¯LoadingProgressLªIdentifierÍ+ôÍ+ú¦createÂÂÂS³ExpressionStatementÍ,Í,wT®CallExpressionÍ,Í,vY°MemberExpressionÍ,Í,0LªIdentifierÍ,Í,&¯LoadingProgressLªIdentifierÍ,'Í,0©debugLineÂÂ’R§LiteralÍ,1Í,lÙ9entry/src/main/ets/pages/PracticeActivityPage.ets(134:11)Ù;"entry/src/main/ets/pages/PracticeActivityPage.ets(134:11)"R§LiteralÍ,nÍ,u¥entry§"entry"ÂLªIdentifierÍ,Í,Ÿ¯LoadingProgressÂS³ExpressionStatementÍ,·Í-ñT®CallExpressionÍ,·Í-ğY°MemberExpressionÍ,·Í,ÕU®ThisExpressionÍ,·Í,»LªIdentifierÍ,¼Í,Õ¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ,ÖÍ-éÀÂÂÂ’LªIdentifierÍ,×Í,İ¦elmtIdLªIdentifierÍ,ßÍ,î¯isInitialRenderM®BlockStatementÍ,óÍ-é“S³ExpressionStatementÍ-Í-0T®CallExpressionÍ-Í-/Y°MemberExpressionÍ-Í-LªIdentifierÍ-Í-¤TextLªIdentifierÍ-Í-¦createÂÂ‘T®CallExpressionÍ-Í-.LªIdentifierÍ-Í-#©getString‘R§LiteralÍ-$Í--§loading©'loading'ÂÂS³ExpressionStatementÍ-JÍ-ŸT®CallExpressionÍ-JÍ-Y°MemberExpressionÍ-JÍ-XLªIdentifierÍ-JÍ-N¤TextLªIdentifierÍ-OÍ-X©debugLineÂÂ’R§LiteralÍ-YÍ-”Ù9entry/src/main/ets/pages/PracticeActivityPage.ets(135:11)Ù;"entry/src/main/ets/pages/PracticeActivityPage.ets(135:11)"R§LiteralÍ-–Í-¥entry§"entry"ÂS³ExpressionStatementÍ-¹Í-ÒT®CallExpressionÍ-¹Í-ÑY°MemberExpressionÍ-¹Í-ÄLªIdentifierÍ-¹Í-½¤TextLªIdentifierÍ-¾Í-Ä¦marginÂÂ‘Ôrb”¤type¥start£endªproperties°ObjectExpressionÍ-ÅÍ-Ğ‘Ôrc™¤type¥start£end¦method©shorthand¨computed£key¥value¤kind¨PropertyÍ-ÇÍ-ÎÂÂÂLªIdentifierÍ-ÇÍ-Ê£topR§LiteralÍ-ÌÍ-Î
+¢10¤initÂLªIdentifierÍ-ëÍ-ï¤TextÂS³ExpressionStatementÍ.Í.T®CallExpressionÍ.Í.Y°MemberExpressionÍ.Í.LªIdentifierÍ.Í.¤TextLªIdentifierÍ.Í.£popÂÂÂS³ExpressionStatementÍ.(Í.5T®CallExpressionÍ.(Í.4Y°MemberExpressionÍ.(Í.2LªIdentifierÍ.(Í..¦ColumnLªIdentifierÍ./Í.2£popÂÂÂÂV«IfStatementÍ.lÍ/¾W°BinaryExpressionÍ.pÍ.‰Y°MemberExpressionÍ.pÍ.…Y°MemberExpressionÍ.pÍ.~U®ThisExpressionÍ.pÍ.tLªIdentifierÍ.uÍ.~©questionsÂÂLªIdentifierÍ.Í.…¦lengthÂÂ¡>R§LiteralÍ.ˆÍ.‰ ¡0M®BlockStatementÍ.‹Í/J‘S³ExpressionStatementÍ.Í/;T®CallExpressionÍ.Í/:Y°MemberExpressionÍ.Í.½U®ThisExpressionÍ.Í.¢LªIdentifierÍ.£Í.½ºifElseBranchUpdateFunctionÂÂ’R§LiteralÍ.¾Í.¿¡1O·ArrowFunctionExpressionÍ.ÁÍ/9ÀÂÂÂM®BlockStatementÍ.ÇÍ/9‘S³ExpressionStatementÍ.ŞÍ/&T®CallExpressionÍ.ŞÍ/%T®CallExpressionÍ.ŞÍ/Y°MemberExpressionÍ.ŞÍ.üY°MemberExpressionÍ.ŞÍ.÷U®ThisExpressionÍ.ŞÍ.âLªIdentifierÍ.ãÍ.÷´buildQuestionContentÂÂLªIdentifierÍ.øÍ.ü¤bindÂÂ‘U®ThisExpressionÍ.ıÍ/Â‘Y°MemberExpressionÍ/Í/$Y°MemberExpressionÍ/Í/U®ThisExpressionÍ/Í/LªIdentifierÍ/Í/©questionsÂÂY°MemberExpressionÍ/Í/#U®ThisExpressionÍ/Í/LªIdentifierÍ/Í/#¬currentIndexÂÂÃÂÂÂM®BlockStatementÍ/]Í/¾‘S³ExpressionStatementÍ/pÍ/¯T®CallExpressionÍ/pÍ/®Y°MemberExpressionÍ/pÍ/U®ThisExpressionÍ/pÍ/tLªIdentifierÍ/uÍ/ºifElseBranchUpdateFunctionÂÂ’R§LiteralÍ/Í/‘¡2O·ArrowFunctionExpressionÍ/“Í/­ÀÂÂÂM®BlockStatementÍ/™Í/­ÂLªIdentifierÍ/ËÍ/Í¢IfÂS³ExpressionStatementÍ/ÙÍ/âT®CallExpressionÍ/ÙÍ/áY°MemberExpressionÍ/ÙÍ/ßLªIdentifierÍ/ÙÍ/Û¢IfLªIdentifierÍ/ÜÍ/ß£popÂÂÂS³ExpressionStatementÍ/ìÍ/ùT®CallExpressionÍ/ìÍ/øY°MemberExpressionÍ/ìÍ/öLªIdentifierÍ/ìÍ/ò¦ColumnLªIdentifierÍ/óÍ/ö£popÂÂÂN°MethodDefinitionÍ0ÍF~ÂÂLªIdentifierÍ0Í0´buildQuestionContent¦methodO²FunctionExpressionÍ0ÍF~ÀÂÂÂ’LªIdentifierÍ0Í0#¨questionP±AssignmentPatternÍ0%Í02LªIdentifierÍ0%Í0+¦parentR§LiteralÍ0.Í02À¤nullM®BlockStatementÍ04ÍF~Ü S³ExpressionStatementÍ0?Í16T®CallExpressionÍ0?Í15Y°MemberExpressionÍ0?Í0]U®ThisExpressionÍ0?Í0CLªIdentifierÍ0DÍ0]¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ0^Í1,ÀÂÂÂ’LªIdentifierÍ0_Í0e¦elmtIdLªIdentifierÍ0gÍ0v¯isInitialRenderM®BlockStatementÍ0{Í1,“S³ExpressionStatementÍ0ŠÍ0šT®CallExpressionÍ0ŠÍ0™Y°MemberExpressionÍ0ŠÍ0—LªIdentifierÍ0ŠÍ0¦ColumnLªIdentifierÍ0‘Í0—¦createÂÂÂS³ExpressionStatementÍ0¨Í0şT®CallExpressionÍ0¨Í0ıY°MemberExpressionÍ0¨Í0¸LªIdentifierÍ0¨Í0®¦ColumnLªIdentifierÍ0¯Í0¸©debugLineÂÂ’R§LiteralÍ0¹Í0óÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(151:5)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(151:5)"R§LiteralÍ0õÍ0ü¥entry§"entry"ÂS³ExpressionStatementÍ1Í1!T®CallExpressionÍ1Í1 Y°MemberExpressionÍ1Í1LªIdentifierÍ1Í1¦ColumnLªIdentifierÍ1Í1¥widthÂÂ‘R§LiteralÍ1Í1¤100%¦'100%'ÂLªIdentifierÍ1.Í14¦ColumnÂS³ExpressionStatementÍ1@Í3T®CallExpressionÍ1@Í3Y°MemberExpressionÍ1@Í1^U®ThisExpressionÍ1@Í1DLªIdentifierÍ1EÍ1^¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ1_Í3	ÀÂÂÂ’LªIdentifierÍ1`Í1f¦elmtIdLªIdentifierÍ1hÍ1w¯isInitialRenderM®BlockStatementÍ1|Í3	•S³ExpressionStatementÍ1 Í1ëT®CallExpressionÍ1 Í1êY°MemberExpressionÍ1 Í1«LªIdentifierÍ1 Í1¤¤TextLªIdentifierÍ1¥Í1«¦createÂÂ‘Ôrd•¤type¥start£end«expressions¦quasis¯TemplateLiteralÍ1¬Í1é’W°BinaryExpressionÍ1±Í1ÆY°MemberExpressionÍ1±Í1ÂU®ThisExpressionÍ1±Í1µLªIdentifierÍ1¶Í1Â¬currentIndexÂÂ¡+R§LiteralÍ1ÅÍ1Æ¡1Y°MemberExpressionÍ1ĞÍ1åY°MemberExpressionÍ1ĞÍ1ŞU®ThisExpressionÍ1ĞÍ1ÔLªIdentifierÍ1ÕÍ1Ş©questionsÂÂLªIdentifierÍ1ßÍ1å¦lengthÂÂ“Ôre•¤type¥start£end¥value¤tail¯TemplateElementÍ1­Í1¯Ôrf’£raw¦cooked¤ç¬¬ ¤ç¬¬ Âe¯TemplateElementÍ1ÇÍ1Îf« é¢˜ / å…± « é¢˜ / å…± Âe¯TemplateElementÍ1æÍ1èf¤ é¢˜¤ é¢˜ÃÂS³ExpressionStatementÍ1ùÍ2MT®CallExpressionÍ1ùÍ2LY°MemberExpressionÍ1ùÍ2LªIdentifierÍ1ùÍ1ı¤TextLªIdentifierÍ1şÍ2©debugLineÂÂ’R§LiteralÍ2Í2BÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(153:7)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(153:7)"R§LiteralÍ2DÍ2K¥entry§"entry"ÂS³ExpressionStatementÍ2pÍ2‚T®CallExpressionÍ2pÍ2Y°MemberExpressionÍ2pÍ2}LªIdentifierÍ2pÍ2t¤TextLªIdentifierÍ2uÍ2}¨fontSizeÂÂ‘R§LiteralÍ2~Í2€¢16ÂS³ExpressionStatementÍ2¥Í2¿T®CallExpressionÍ2¥Í2¾Y°MemberExpressionÍ2¥Í2³LªIdentifierÍ2¥Í2©¤TextLªIdentifierÍ2ªÍ2³©fontColorÂÂ‘R§LiteralÍ2´Í2½§#666666©'#666666'ÂS³ExpressionStatementÍ2âÍ2şT®CallExpressionÍ2âÍ2ıY°MemberExpressionÍ2âÍ2íLªIdentifierÍ2âÍ2æ¤TextLªIdentifierÍ2çÍ2í¦marginÂÂ‘b°ObjectExpressionÍ2îÍ2ü‘c¨PropertyÍ2ğÍ2úÂÂÂLªIdentifierÍ2ğÍ2ö¦bottomR§LiteralÍ2øÍ2ú¢20¤initÂLªIdentifierÍ3Í3¤TextÂS³ExpressionStatementÍ3,Í37T®CallExpressionÍ3,Í36Y°MemberExpressionÍ3,Í34LªIdentifierÍ3,Í30¤TextLªIdentifierÍ31Í34£popÂÂÂS³ExpressionStatementÍ3AÍ4ìT®CallExpressionÍ3AÍ4ëY°MemberExpressionÍ3AÍ3_U®ThisExpressionÍ3AÍ3ELªIdentifierÍ3FÍ3_¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ3`Í4äÀÂÂÂ’LªIdentifierÍ3aÍ3g¦elmtIdLªIdentifierÍ3iÍ3x¯isInitialRenderM®BlockStatementÍ3}Í4ä•S³ExpressionStatementÍ3¡Í3¿T®CallExpressionÍ3¡Í3¾Y°MemberExpressionÍ3¡Í3¬LªIdentifierÍ3¡Í3¥¤TextLªIdentifierÍ3¦Í3¬¦createÂÂ‘Y°MemberExpressionÍ3­Í3½LªIdentifierÍ3­Í3µ¨questionLªIdentifierÍ3¶Í3½§contentÂÂÂS³ExpressionStatementÍ3ÍÍ4!T®CallExpressionÍ3ÍÍ4 Y°MemberExpressionÍ3ÍÍ3ÛLªIdentifierÍ3ÍÍ3Ñ¤TextLªIdentifierÍ3ÒÍ3Û©debugLineÂÂ’R§LiteralÍ3ÜÍ4Ù8entry/src/main/ets/pages/PracticeActivityPage.ets(159:7)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(159:7)"R§LiteralÍ4Í4¥entry§"entry"ÂS³ExpressionStatementÍ4DÍ4VT®CallExpressionÍ4DÍ4UY°MemberExpressionÍ4DÍ4QLªIdentifierÍ4DÍ4H¤TextLªIdentifierÍ4IÍ4Q¨fontSizeÂÂ‘R§LiteralÍ4RÍ4T¢18ÂS³ExpressionStatementÍ4yÍ4šT®CallExpressionÍ4yÍ4™Y°MemberExpressionÍ4yÍ4ˆLªIdentifierÍ4yÍ4}¤TextLªIdentifierÍ4~Í4ˆªfontWeightÂÂ‘Y°MemberExpressionÍ4‰Í4˜LªIdentifierÍ4‰Í4“ªFontWeightLªIdentifierÍ4”Í4˜¤BoldÂÂÂS³ExpressionStatementÍ4½Í4ÙT®CallExpressionÍ4½Í4ØY°MemberExpressionÍ4½Í4ÈLªIdentifierÍ4½Í4Á¤TextLªIdentifierÍ4ÂÍ4È¦marginÂÂ‘b°ObjectExpressionÍ4ÉÍ4×‘c¨PropertyÍ4ËÍ4ÕÂÂÂLªIdentifierÍ4ËÍ4Ñ¦bottomR§LiteralÍ4ÓÍ4Õ¢30¤initÂLªIdentifierÍ4æÍ4ê¤TextÂS³ExpressionStatementÍ5Í5T®CallExpressionÍ5Í5Y°MemberExpressionÍ5Í5LªIdentifierÍ5Í5¤TextLªIdentifierÍ5Í5£popÂÂÂS³ExpressionStatementÍ5Í8ST®CallExpressionÍ5Í8RY°MemberExpressionÍ5Í5:U®ThisExpressionÍ5Í5 LªIdentifierÍ5!Í5:¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ5;Í8MÀÂÂÂ’LªIdentifierÍ5<Í5B¦elmtIdLªIdentifierÍ5DÍ5S¯isInitialRenderM®BlockStatementÍ5XÍ8M’S³ExpressionStatementÍ5gÍ5sT®CallExpressionÍ5gÍ5rY°MemberExpressionÍ5gÍ5pLªIdentifierÍ5gÍ5i¢IfLªIdentifierÍ5jÍ5p¦createÂÂÂV«IfStatementÍ5¡Í8BW±LogicalExpressionÍ5¥Í6)W°BinaryExpressionÍ5¥Í5ßY°MemberExpressionÍ5¥Í5²LªIdentifierÍ5¥Í5­¨questionLªIdentifierÍ5®Í5²¤typeÂÂ£===Y°MemberExpressionÍ5·Í5ßLªIdentifierÍ5·Í5Ã¬AppConstantsLªIdentifierÍ5ÄÍ5ß»QUESTION_TYPE_SINGLE_CHOICEÂÂ¢||W°BinaryExpressionÍ5ôÍ6)Y°MemberExpressionÍ5ôÍ6LªIdentifierÍ5ôÍ5ü¨questionLªIdentifierÍ5ıÍ6¤typeÂÂ£===Y°MemberExpressionÍ6Í6)LªIdentifierÍ6Í6¬AppConstantsLªIdentifierÍ6Í6)¶QUESTION_TYPE_JUDGMENTÂÂM®BlockStatementÍ6+Í6É‘S³ExpressionStatementÍ6>Í6ºT®CallExpressionÍ6>Í6¹Y°MemberExpressionÍ6>Í6]U®ThisExpressionÍ6>Í6BLªIdentifierÍ6CÍ6]ºifElseBranchUpdateFunctionÂÂ’R§LiteralÍ6^Í6_ ¡0O·ArrowFunctionExpressionÍ6aÍ6¸ÀÂÂÂM®BlockStatementÍ6gÍ6¸‘S³ExpressionStatementÍ6~Í6¥T®CallExpressionÍ6~Í6¤T®CallExpressionÍ6~Í6šY°MemberExpressionÍ6~Í6”Y°MemberExpressionÍ6~Í6U®ThisExpressionÍ6~Í6‚LªIdentifierÍ6ƒÍ6¬buildOptionsÂÂLªIdentifierÍ6Í6”¤bindÂÂ‘U®ThisExpressionÍ6•Í6™Â‘LªIdentifierÍ6›Í6£¨questionÂÂV«IfStatementÍ6ÜÍ8BW°BinaryExpressionÍ6àÍ7Y°MemberExpressionÍ6àÍ6íLªIdentifierÍ6àÍ6è¨questionLªIdentifierÍ6éÍ6í¤typeÂÂ£===Y°MemberExpressionÍ6òÍ7LªIdentifierÍ6òÍ6ş¬AppConstantsLªIdentifierÍ6ÿÍ7¸QUESTION_TYPE_FILL_BLANKÂÂM®BlockStatementÍ7Í7¹‘S³ExpressionStatementÍ7,Í7ªT®CallExpressionÍ7,Í7©Y°MemberExpressionÍ7,Í7KU®ThisExpressionÍ7,Í70LªIdentifierÍ71Í7KºifElseBranchUpdateFunctionÂÂ’R§LiteralÍ7LÍ7M¡1O·ArrowFunctionExpressionÍ7OÍ7¨ÀÂÂÂM®BlockStatementÍ7UÍ7¨‘S³ExpressionStatementÍ7lÍ7•T®CallExpressionÍ7lÍ7”T®CallExpressionÍ7lÍ7ŠY°MemberExpressionÍ7lÍ7„Y°MemberExpressionÍ7lÍ7U®ThisExpressionÍ7lÍ7pLªIdentifierÍ7qÍ7®buildFillBlankÂÂLªIdentifierÍ7€Í7„¤bindÂÂ‘U®ThisExpressionÍ7…Í7‰Â‘LªIdentifierÍ7‹Í7“¨questionÂÂM®BlockStatementÍ7áÍ8B‘S³ExpressionStatementÍ7ôÍ83T®CallExpressionÍ7ôÍ82Y°MemberExpressionÍ7ôÍ8U®ThisExpressionÍ7ôÍ7øLªIdentifierÍ7ùÍ8ºifElseBranchUpdateFunctionÂÂ’R§LiteralÍ8Í8¡2O·ArrowFunctionExpressionÍ8Í81ÀÂÂÂM®BlockStatementÍ8Í81ÂLªIdentifierÍ8OÍ8Q¢IfÂS³ExpressionStatementÍ8]Í8fT®CallExpressionÍ8]Í8eY°MemberExpressionÍ8]Í8cLªIdentifierÍ8]Í8_¢IfLªIdentifierÍ8`Í8c£popÂÂÂS³ExpressionStatementÍ8pÍ:6T®CallExpressionÍ8pÍ:5Y°MemberExpressionÍ8pÍ8U®ThisExpressionÍ8pÍ8tLªIdentifierÍ8uÍ8¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ8Í:0ÀÂÂÂ’LªIdentifierÍ8Í8–¦elmtIdLªIdentifierÍ8˜Í8§¯isInitialRenderM®BlockStatementÍ8¬Í:0’S³ExpressionStatementÍ8»Í8ÇT®CallExpressionÍ8»Í8ÆY°MemberExpressionÍ8»Í8ÄLªIdentifierÍ8»Í8½¢IfLªIdentifierÍ8¾Í8Ä¦createÂÂÂV«IfStatementÍ8êÍ:%Y°MemberExpressionÍ8îÍ8ıU®ThisExpressionÍ8îÍ8òLªIdentifierÍ8óÍ8ıªshowResultÂÂM®BlockStatementÍ8ÿÍ9œ‘S³ExpressionStatementÍ9Í9T®CallExpressionÍ9Í9ŒY°MemberExpressionÍ9Í91U®ThisExpressionÍ9Í9LªIdentifierÍ9Í91ºifElseBranchUpdateFunctionÂÂ’R§LiteralÍ92Í93 ¡0O·ArrowFunctionExpressionÍ95Í9‹ÀÂÂÂM®BlockStatementÍ9;Í9‹‘S³ExpressionStatementÍ9RÍ9xT®CallExpressionÍ9RÍ9wT®CallExpressionÍ9RÍ9mY°MemberExpressionÍ9RÍ9gY°MemberExpressionÍ9RÍ9bU®ThisExpressionÍ9RÍ9VLªIdentifierÍ9WÍ9b«buildResultÂÂLªIdentifierÍ9cÍ9g¤bindÂÂ‘U®ThisExpressionÍ9hÍ9lÂ‘LªIdentifierÍ9nÍ9v¨questionÂÂM®BlockStatementÍ9ÄÍ:%‘S³ExpressionStatementÍ9×Í:T®CallExpressionÍ9×Í:Y°MemberExpressionÍ9×Í9öU®ThisExpressionÍ9×Í9ÛLªIdentifierÍ9ÜÍ9öºifElseBranchUpdateFunctionÂÂ’R§LiteralÍ9÷Í9ø¡1O·ArrowFunctionExpressionÍ9úÍ:ÀÂÂÂM®BlockStatementÍ: Í:ÂLªIdentifierÍ:2Í:4¢IfÂS³ExpressionStatementÍ:@Í:IT®CallExpressionÍ:@Í:HY°MemberExpressionÍ:@Í:FLªIdentifierÍ:@Í:B¢IfLªIdentifierÍ:CÍ:F£popÂÂÂS³ExpressionStatementÍ:SÍ;ëT®CallExpressionÍ:SÍ;êY°MemberExpressionÍ:SÍ:qU®ThisExpressionÍ:SÍ:WLªIdentifierÍ:XÍ:q¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ:rÍ;äÀÂÂÂ’LªIdentifierÍ:sÍ:y¦elmtIdLªIdentifierÍ:{Í:Š¯isInitialRenderM®BlockStatementÍ:Í;ä•S³ExpressionStatementÍ:³Í:ÀT®CallExpressionÍ:³Í:¿Y°MemberExpressionÍ:³Í:½LªIdentifierÍ:³Í:¶£RowLªIdentifierÍ:·Í:½¦createÂÂÂS³ExpressionStatementÍ:ÎÍ;!T®CallExpressionÍ:ÎÍ; Y°MemberExpressionÍ:ÎÍ:ÛLªIdentifierÍ:ÎÍ:Ñ£RowLªIdentifierÍ:ÒÍ:Û©debugLineÂÂ’R§LiteralÍ:ÜÍ;Ù8entry/src/main/ets/pages/PracticeActivityPage.ets(178:7)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(178:7)"R§LiteralÍ;Í;¥entry§"entry"ÂS³ExpressionStatementÍ;DÍ;VT®CallExpressionÍ;DÍ;UY°MemberExpressionÍ;DÍ;MLªIdentifierÍ;DÍ;G£RowLªIdentifierÍ;HÍ;M¥widthÂÂ‘R§LiteralÍ;NÍ;T¤100%¦'100%'ÂS³ExpressionStatementÍ;yÍ;T®CallExpressionÍ;yÍ;Y°MemberExpressionÍ;yÍ;‹LªIdentifierÍ;yÍ;|£RowLªIdentifierÍ;}Í;‹®justifyContentÂÂ‘Y°MemberExpressionÍ;ŒÍ;œLªIdentifierÍ;ŒÍ;•©FlexAlignLªIdentifierÍ;–Í;œ¦CenterÂÂÂS³ExpressionStatementÍ;ÁÍ;ÙT®CallExpressionÍ;ÁÍ;ØY°MemberExpressionÍ;ÁÍ;ËLªIdentifierÍ;ÁÍ;Ä£RowLªIdentifierÍ;ÅÍ;Ë¦marginÂÂ‘b°ObjectExpressionÍ;ÌÍ;×‘c¨PropertyÍ;ÎÍ;ÕÂÂÂLªIdentifierÍ;ÎÍ;Ñ£topR§LiteralÍ;ÓÍ;Õ¢30¤initÂLªIdentifierÍ;æÍ;é£RowÂS³ExpressionStatementÍ;õÍ=æT®CallExpressionÍ;õÍ=åY°MemberExpressionÍ;õÍ<U®ThisExpressionÍ;õÍ;ùLªIdentifierÍ;úÍ<¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ<Í=ÜÀÂÂÂ’LªIdentifierÍ<Í<¦elmtIdLªIdentifierÍ<Í<,¯isInitialRenderM®BlockStatementÍ<1Í=Ü•S³ExpressionStatementÍ<@Í<nT®CallExpressionÍ<@Í<mY°MemberExpressionÍ<@Í<VLªIdentifierÍ<@Í<F¦ButtonLªIdentifierÍ<GÍ<V¯createWithLabelÂÂ‘T®CallExpressionÍ<WÍ<lLªIdentifierÍ<WÍ<`©getString‘R§LiteralÍ<aÍ<k¨previousª'previous'ÂÂS³ExpressionStatementÍ<|Í<ÒT®CallExpressionÍ<|Í<ÑY°MemberExpressionÍ<|Í<ŒLªIdentifierÍ<|Í<‚¦ButtonLªIdentifierÍ<ƒÍ<Œ©debugLineÂÂ’R§LiteralÍ<Í<ÇÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(179:9)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(179:9)"R§LiteralÍ<ÉÍ<Ğ¥entry§"entry"ÂS³ExpressionStatementÍ<àÍ=T®CallExpressionÍ<àÍ=Y°MemberExpressionÍ<àÍ<îLªIdentifierÍ<àÍ<æ¦ButtonLªIdentifierÍ<çÍ<î§enabledÂÂ‘W±LogicalExpressionÍ<ïÍ=W°BinaryExpressionÍ<ïÍ=Y°MemberExpressionÍ<ïÍ= U®ThisExpressionÍ<ïÍ<óLªIdentifierÍ<ôÍ= ¬currentIndexÂÂ¡>R§LiteralÍ=Í= ¡0¢&&Q¯UnaryExpressionÍ=Í=¡!ÃY°MemberExpressionÍ=	Í=U®ThisExpressionÍ=	Í=LªIdentifierÍ=Í=¬allSubmittedÂÂÂS³ExpressionStatementÍ=*Í=¦T®CallExpressionÍ=*Í=¥Y°MemberExpressionÍ=*Í=8LªIdentifierÍ=*Í=0¦ButtonLªIdentifierÍ=1Í=8§onClickÂÂ‘O·ArrowFunctionExpressionÍ=9Í=¤ÀÂÂÂM®BlockStatementÍ=?Í=¤’S³ExpressionStatementÍ=RÍ=kT®CallExpressionÍ=RÍ=jY°MemberExpressionÍ=RÍ=hU®ThisExpressionÍ=RÍ=VLªIdentifierÍ=WÍ=h±saveCurrentAnswerÂÂÂS³ExpressionStatementÍ=}Í=•T®CallExpressionÍ=}Í=”Y°MemberExpressionÍ=}Í=’U®ThisExpressionÍ=}Í=LªIdentifierÍ=‚Í=’°previousQuestionÂÂÂÂS³ExpressionStatementÍ=´Í=ÑT®CallExpressionÍ=´Í=ĞY°MemberExpressionÍ=´Í=ÁLªIdentifierÍ=´Í=º¦ButtonLªIdentifierÍ=»Í=Á¦marginÂÂ‘b°ObjectExpressionÍ=ÂÍ=Ï‘c¨PropertyÍ=ÄÍ=ÍÂÂÂLªIdentifierÍ=ÄÍ=É¥rightR§LiteralÍ=ËÍ=Í
+¢10¤initÂLªIdentifierÍ=ŞÍ=ä¦ButtonÂS³ExpressionStatementÍ=ğÍ=ıT®CallExpressionÍ=ğÍ=üY°MemberExpressionÍ=ğÍ=úLªIdentifierÍ=ğÍ=ö¦ButtonLªIdentifierÍ=÷Í=ú£popÂÂÂS³ExpressionStatementÍ>Í@T®CallExpressionÍ>Í@Y°MemberExpressionÍ>Í>%U®ThisExpressionÍ>Í>LªIdentifierÍ>Í>%¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ>&Í?ıÀÂÂÂ’LªIdentifierÍ>'Í>-¦elmtIdLªIdentifierÍ>/Í>>¯isInitialRenderM®BlockStatementÍ>CÍ?ı•S³ExpressionStatementÍ>RÍ>|T®CallExpressionÍ>RÍ>{Y°MemberExpressionÍ>RÍ>hLªIdentifierÍ>RÍ>X¦ButtonLªIdentifierÍ>YÍ>h¯createWithLabelÂÂ‘T®CallExpressionÍ>iÍ>zLªIdentifierÍ>iÍ>r©getString‘R§LiteralÍ>sÍ>y¤next¦'next'ÂÂS³ExpressionStatementÍ>ŠÍ>àT®CallExpressionÍ>ŠÍ>ßY°MemberExpressionÍ>ŠÍ>šLªIdentifierÍ>ŠÍ>¦ButtonLªIdentifierÍ>‘Í>š©debugLineÂÂ’R§LiteralÍ>›Í>ÕÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(187:9)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(187:9)"R§LiteralÍ>×Í>Ş¥entry§"entry"ÂS³ExpressionStatementÍ>îÍ?BT®CallExpressionÍ>îÍ?AY°MemberExpressionÍ>îÍ>üLªIdentifierÍ>îÍ>ô¦ButtonLªIdentifierÍ>õÍ>ü§enabledÂÂ‘W±LogicalExpressionÍ>ıÍ?@W°BinaryExpressionÍ>ıÍ?*Y°MemberExpressionÍ>ıÍ?U®ThisExpressionÍ>ıÍ?LªIdentifierÍ?Í?¬currentIndexÂÂ¡<W°BinaryExpressionÍ?Í?*Y°MemberExpressionÍ?Í?&Y°MemberExpressionÍ?Í?U®ThisExpressionÍ?Í?LªIdentifierÍ?Í?©questionsÂÂLªIdentifierÍ? Í?&¦lengthÂÂ¡-R§LiteralÍ?)Í?*¡1¢&&Q¯UnaryExpressionÍ?.Í?@¡!ÃY°MemberExpressionÍ?/Í?@U®ThisExpressionÍ?/Í?3LªIdentifierÍ?4Í?@¬allSubmittedÂÂÂS³ExpressionStatementÍ?PÍ?ÈT®CallExpressionÍ?PÍ?ÇY°MemberExpressionÍ?PÍ?^LªIdentifierÍ?PÍ?V¦ButtonLªIdentifierÍ?WÍ?^§onClickÂÂ‘O·ArrowFunctionExpressionÍ?_Í?ÆÀÂÂÂM®BlockStatementÍ?eÍ?Æ’S³ExpressionStatementÍ?xÍ?‘T®CallExpressionÍ?xÍ?Y°MemberExpressionÍ?xÍ?U®ThisExpressionÍ?xÍ?|LªIdentifierÍ?}Í?±saveCurrentAnswerÂÂÂS³ExpressionStatementÍ?£Í?·T®CallExpressionÍ?£Í?¶Y°MemberExpressionÍ?£Í?´U®ThisExpressionÍ?£Í?§LªIdentifierÍ?¨Í?´¬nextQuestionÂÂÂÂS³ExpressionStatementÍ?ÖÍ?òT®CallExpressionÍ?ÖÍ?ñY°MemberExpressionÍ?ÖÍ?ãLªIdentifierÍ?ÖÍ?Ü¦ButtonLªIdentifierÍ?İÍ?ã¦marginÂÂ‘b°ObjectExpressionÍ?äÍ?ğ‘c¨PropertyÍ?æÍ?îÂÂÂLªIdentifierÍ?æÍ?ê¤leftR§LiteralÍ?ìÍ?î
+¢10¤initÂLªIdentifierÍ?ÿÍ@¦ButtonÂS³ExpressionStatementÍ@Í@T®CallExpressionÍ@Í@Y°MemberExpressionÍ@Í@LªIdentifierÍ@Í@¦ButtonLªIdentifierÍ@Í@£popÂÂÂS³ExpressionStatementÍ@9Í@CT®CallExpressionÍ@9Í@BY°MemberExpressionÍ@9Í@@LªIdentifierÍ@9Í@<£RowLªIdentifierÍ@=Í@@£popÂÂÂS³ExpressionStatementÍ@MÍFMT®CallExpressionÍ@MÍFLY°MemberExpressionÍ@MÍ@kU®ThisExpressionÍ@MÍ@QLªIdentifierÍ@RÍ@k¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ@lÍFGÀÂÂÂ’LªIdentifierÍ@mÍ@s¦elmtIdLªIdentifierÍ@uÍ@„¯isInitialRenderM®BlockStatementÍ@‰ÍFG’S³ExpressionStatementÍ@˜Í@¤T®CallExpressionÍ@˜Í@£Y°MemberExpressionÍ@˜Í@¡LªIdentifierÍ@˜Í@š¢IfLªIdentifierÍ@›Í@¡¦createÂÂÂV«IfStatementÍ@ÇÍF<Q¯UnaryExpressionÍ@ËÍ@İ¡!ÃY°MemberExpressionÍ@ÌÍ@İU®ThisExpressionÍ@ÌÍ@ĞLªIdentifierÍ@ÑÍ@İ¬allSubmittedÂÂM®BlockStatementÍ@ßÍCí‘S³ExpressionStatementÍ@òÍCŞT®CallExpressionÍ@òÍCİY°MemberExpressionÍ@òÍAU®ThisExpressionÍ@òÍ@öLªIdentifierÍ@÷ÍAºifElseBranchUpdateFunctionÂÂ’R§LiteralÍAÍA ¡0O·ArrowFunctionExpressionÍAÍCÜÀÂÂÂM®BlockStatementÍAÍCÜ’S³ExpressionStatementÍA2ÍC¦T®CallExpressionÍA2ÍC¥Y°MemberExpressionÍA2ÍAPU®ThisExpressionÍA2ÍA6LªIdentifierÍA7ÍAP¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍAQÍCœÀÂÂÂ’LªIdentifierÍARÍAX¦elmtIdLªIdentifierÍAZÍAi¯isInitialRenderM®BlockStatementÍAnÍCœ–S³ExpressionStatementÍA‰ÍAíT®CallExpressionÍA‰ÍAìY°MemberExpressionÍA‰ÍAŸLªIdentifierÍA‰ÍA¦ButtonLªIdentifierÍAÍAŸ¯createWithLabelÂÂ‘VµConditionalExpressionÍA ÍAëT®CallExpressionÍA ÍA·Y°MemberExpressionÍA ÍAµU®ThisExpressionÍA ÍA¤LªIdentifierÍA¥ÍAµ°checkAllAnsweredÂÂÂT®CallExpressionÍAºÍAÑLªIdentifierÍAºÍAÃ©getString‘R§LiteralÍAÄÍAĞªsubmit_all¬'submit_all'ÂT®CallExpressionÍAÔÍAëLªIdentifierÍAÔÍAİ©getString‘R§LiteralÍAŞÍAêªsubmit_all¬'submit_all'ÂÂS³ExpressionStatementÍBÍB]T®CallExpressionÍBÍB\Y°MemberExpressionÍBÍBLªIdentifierÍBÍB¦ButtonLªIdentifierÍBÍB©debugLineÂÂ’R§LiteralÍBÍBRÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(201:9)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(201:9)"R§LiteralÍBTÍB[¥entry§"entry"ÂS³ExpressionStatementÍBwÍB‹T®CallExpressionÍBwÍBŠY°MemberExpressionÍBwÍBƒLªIdentifierÍBwÍB}¦ButtonLªIdentifierÍB~ÍBƒ¥widthÂÂ‘R§LiteralÍB„ÍB‰£80%¥'80%'ÂS³ExpressionStatementÍB¥ÍBÍT®CallExpressionÍB¥ÍBÌY°MemberExpressionÍB¥ÍB³LªIdentifierÍB¥ÍB«¦ButtonLªIdentifierÍB¬ÍB³§enabledÂÂ‘T®CallExpressionÍB´ÍBËY°MemberExpressionÍB´ÍBÉU®ThisExpressionÍB´ÍB¸LªIdentifierÍB¹ÍBÉ°checkAllAnsweredÂÂÂÂS³ExpressionStatementÍBçÍCPT®CallExpressionÍBçÍCOY°MemberExpressionÍBçÍBõLªIdentifierÍBçÍBí¦ButtonLªIdentifierÍBîÍBõ§onClickÂÂ‘O·ArrowFunctionExpressionÍBöÍCNÀÂÂÂM®BlockStatementÍBüÍCN‘S³ExpressionStatementÍCÍC3T®CallExpressionÍCÍC2Y°MemberExpressionÍCÍC0U®ThisExpressionÍCÍCLªIdentifierÍC ÍC0°submitAllAnswersÂÂÂÂS³ExpressionStatementÍCjÍC…T®CallExpressionÍCjÍC„Y°MemberExpressionÍCjÍCwLªIdentifierÍCjÍCp¦ButtonLªIdentifierÍCqÍCw¦marginÂÂ‘b°ObjectExpressionÍCxÍCƒ‘c¨PropertyÍCzÍCÂÂÂLªIdentifierÍCzÍC}£topR§LiteralÍCÍC¢20¤initÂLªIdentifierÍCÍC¤¦ButtonÂS³ExpressionStatementÍC¼ÍCÉT®CallExpressionÍC¼ÍCÈY°MemberExpressionÍC¼ÍCÆLªIdentifierÍC¼ÍCÂ¦ButtonLªIdentifierÍCÃÍCÆ£popÂÂÂÂM®BlockStatementÍD ÍF<‘S³ExpressionStatementÍDÍF-T®CallExpressionÍDÍF,Y°MemberExpressionÍDÍD2U®ThisExpressionÍDÍDLªIdentifierÍDÍD2ºifElseBranchUpdateFunctionÂÂ’R§LiteralÍD3ÍD4¡1O·ArrowFunctionExpressionÍD6ÍF+ÀÂÂÂM®BlockStatementÍD<ÍF+’S³ExpressionStatementÍDSÍE÷T®CallExpressionÍDSÍEöY°MemberExpressionÍDSÍDqU®ThisExpressionÍDSÍDWLªIdentifierÍDXÍDq¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍDrÍEïÀÂÂÂ’LªIdentifierÍDsÍDy¦elmtIdLªIdentifierÍD{ÍDŠ¯isInitialRenderM®BlockStatementÍDÍEï•S³ExpressionStatementÍDªÍD×T®CallExpressionÍDªÍDÖY°MemberExpressionÍDªÍDµLªIdentifierÍDªÍD®¤TextLªIdentifierÍD¯ÍDµ¦createÂÂ‘T®CallExpressionÍD¶ÍDÕLªIdentifierÍD¶ÍD¿©getString‘R§LiteralÍDÀÍDÔ²practice_completed´'practice_completed'ÂÂS³ExpressionStatementÍDñÍEET®CallExpressionÍDñÍEDY°MemberExpressionÍDñÍDÿLªIdentifierÍDñÍDõ¤TextLªIdentifierÍDöÍDÿ©debugLineÂÂ’R§LiteralÍE ÍE:Ù8entry/src/main/ets/pages/PracticeActivityPage.ets(209:9)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(209:9)"R§LiteralÍE<ÍEC¥entry§"entry"ÂS³ExpressionStatementÍE_ÍEqT®CallExpressionÍE_ÍEpY°MemberExpressionÍE_ÍElLªIdentifierÍE_ÍEc¤TextLªIdentifierÍEdÍEl¨fontSizeÂÂ‘R§LiteralÍEmÍEo¢16ÂS³ExpressionStatementÍE‹ÍE¥T®CallExpressionÍE‹ÍE¤Y°MemberExpressionÍE‹ÍE™LªIdentifierÍE‹ÍE¤TextLªIdentifierÍEÍE™©fontColorÂÂ‘R§LiteralÍEšÍE£§#52C41A©'#52C41A'ÂS³ExpressionStatementÍE¿ÍEØT®CallExpressionÍE¿ÍE×Y°MemberExpressionÍE¿ÍEÊLªIdentifierÍE¿ÍEÃ¤TextLªIdentifierÍEÄÍEÊ¦marginÂÂ‘b°ObjectExpressionÍEËÍEÖ‘c¨PropertyÍEÍÍEÔÂÂÂLªIdentifierÍEÍÍEĞ£topR§LiteralÍEÒÍEÔ¢20¤initÂLªIdentifierÍEñÍEõ¤TextÂS³ExpressionStatementÍFÍFT®CallExpressionÍFÍFY°MemberExpressionÍFÍFLªIdentifierÍFÍF¤TextLªIdentifierÍFÍF£popÂÂÂÂLªIdentifierÍFIÍFK¢IfÂS³ExpressionStatementÍFWÍF`T®CallExpressionÍFWÍF_Y°MemberExpressionÍFWÍF]LªIdentifierÍFWÍFY¢IfLªIdentifierÍFZÍF]£popÂÂÂS³ExpressionStatementÍFjÍFwT®CallExpressionÍFjÍFvY°MemberExpressionÍFjÍFtLªIdentifierÍFjÍFp¦ColumnLªIdentifierÍFqÍFt£popÂÂÂN°MethodDefinitionÍF„Í]9ÂÂLªIdentifierÍF„ÍF¬buildOptions¦methodO²FunctionExpressionÍFÍ]9ÀÂÂÂ’LªIdentifierÍF‘ÍF™¨questionP±AssignmentPatternÍF›ÍF¨LªIdentifierÍF›ÍF¡¦parentR§LiteralÍF¤ÍF¨À¤nullM®BlockStatementÍFªÍ]9”S³ExpressionStatementÍFµÍG¬T®CallExpressionÍFµÍG«Y°MemberExpressionÍFµÍFÓU®ThisExpressionÍFµÍF¹LªIdentifierÍFºÍFÓ¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍFÔÍG¢ÀÂÂÂ’LªIdentifierÍFÕÍFÛ¦elmtIdLªIdentifierÍFİÍFì¯isInitialRenderM®BlockStatementÍFñÍG¢“S³ExpressionStatementÍG ÍGT®CallExpressionÍG ÍGY°MemberExpressionÍG ÍGLªIdentifierÍG ÍG¦ColumnLªIdentifierÍGÍG¦createÂÂÂS³ExpressionStatementÍGÍGtT®CallExpressionÍGÍGsY°MemberExpressionÍGÍG.LªIdentifierÍGÍG$¦ColumnLªIdentifierÍG%ÍG.©debugLineÂÂ’R§LiteralÍG/ÍGiÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(220:5)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(220:5)"R§LiteralÍGkÍGr¥entry§"entry"ÂS³ExpressionStatementÍG‚ÍG—T®CallExpressionÍG‚ÍG–Y°MemberExpressionÍG‚ÍGLªIdentifierÍG‚ÍGˆ¦ColumnLªIdentifierÍG‰ÍG¥widthÂÂ‘R§LiteralÍGÍG•¤100%¦'100%'ÂLªIdentifierÍG¤ÍGª¦ColumnÂS³ExpressionStatementÍG¶Í]T®CallExpressionÍG¶Í]Y°MemberExpressionÍG¶ÍGÔU®ThisExpressionÍG¶ÍGºLªIdentifierÍG»ÍGÔ¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍGÕÍ]ÀÂÂÂ’LªIdentifierÍGÖÍGÜ¦elmtIdLªIdentifierÍGŞÍGí¯isInitialRenderM®BlockStatementÍGòÍ]’S³ExpressionStatementÍHÍHT®CallExpressionÍHÍHY°MemberExpressionÍHÍH
+LªIdentifierÍHÍH¢IfLªIdentifierÍHÍH
+¦createÂÂÂV«IfStatementÍHÍ\÷W°BinaryExpressionÍHÍHTY°MemberExpressionÍHÍH,LªIdentifierÍHÍH'¨questionLªIdentifierÍH(ÍH,¤typeÂÂ£===Y°MemberExpressionÍH1ÍHTLªIdentifierÍH1ÍH=¬AppConstantsLªIdentifierÍH>ÍHT¶QUESTION_TYPE_JUDGMENTÂÂM®BlockStatementÍHVÍRÆ‘S³ExpressionStatementÍHiÍR·T®CallExpressionÍHiÍR¶Y°MemberExpressionÍHiÍHˆU®ThisExpressionÍHiÍHmLªIdentifierÍHnÍHˆºifElseBranchUpdateFunctionÂÂ’R§LiteralÍH‰ÍHŠ ¡0O·ArrowFunctionExpressionÍHŒÍRµÀÂÂÂM®BlockStatementÍH’ÍRµšS³ExpressionStatementÍH©ÍIÇT®CallExpressionÍH©ÍIÆY°MemberExpressionÍH©ÍHÇU®ThisExpressionÍH©ÍH­LªIdentifierÍH®ÍHÇ¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍHÈÍI½ÀÂÂÂ’LªIdentifierÍHÉÍHÏ¦elmtIdLªIdentifierÍHÑÍHà¯isInitialRenderM®BlockStatementÍHåÍI½’S³ExpressionStatementÍI&ÍI6T®CallExpressionÍI&ÍI5Y°MemberExpressionÍI&ÍI3LªIdentifierÍI&ÍI,¦ColumnLªIdentifierÍI-ÍI3¦createÂÂÂS³ExpressionStatementÍIPÍI¦T®CallExpressionÍIPÍI¥Y°MemberExpressionÍIPÍI`LªIdentifierÍIPÍIV¦ColumnLªIdentifierÍIWÍI`©debugLineÂÂ’R§LiteralÍIaÍI›Ù8entry/src/main/ets/pages/PracticeActivityPage.ets(223:9)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(223:9)"R§LiteralÍIÍI¤¥entry§"entry"ÂLªIdentifierÍI¿ÍIÅ¦ColumnÂS³ExpressionStatementÍIİÍLaT®CallExpressionÍIİÍL`Y°MemberExpressionÍIİÍIûU®ThisExpressionÍIİÍIáLªIdentifierÍIâÍIû¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍIüÍLWÀÂÂÂ’LªIdentifierÍIıÍJ¦elmtIdLªIdentifierÍJÍJ¯isInitialRenderM®BlockStatementÍJÍLW”S³ExpressionStatementÍJ4ÍJ…T®CallExpressionÍJ4ÍJ„Y°MemberExpressionÍJ4ÍJALªIdentifierÍJ4ÍJ:¦ToggleLªIdentifierÍJ;ÍJA¦createÂÂ‘b°ObjectExpressionÍJBÍJƒ’c¨PropertyÍJDÍJ]ÂÂÂLªIdentifierÍJDÍJH¤typeY°MemberExpressionÍJJÍJ]LªIdentifierÍJJÍJTªToggleTypeLªIdentifierÍJUÍJ]¨CheckboxÂÂ¤initc¨PropertyÍJ_ÍJÂÂÂLªIdentifierÍJ_ÍJc¤isOnW°BinaryExpressionÍJeÍJY°MemberExpressionÍJeÍJxU®ThisExpressionÍJeÍJiLªIdentifierÍJjÍJx®selectedAnswerÂÂ£===R§LiteralÍJ}ÍJ¦æ­£ç¡®¨'æ­£ç¡®'¤initÂS³ExpressionStatementÍJŸÍJöT®CallExpressionÍJŸÍJõY°MemberExpressionÍJŸÍJ¯LªIdentifierÍJŸÍJ¥¦ToggleLªIdentifierÍJ¦ÍJ¯©debugLineÂÂ’R§LiteralÍJ°ÍJëÙ9entry/src/main/ets/pages/PracticeActivityPage.ets(224:11)Ù;"entry/src/main/ets/pages/PracticeActivityPage.ets(224:11)"R§LiteralÍJíÍJô¥entry§"entry"ÂS³ExpressionStatementÍKÍLT®CallExpressionÍKÍLY°MemberExpressionÍKÍKLªIdentifierÍKÍK¦ToggleLªIdentifierÍKÍK¨onChangeÂÂ‘O·ArrowFunctionExpressionÍK ÍLÀÂÂÂ‘LªIdentifierÍK!ÍK%¤isOnM®BlockStatementÍK*ÍL‘V«IfStatementÍKIÍKëLªIdentifierÍKMÍKQ¤isOnM®BlockStatementÍKSÍKë’S³ExpressionStatementÍKvÍK‘X´AssignmentExpressionÍKvÍK¡=Y°MemberExpressionÍKvÍK‰U®ThisExpressionÍKvÍKzLªIdentifierÍK{ÍK‰®selectedAnswerÂÂR§LiteralÍKŒÍK¦æ­£ç¡®¨'æ­£ç¡®'S³ExpressionStatementÍK³ÍKÌT®CallExpressionÍK³ÍKËY°MemberExpressionÍK³ÍKÉU®ThisExpressionÍK³ÍK·LªIdentifierÍK¸ÍKÉ±saveCurrentAnswerÂÂÂÀÂS³ExpressionStatementÍL"ÍL@T®CallExpressionÍL"ÍL?Y°MemberExpressionÍL"ÍL/LªIdentifierÍL"ÍL(¦ToggleLªIdentifierÍL)ÍL/¦marginÂÂ‘b°ObjectExpressionÍL0ÍL>‘c¨PropertyÍL2ÍL<ÂÂÂLªIdentifierÍL2ÍL8¦bottomR§LiteralÍL:ÍL<
+¢10¤initÂLªIdentifierÍLYÍL_¦ToggleÂS³ExpressionStatementÍLwÍL„T®CallExpressionÍLwÍLƒY°MemberExpressionÍLwÍLLªIdentifierÍLwÍL}¦ToggleLªIdentifierÍL~ÍL£popÂÂÂS³ExpressionStatementÍLšÍMñT®CallExpressionÍLšÍMğY°MemberExpressionÍLšÍL¸U®ThisExpressionÍLšÍLLªIdentifierÍLŸÍL¸¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍL¹ÍMéÀÂÂÂ’LªIdentifierÍLºÍLÀ¦elmtIdLªIdentifierÍLÂÍLÑ¯isInitialRenderM®BlockStatementÍLÖÍMé”S³ExpressionStatementÍLñÍMT®CallExpressionÍLñÍMY°MemberExpressionÍLñÍLüLªIdentifierÍLñÍLõ¤TextLªIdentifierÍLöÍLü¦createÂÂ‘R§LiteralÍLıÍM¦æ­£ç¡®¨'æ­£ç¡®'ÂS³ExpressionStatementÍMÍMrT®CallExpressionÍMÍMqY°MemberExpressionÍMÍM+LªIdentifierÍMÍM!¤TextLªIdentifierÍM"ÍM+©debugLineÂÂ’R§LiteralÍM,ÍMgÙ9entry/src/main/ets/pages/PracticeActivityPage.ets(232:11)Ù;"entry/src/main/ets/pages/PracticeActivityPage.ets(232:11)"R§LiteralÍMiÍMp¥entry§"entry"ÂS³ExpressionStatementÍMŒÍMT®CallExpressionÍMŒÍMY°MemberExpressionÍMŒÍM™LªIdentifierÍMŒÍM¤TextLªIdentifierÍM‘ÍM™¨fontSizeÂÂ‘R§LiteralÍMšÍMœ¢14ÂS³ExpressionStatementÍM¸ÍMÒT®CallExpressionÍM¸ÍMÑY°MemberExpressionÍM¸ÍMÃLªIdentifierÍM¸ÍM¼¤TextLªIdentifierÍM½ÍMÃ¦marginÂÂ‘b°ObjectExpressionÍMÄÍMĞ‘c¨PropertyÍMÆÍMÎÂÂÂLªIdentifierÍMÆÍMÊ¤leftR§LiteralÍMÌÍMÎ
+¢10¤initÂLªIdentifierÍMëÍMï¤TextÂS³ExpressionStatementÍNÍNT®CallExpressionÍNÍNY°MemberExpressionÍNÍNLªIdentifierÍNÍN¤TextLªIdentifierÍNÍN£popÂÂÂS³ExpressionStatementÍN(ÍP¬T®CallExpressionÍN(ÍP«Y°MemberExpressionÍN(ÍNFU®ThisExpressionÍN(ÍN,LªIdentifierÍN-ÍNF¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍNGÍP¢ÀÂÂÂ’LªIdentifierÍNHÍNN¦elmtIdLªIdentifierÍNPÍN_¯isInitialRenderM®BlockStatementÍNdÍP¢”S³ExpressionStatementÍNÍNĞT®CallExpressionÍNÍNÏY°MemberExpressionÍNÍNŒLªIdentifierÍNÍN…¦ToggleLªIdentifierÍN†ÍNŒ¦createÂÂ‘b°ObjectExpressionÍNÍNÎ’c¨PropertyÍNÍN¨ÂÂÂLªIdentifierÍNÍN“¤typeY°MemberExpressionÍN•ÍN¨LªIdentifierÍN•ÍNŸªToggleTypeLªIdentifierÍN ÍN¨¨CheckboxÂÂ¤initc¨PropertyÍNªÍNÌÂÂÂLªIdentifierÍNªÍN®¤isOnW°BinaryExpressionÍN°ÍNÌY°MemberExpressionÍN°ÍNÃU®ThisExpressionÍN°ÍN´LªIdentifierÍNµÍNÃ®selectedAnswerÂÂ£===R§LiteralÍNÈÍNÌ¦é”™è¯¯¨'é”™è¯¯'¤initÂS³ExpressionStatementÍNêÍOAT®CallExpressionÍNêÍO@Y°MemberExpressionÍNêÍNúLªIdentifierÍNêÍNğ¦ToggleLªIdentifierÍNñÍNú©debugLineÂÂ’R§LiteralÍNûÍO6Ù9entry/src/main/ets/pages/PracticeActivityPage.ets(236:11)Ù;"entry/src/main/ets/pages/PracticeActivityPage.ets(236:11)"R§LiteralÍO8ÍO?¥entry§"entry"ÂS³ExpressionStatementÍO[ÍPST®CallExpressionÍO[ÍPRY°MemberExpressionÍO[ÍOjLªIdentifierÍO[ÍOa¦ToggleLªIdentifierÍObÍOj¨onChangeÂÂ‘O·ArrowFunctionExpressionÍOkÍPQÀÂÂÂ‘LªIdentifierÍOlÍOp¤isOnM®BlockStatementÍOuÍPQ‘V«IfStatementÍO”ÍP6LªIdentifierÍO˜ÍOœ¤isOnM®BlockStatementÍOÍP6’S³ExpressionStatementÍOÁÍOÜX´AssignmentExpressionÍOÁÍOÛ¡=Y°MemberExpressionÍOÁÍOÔU®ThisExpressionÍOÁÍOÅLªIdentifierÍOÆÍOÔ®selectedAnswerÂÂR§LiteralÍO×ÍOÛ¦é”™è¯¯¨'é”™è¯¯'S³ExpressionStatementÍOşÍPT®CallExpressionÍOşÍPY°MemberExpressionÍOşÍPU®ThisExpressionÍOşÍPLªIdentifierÍPÍP±saveCurrentAnswerÂÂÂÀÂS³ExpressionStatementÍPmÍP‹T®CallExpressionÍPmÍPŠY°MemberExpressionÍPmÍPzLªIdentifierÍPmÍPs¦ToggleLªIdentifierÍPtÍPz¦marginÂÂ‘b°ObjectExpressionÍP{ÍP‰‘c¨PropertyÍP}ÍP‡ÂÂÂLªIdentifierÍP}ÍPƒ¦bottomR§LiteralÍP…ÍP‡
+¢10¤initÂLªIdentifierÍP¤ÍPª¦ToggleÂS³ExpressionStatementÍPÂÍPÏT®CallExpressionÍPÂÍPÎY°MemberExpressionÍPÂÍPÌLªIdentifierÍPÂÍPÈ¦ToggleLªIdentifierÍPÉÍPÌ£popÂÂÂS³ExpressionStatementÍPåÍR<T®CallExpressionÍPåÍR;Y°MemberExpressionÍPåÍQU®ThisExpressionÍPåÍPéLªIdentifierÍPêÍQ¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍQÍR4ÀÂÂÂ’LªIdentifierÍQÍQ¦elmtIdLªIdentifierÍQÍQ¯isInitialRenderM®BlockStatementÍQ!ÍR4”S³ExpressionStatementÍQ<ÍQNT®CallExpressionÍQ<ÍQMY°MemberExpressionÍQ<ÍQGLªIdentifierÍQ<ÍQ@¤TextLªIdentifierÍQAÍQG¦createÂÂ‘R§LiteralÍQHÍQL¦é”™è¯¯¨'é”™è¯¯'ÂS³ExpressionStatementÍQhÍQ½T®CallExpressionÍQhÍQ¼Y°MemberExpressionÍQhÍQvLªIdentifierÍQhÍQl¤TextLªIdentifierÍQmÍQv©debugLineÂÂ’R§LiteralÍQwÍQ²Ù9entry/src/main/ets/pages/PracticeActivityPage.ets(244:11)Ù;"entry/src/main/ets/pages/PracticeActivityPage.ets(244:11)"R§LiteralÍQ´ÍQ»¥entry§"entry"ÂS³ExpressionStatementÍQ×ÍQéT®CallExpressionÍQ×ÍQèY°MemberExpressionÍQ×ÍQäLªIdentifierÍQ×ÍQÛ¤TextLªIdentifierÍQÜÍQä¨fontSizeÂÂ‘R§LiteralÍQåÍQç¢14ÂS³ExpressionStatementÍRÍRT®CallExpressionÍRÍRY°MemberExpressionÍRÍRLªIdentifierÍRÍR¤TextLªIdentifierÍRÍR¦marginÂÂ‘b°ObjectExpressionÍRÍR‘c¨PropertyÍRÍRÂÂÂLªIdentifierÍRÍR¤leftR§LiteralÍRÍR
+¢10¤initÂLªIdentifierÍR6ÍR:¤TextÂS³ExpressionStatementÍRRÍR]T®CallExpressionÍRRÍR\Y°MemberExpressionÍRRÍRZLªIdentifierÍRRÍRV¤TextLªIdentifierÍRWÍRZ£popÂÂÂS³ExpressionStatementÍR•ÍR¢T®CallExpressionÍR•ÍR¡Y°MemberExpressionÍR•ÍRŸLªIdentifierÍR•ÍR›¦ColumnLªIdentifierÍRœÍRŸ£popÂÂÂÂM®BlockStatementÍRÙÍ\÷‘S³ExpressionStatementÍRìÍ\èT®CallExpressionÍRìÍ\çY°MemberExpressionÍRìÍSU®ThisExpressionÍRìÍRğLªIdentifierÍRñÍSºifElseBranchUpdateFunctionÂÂ’R§LiteralÍSÍS¡1O·ArrowFunctionExpressionÍSÍ\æÀÂÂÂM®BlockStatementÍSÍ\æ”S³ExpressionStatementÍS,ÍTIT®CallExpressionÍS,ÍTHY°MemberExpressionÍS,ÍSJU®ThisExpressionÍS,ÍS0LªIdentifierÍS1ÍSJ¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍSKÍT?ÀÂÂÂ’LªIdentifierÍSLÍSR¦elmtIdLªIdentifierÍSTÍSc¯isInitialRenderM®BlockStatementÍShÍT?’S³ExpressionStatementÍS¨ÍS¸T®CallExpressionÍS¨ÍS·Y°MemberExpressionÍS¨ÍSµLªIdentifierÍS¨ÍS®¦ColumnLªIdentifierÍS¯ÍSµ¦createÂÂÂS³ExpressionStatementÍSÒÍT(T®CallExpressionÍSÒÍT'Y°MemberExpressionÍSÒÍSâLªIdentifierÍSÒÍSØ¦ColumnLªIdentifierÍSÙÍSâ©debugLineÂÂ’R§LiteralÍSãÍTÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(250:9)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(250:9)"R§LiteralÍTÍT&¥entry§"entry"ÂLªIdentifierÍTAÍTG¦ColumnÂS³ExpressionStatementÍT_Í\kT®CallExpressionÍT_Í\jY°MemberExpressionÍT_ÍT}U®ThisExpressionÍT_ÍTcLªIdentifierÍTdÍT}¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍT~Í\`ÀÂÂÂ’LªIdentifierÍTÍT…¦elmtIdLªIdentifierÍT‡ÍT–¯isInitialRenderM®BlockStatementÍT›Í\`“S³ExpressionStatementÍT¶ÍTÇT®CallExpressionÍT¶ÍTÆY°MemberExpressionÍT¶ÍTÄLªIdentifierÍT¶ÍT½§ForEachLªIdentifierÍT¾ÍTÄ¦createÂÂÂ]³VariableDeclarationÍTáÍ[Ê‘^²VariableDeclaratorÍTçÍ[ÉLªIdentifierÍTçÍTı¶forEachItemGenFunctionO·ArrowFunctionExpressionÍU Í[ÉÀÂÂÂ’LªIdentifierÍUÍU¥_itemLªIdentifierÍUÍU¥indexM®BlockStatementÍUÍ[É—]³VariableDeclarationÍU1ÍUF‘^²VariableDeclaratorÍU7ÍUELªIdentifierÍU7ÍU=¦optionLªIdentifierÍU@ÍUE¥_item¥constS³ExpressionStatementÍUdÍVİT®CallExpressionÍUdÍVÜY°MemberExpressionÍUdÍU‚U®ThisExpressionÍUdÍUhLªIdentifierÍUiÍU‚¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍUƒÍVÖÀÂÂÂ’LªIdentifierÍU„ÍUŠ¦elmtIdLªIdentifierÍUŒÍU›¯isInitialRenderM®BlockStatementÍU ÍVÖ”S³ExpressionStatementÍUÃÍUĞT®CallExpressionÍUÃÍUÏY°MemberExpressionÍUÃÍUÍLªIdentifierÍUÃÍUÆ£RowLªIdentifierÍUÇÍUÍ¦createÂÂÂS³ExpressionStatementÍUòÍVFT®CallExpressionÍUòÍVEY°MemberExpressionÍUòÍUÿLªIdentifierÍUòÍUõ£RowLªIdentifierÍUöÍUÿ©debugLineÂÂ’R§LiteralÍV ÍV;Ù9entry/src/main/ets/pages/PracticeActivityPage.ets(252:13)Ù;"entry/src/main/ets/pages/PracticeActivityPage.ets(252:13)"R§LiteralÍV=ÍVD¥entry§"entry"ÂS³ExpressionStatementÍVhÍVzT®CallExpressionÍVhÍVyY°MemberExpressionÍVhÍVqLªIdentifierÍVhÍVk£RowLªIdentifierÍVlÍVq¥widthÂÂ‘R§LiteralÍVrÍVx¤100%¦'100%'ÂS³ExpressionStatementÍVœÍV·T®CallExpressionÍVœÍV¶Y°MemberExpressionÍVœÍV¦LªIdentifierÍVœÍVŸ£RowLªIdentifierÍV ÍV¦¦marginÂÂ‘b°ObjectExpressionÍV§ÍVµ‘c¨PropertyÍV©ÍV³ÂÂÂLªIdentifierÍV©ÍV¯¦bottomR§LiteralÍV±ÍV³
+¢10¤initÂLªIdentifierÍVØÍVÛ£RowÂS³ExpressionStatementÍVûÍY“T®CallExpressionÍVûÍY’Y°MemberExpressionÍVûÍWU®ThisExpressionÍVûÍVÿLªIdentifierÍW ÍW¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍWÍY‰ÀÂÂÂ’LªIdentifierÍWÍW!¦elmtIdLªIdentifierÍW#ÍW2¯isInitialRenderM®BlockStatementÍW7ÍY‰“S³ExpressionStatementÍWZÍW­T®CallExpressionÍWZÍW¬Y°MemberExpressionÍWZÍWgLªIdentifierÍWZÍW`¦ToggleLªIdentifierÍWaÍWg¦createÂÂ‘b°ObjectExpressionÍWhÍW«’c¨PropertyÍWjÍWƒÂÂÂLªIdentifierÍWjÍWn¤typeY°MemberExpressionÍWpÍWƒLªIdentifierÍWpÍWzªToggleTypeLªIdentifierÍW{ÍWƒ¨CheckboxÂÂ¤initc¨PropertyÍW…ÍW©ÂÂÂLªIdentifierÍW…ÍW‰¤isOnW°BinaryExpressionÍW‹ÍW©Y°MemberExpressionÍW‹ÍWU®ThisExpressionÍW‹ÍWLªIdentifierÍWÍW®selectedAnswerÂÂ£===LªIdentifierÍW£ÍW©¦option¤initÂS³ExpressionStatementÍWÏÍX&T®CallExpressionÍWÏÍX%Y°MemberExpressionÍWÏÍWßLªIdentifierÍWÏÍWÕ¦ToggleLªIdentifierÍWÖÍWß©debugLineÂÂ’R§LiteralÍWàÍXÙ9entry/src/main/ets/pages/PracticeActivityPage.ets(253:15)Ù;"entry/src/main/ets/pages/PracticeActivityPage.ets(253:15)"R§LiteralÍXÍX$¥entry§"entry"ÂS³ExpressionStatementÍXHÍYjT®CallExpressionÍXHÍYiY°MemberExpressionÍXHÍXWLªIdentifierÍXHÍXN¦ToggleLªIdentifierÍXOÍXW¨onChangeÂÂ‘O·ArrowFunctionExpressionÍXXÍYhÀÂÂÂ‘LªIdentifierÍXYÍX]¤isOnM®BlockStatementÍXbÍYh‘V«IfStatementÍX‰ÍYELªIdentifierÍXÍX‘¤isOnM®BlockStatementÍX“ÍYE’S³ExpressionStatementÍX¾ÍXÛX´AssignmentExpressionÍX¾ÍXÚ¡=Y°MemberExpressionÍX¾ÍXÑU®ThisExpressionÍX¾ÍXÂLªIdentifierÍXÃÍXÑ®selectedAnswerÂÂLªIdentifierÍXÔÍXÚ¦optionS³ExpressionStatementÍYÍYT®CallExpressionÍYÍYY°MemberExpressionÍYÍYU®ThisExpressionÍYÍY	LªIdentifierÍY
+ÍY±saveCurrentAnswerÂÂÂÀÂLªIdentifierÍY‹ÍY‘¦ToggleÂS³ExpressionStatementÍY±ÍY¾T®CallExpressionÍY±ÍY½Y°MemberExpressionÍY±ÍY»LªIdentifierÍY±ÍY·¦ToggleLªIdentifierÍY¸ÍY»£popÂÂÂS³ExpressionStatementÍYÜÍ[]T®CallExpressionÍYÜÍ[\Y°MemberExpressionÍYÜÍYúU®ThisExpressionÍYÜÍYàLªIdentifierÍYáÍYú¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍYûÍ[UÀÂÂÂ’LªIdentifierÍYüÍZ¦elmtIdLªIdentifierÍZÍZ¯isInitialRenderM®BlockStatementÍZÍ[U”S³ExpressionStatementÍZ;ÍZOT®CallExpressionÍZ;ÍZNY°MemberExpressionÍZ;ÍZFLªIdentifierÍZ;ÍZ?¤TextLªIdentifierÍZ@ÍZF¦createÂÂ‘LªIdentifierÍZGÍZM¦optionÂS³ExpressionStatementÍZqÍZÆT®CallExpressionÍZqÍZÅY°MemberExpressionÍZqÍZLªIdentifierÍZqÍZu¤TextLªIdentifierÍZvÍZ©debugLineÂÂ’R§LiteralÍZ€ÍZ»Ù9entry/src/main/ets/pages/PracticeActivityPage.ets(260:15)Ù;"entry/src/main/ets/pages/PracticeActivityPage.ets(260:15)"R§LiteralÍZ½ÍZÄ¥entry§"entry"ÂS³ExpressionStatementÍZèÍZúT®CallExpressionÍZèÍZùY°MemberExpressionÍZèÍZõLªIdentifierÍZèÍZì¤TextLªIdentifierÍZíÍZõ¨fontSizeÂÂ‘R§LiteralÍZöÍZø¢14ÂS³ExpressionStatementÍ[Í[6T®CallExpressionÍ[Í[5Y°MemberExpressionÍ[Í['LªIdentifierÍ[Í[ ¤TextLªIdentifierÍ[!Í['¦marginÂÂ‘b°ObjectExpressionÍ[(Í[4‘c¨PropertyÍ[*Í[2ÂÂÂLªIdentifierÍ[*Í[.¤leftR§LiteralÍ[0Í[2
+¢10¤initÂLªIdentifierÍ[WÍ[[¤TextÂS³ExpressionStatementÍ[{Í[†T®CallExpressionÍ[{Í[…Y°MemberExpressionÍ[{Í[ƒLªIdentifierÍ[{Í[¤TextLªIdentifierÍ[€Í[ƒ£popÂÂÂS³ExpressionStatementÍ[¤Í[®T®CallExpressionÍ[¤Í[­Y°MemberExpressionÍ[¤Í[«LªIdentifierÍ[¤Í[§£RowLªIdentifierÍ[¨Í[«£popÂÂÂ¥constS³ExpressionStatementÍ[äÍ\IT®CallExpressionÍ[äÍ\HY°MemberExpressionÍ[äÍ[şU®ThisExpressionÍ[äÍ[èLªIdentifierÍ[éÍ[şµforEachUpdateFunctionÂÂ–LªIdentifierÍ[ÿÍ\¦elmtIdY°MemberExpressionÍ\Í\LªIdentifierÍ\Í\¨questionLªIdentifierÍ\Í\§optionsÂÂLªIdentifierÍ\Í\/¶forEachItemGenFunctionLªIdentifierÍ\1Í\:©undefinedR§LiteralÍ\<Í\@Ã¤trueR§LiteralÍ\BÍ\GÂ¥falseÂLªIdentifierÍ\bÍ\i§ForEachÂS³ExpressionStatementÍ\Í\T®CallExpressionÍ\Í\Y°MemberExpressionÍ\Í\ŒLªIdentifierÍ\Í\ˆ§ForEachLªIdentifierÍ\‰Í\Œ£popÂÂÂS³ExpressionStatementÍ\ÆÍ\ÓT®CallExpressionÍ\ÆÍ\ÒY°MemberExpressionÍ\ÆÍ\ĞLªIdentifierÍ\ÆÍ\Ì¦ColumnLªIdentifierÍ\ÍÍ\Ğ£popÂÂÂÂLªIdentifierÍ]Í]¢IfÂS³ExpressionStatementÍ]Í]T®CallExpressionÍ]Í]Y°MemberExpressionÍ]Í]LªIdentifierÍ]Í]¢IfLªIdentifierÍ]Í]£popÂÂÂS³ExpressionStatementÍ]%Í]2T®CallExpressionÍ]%Í]1Y°MemberExpressionÍ]%Í]/LªIdentifierÍ]%Í]+¦ColumnLªIdentifierÍ],Í]/£popÂÂÂN°MethodDefinitionÍ]?Í_ÖÂÂLªIdentifierÍ]?Í]M®buildFillBlank¦methodO²FunctionExpressionÍ]MÍ_ÖÀÂÂÂ’LªIdentifierÍ]NÍ]V¨questionP±AssignmentPatternÍ]XÍ]eLªIdentifierÍ]XÍ]^¦parentR§LiteralÍ]aÍ]eÀ¤nullM®BlockStatementÍ]gÍ_Ö‘S³ExpressionStatementÍ]rÍ_ÏT®CallExpressionÍ]rÍ_ÎY°MemberExpressionÍ]rÍ]U®ThisExpressionÍ]rÍ]vLªIdentifierÍ]wÍ]¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ]‘Í_ÂÀÂÂÂ’LªIdentifierÍ]’Í]˜¦elmtIdLªIdentifierÍ]šÍ]©¯isInitialRenderM®BlockStatementÍ]®Í_Â—S³ExpressionStatementÍ]½Í^T®CallExpressionÍ]½Í^Y°MemberExpressionÍ]½Í]ÍLªIdentifierÍ]½Í]Æ©TextInputLªIdentifierÍ]ÇÍ]Í¦createÂÂ‘b°ObjectExpressionÍ]ÎÍ^’c¨PropertyÍ]ĞÍ]öÂÂÂLªIdentifierÍ]ĞÍ]Û«placeholderT®CallExpressionÍ]İÍ]öLªIdentifierÍ]İÍ]æ©getString‘R§LiteralÍ]çÍ]õ¬input_answer®'input_answer'Â¤initc¨PropertyÍ]øÍ^ÂÂÂLªIdentifierÍ]øÍ]ü¤textY°MemberExpressionÍ]şÍ^U®ThisExpressionÍ]şÍ^LªIdentifierÍ^Í^ªfillAnswerÂÂ¤initÂS³ExpressionStatementÍ^Í^xT®CallExpressionÍ^Í^wY°MemberExpressionÍ^Í^2LªIdentifierÍ^Í^(©TextInputLªIdentifierÍ^)Í^2©debugLineÂÂ’R§LiteralÍ^3Í^mÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(275:5)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(275:5)"R§LiteralÍ^oÍ^v¥entry§"entry"ÂS³ExpressionStatementÍ^†Í^T®CallExpressionÍ^†Í^Y°MemberExpressionÍ^†Í^•LªIdentifierÍ^†Í^©TextInputLªIdentifierÍ^Í^•¥widthÂÂ‘R§LiteralÍ^–Í^œ¤100%¦'100%'ÂS³ExpressionStatementÍ^¬Í^ÁT®CallExpressionÍ^¬Í^ÀY°MemberExpressionÍ^¬Í^¼LªIdentifierÍ^¬Í^µ©TextInputLªIdentifierÍ^¶Í^¼¦heightÂÂ‘R§LiteralÍ^½Í^¿2¢50ÂS³ExpressionStatementÍ^ÏÍ^õT®CallExpressionÍ^ÏÍ^ôY°MemberExpressionÍ^ÏÍ^àLªIdentifierÍ^ÏÍ^Ø©TextInputLªIdentifierÍ^ÙÍ^à§enabledÂÂ‘Q¯UnaryExpressionÍ^áÍ^ó¡!ÃY°MemberExpressionÍ^âÍ^óU®ThisExpressionÍ^âÍ^æLªIdentifierÍ^çÍ^ó¬allSubmittedÂÂÂS³ExpressionStatementÍ_Í_ˆT®CallExpressionÍ_Í_‡Y°MemberExpressionÍ_Í_LªIdentifierÍ_Í_©TextInputLªIdentifierÍ_Í_¨onChangeÂÂ‘O·ArrowFunctionExpressionÍ_Í_†ÀÂÂÂ‘LªIdentifierÍ_Í_¥valueM®BlockStatementÍ_!Í_†’S³ExpressionStatementÍ_4Í_LX´AssignmentExpressionÍ_4Í_K¡=Y°MemberExpressionÍ_4Í_CU®ThisExpressionÍ_4Í_8LªIdentifierÍ_9Í_CªfillAnswerÂÂLªIdentifierÍ_FÍ_K¥valueS³ExpressionStatementÍ_^Í_wT®CallExpressionÍ_^Í_vY°MemberExpressionÍ_^Í_tU®ThisExpressionÍ_^Í_bLªIdentifierÍ_cÍ_t±saveCurrentAnswerÂÂÂÂS³ExpressionStatementÍ_–Í_·T®CallExpressionÍ_–Í_¶Y°MemberExpressionÍ_–Í_¦LªIdentifierÍ_–Í_Ÿ©TextInputLªIdentifierÍ_ Í_¦¦marginÂÂ‘b°ObjectExpressionÍ_§Í_µ‘c¨PropertyÍ_©Í_³ÂÂÂLªIdentifierÍ_©Í_¯¦bottomR§LiteralÍ_±Í_³¢20¤initÂLªIdentifierÍ_ÄÍ_Í©TextInputÂN°MethodDefinitionÍ_ÜÍjMÂÂLªIdentifierÍ_ÜÍ_ç«buildResult¦methodO²FunctionExpressionÍ_çÍjMÀÂÂÂ’LªIdentifierÍ_èÍ_ğ¨questionP±AssignmentPatternÍ_òÍ_ÿLªIdentifierÍ_òÍ_ø¦parentR§LiteralÍ_ûÍ_ÿÀ¤nullM®BlockStatementÍ`ÍjM˜S³ExpressionStatementÍ`Ía®T®CallExpressionÍ`Ía­Y°MemberExpressionÍ`Í`*U®ThisExpressionÍ`Í`LªIdentifierÍ`Í`*¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍ`+Ía¤ÀÂÂÂ’LªIdentifierÍ`,Í`2¦elmtIdLªIdentifierÍ`4Í`C¯isInitialRenderM®BlockStatementÍ`HÍa¤—S³ExpressionStatementÍ`WÍ`gT®CallExpressionÍ`WÍ`fY°MemberExpressionÍ`WÍ`dLªIdentifierÍ`WÍ`]¦ColumnLªIdentifierÍ`^Í`d¦createÂÂÂS³ExpressionStatementÍ`uÍ`ËT®CallExpressionÍ`uÍ`ÊY°MemberExpressionÍ`uÍ`…LªIdentifierÍ`uÍ`{¦ColumnLªIdentifierÍ`|Í`…©debugLineÂÂ’R§LiteralÍ`†Í`ÀÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(288:5)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(288:5)"R§LiteralÍ`ÂÍ`É¥entry§"entry"ÂS³ExpressionStatementÍ`ÙÍ`îT®CallExpressionÍ`ÙÍ`íY°MemberExpressionÍ`ÙÍ`åLªIdentifierÍ`ÙÍ`ß¦ColumnLªIdentifierÍ`àÍ`å¥widthÂÂ‘R§LiteralÍ`æÍ`ì¤100%¦'100%'ÂS³ExpressionStatementÍ`üÍaT®CallExpressionÍ`üÍaY°MemberExpressionÍ`üÍa
+LªIdentifierÍ`üÍa¦ColumnLªIdentifierÍaÍa
+§paddingÂÂ‘R§LiteralÍaÍa¢15ÂS³ExpressionStatementÍaÍa?T®CallExpressionÍaÍa>Y°MemberExpressionÍaÍa3LªIdentifierÍaÍa#¦ColumnLªIdentifierÍa$Ía3¯backgroundColorÂÂ‘R§LiteralÍa4Ía=§#F5F5F5©'#F5F5F5'ÂS³ExpressionStatementÍaMÍadT®CallExpressionÍaMÍacY°MemberExpressionÍaMÍa`LªIdentifierÍaMÍaS¦ColumnLªIdentifierÍaTÍa`¬borderRadiusÂÂ‘R§LiteralÍaaÍab¡8ÂS³ExpressionStatementÍarÍa™T®CallExpressionÍarÍa˜Y°MemberExpressionÍarÍaLªIdentifierÍarÍax¦ColumnLªIdentifierÍayÍa¦marginÂÂ‘b°ObjectExpressionÍa€Ía—’c¨PropertyÍa‚Ía‰ÂÂÂLªIdentifierÍa‚Ía…£topR§LiteralÍa‡Ía‰¢20¤initc¨PropertyÍa‹Ía•ÂÂÂLªIdentifierÍa‹Ía‘¦bottomR§LiteralÍa“Ía•¢20¤initÂLªIdentifierÍa¦Ía¬¦ColumnÂS³ExpressionStatementÍa¸ÍcŒT®CallExpressionÍa¸Íc‹Y°MemberExpressionÍa¸ÍaÖU®ThisExpressionÍa¸Ía¼LªIdentifierÍa½ÍaÖ¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍa×Íc„ÀÂÂÂ’LªIdentifierÍaØÍaŞ¦elmtIdLªIdentifierÍaàÍaï¯isInitialRenderM®BlockStatementÍaôÍc„–S³ExpressionStatementÍbÍbYT®CallExpressionÍbÍbXY°MemberExpressionÍbÍbLªIdentifierÍbÍb¤TextLªIdentifierÍbÍb¦createÂÂ‘VµConditionalExpressionÍbÍbWY°MemberExpressionÍbÍbU®ThisExpressionÍbÍbLªIdentifierÍbÍb©isCorrectÂÂT®CallExpressionÍb Íb;LªIdentifierÍb Íb)©getString‘R§LiteralÍb*Íb:®answer_correct°'answer_correct'ÂT®CallExpressionÍb>ÍbWLªIdentifierÍb>ÍbG©getString‘R§LiteralÍbHÍbV¬answer_wrong®'answer_wrong'ÂÂS³ExpressionStatementÍbgÍb»T®CallExpressionÍbgÍbºY°MemberExpressionÍbgÍbuLªIdentifierÍbgÍbk¤TextLªIdentifierÍblÍbu©debugLineÂÂ’R§LiteralÍbvÍb°Ù8entry/src/main/ets/pages/PracticeActivityPage.ets(289:7)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(289:7)"R§LiteralÍb²Íb¹¥entry§"entry"ÂS³ExpressionStatementÍbÉÍbÛT®CallExpressionÍbÉÍbÚY°MemberExpressionÍbÉÍbÖLªIdentifierÍbÉÍbÍ¤TextLªIdentifierÍbÎÍbÖ¨fontSizeÂÂ‘R§LiteralÍb×ÍbÙ¢18ÂS³ExpressionStatementÍbéÍc
+T®CallExpressionÍbéÍc	Y°MemberExpressionÍbéÍbøLªIdentifierÍbéÍbí¤TextLªIdentifierÍbîÍbøªfontWeightÂÂ‘Y°MemberExpressionÍbùÍcLªIdentifierÍbùÍcªFontWeightLªIdentifierÍcÍc¤BoldÂÂÂS³ExpressionStatementÍcÍcOT®CallExpressionÍcÍcNY°MemberExpressionÍcÍc&LªIdentifierÍcÍc¤TextLªIdentifierÍcÍc&©fontColorÂÂ‘VµConditionalExpressionÍc'ÍcMY°MemberExpressionÍc'Íc5U®ThisExpressionÍc'Íc+LªIdentifierÍc,Íc5©isCorrectÂÂR§LiteralÍc8ÍcA§#52C41A©'#52C41A'R§LiteralÍcDÍcM§#FF4D4F©'#FF4D4F'ÂS³ExpressionStatementÍc]ÍcyT®CallExpressionÍc]ÍcxY°MemberExpressionÍc]ÍchLªIdentifierÍc]Íca¤TextLªIdentifierÍcbÍch¦marginÂÂ‘b°ObjectExpressionÍciÍcw‘c¨PropertyÍckÍcuÂÂÂLªIdentifierÍckÍcq¦bottomR§LiteralÍcsÍcu
+¢10¤initÂLªIdentifierÍc†ÍcŠ¤TextÂS³ExpressionStatementÍc–Íc¡T®CallExpressionÍc–Íc Y°MemberExpressionÍc–ÍcLªIdentifierÍc–Ícš¤TextLªIdentifierÍc›Íc£popÂÂÂS³ExpressionStatementÍc«ÍgT®CallExpressionÍc«ÍgY°MemberExpressionÍc«ÍcÉU®ThisExpressionÍc«Íc¯LªIdentifierÍc°ÍcÉ¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍcÊÍfÿÀÂÂÂ’LªIdentifierÍcËÍcÑ¦elmtIdLªIdentifierÍcÓÍcâ¯isInitialRenderM®BlockStatementÍcçÍfÿ’S³ExpressionStatementÍcöÍdT®CallExpressionÍcöÍdY°MemberExpressionÍcöÍcÿLªIdentifierÍcöÍcø¢IfLªIdentifierÍcùÍcÿ¦createÂÂÂV«IfStatementÍdÍfôQ¯UnaryExpressionÍdÍd#¡!ÃY°MemberExpressionÍdÍd#U®ThisExpressionÍdÍdLªIdentifierÍdÍd#©isCorrectÂÂM®BlockStatementÍd%Íf€‘S³ExpressionStatementÍd8ÍfqT®CallExpressionÍd8ÍfpY°MemberExpressionÍd8ÍdWU®ThisExpressionÍd8Íd<LªIdentifierÍd=ÍdWºifElseBranchUpdateFunctionÂÂ’R§LiteralÍdXÍdY ¡0O·ArrowFunctionExpressionÍd[ÍfoÀÂÂÂM®BlockStatementÍdaÍfo’S³ExpressionStatementÍdxÍf;T®CallExpressionÍdxÍf:Y°MemberExpressionÍdxÍd–U®ThisExpressionÍdxÍd|LªIdentifierÍd}Íd–¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍd—Íf3ÀÂÂÂ’LªIdentifierÍd˜Íd¦elmtIdLªIdentifierÍd Íd¯¯isInitialRenderM®BlockStatementÍd´Íf3•S³ExpressionStatementÍdÏÍeT®CallExpressionÍdÏÍeY°MemberExpressionÍdÏÍdÚLªIdentifierÍdÏÍdÓ¤TextLªIdentifierÍdÔÍdÚ¦createÂÂ‘d¯TemplateLiteralÍdÛÍe’T®CallExpressionÍdŞÍdùLªIdentifierÍdŞÍdç©getString‘R§LiteralÍdèÍdø®correct_answer°'correct_answer'ÂY°MemberExpressionÍdşÍeLªIdentifierÍdşÍe¨questionLªIdentifierÍeÍe­correctAnswerÂÂ“e¯TemplateElementÍdÜÍdÜf  Âe¯TemplateElementÍdúÍdüf¢: ¢: Âe¯TemplateElementÍeÍef  ÃÂS³ExpressionStatementÍe2Íe†T®CallExpressionÍe2Íe…Y°MemberExpressionÍe2Íe@LªIdentifierÍe2Íe6¤TextLªIdentifierÍe7Íe@©debugLineÂÂ’R§LiteralÍeAÍe{Ù8entry/src/main/ets/pages/PracticeActivityPage.ets(296:9)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(296:9)"R§LiteralÍe}Íe„¥entry§"entry"ÂS³ExpressionStatementÍe Íe²T®CallExpressionÍe Íe±Y°MemberExpressionÍe Íe­LªIdentifierÍe Íe¤¤TextLªIdentifierÍe¥Íe­¨fontSizeÂÂ‘R§LiteralÍe®Íe°¢16ÂS³ExpressionStatementÍeÌÍeæT®CallExpressionÍeÌÍeåY°MemberExpressionÍeÌÍeÚLªIdentifierÍeÌÍeĞ¤TextLªIdentifierÍeÑÍeÚ©fontColorÂÂ‘R§LiteralÍeÛÍeä§#666666©'#666666'ÂS³ExpressionStatementÍf ÍfT®CallExpressionÍf ÍfY°MemberExpressionÍf ÍfLªIdentifierÍf Íf¤TextLªIdentifierÍfÍf¦marginÂÂ‘b°ObjectExpressionÍfÍf‘c¨PropertyÍfÍfÂÂÂLªIdentifierÍfÍf¦bottomR§LiteralÍfÍf
+¢10¤initÂLªIdentifierÍf5Íf9¤TextÂS³ExpressionStatementÍfQÍf\T®CallExpressionÍfQÍf[Y°MemberExpressionÍfQÍfYLªIdentifierÍfQÍfU¤TextLªIdentifierÍfVÍfY£popÂÂÂÂM®BlockStatementÍf“Ífô‘S³ExpressionStatementÍf¦ÍfåT®CallExpressionÍf¦ÍfäY°MemberExpressionÍf¦ÍfÅU®ThisExpressionÍf¦ÍfªLªIdentifierÍf«ÍfÅºifElseBranchUpdateFunctionÂÂ’R§LiteralÍfÆÍfÇ¡1O·ArrowFunctionExpressionÍfÉÍfãÀÂÂÂM®BlockStatementÍfÏÍfãÂLªIdentifierÍgÍg¢IfÂS³ExpressionStatementÍgÍgT®CallExpressionÍgÍgY°MemberExpressionÍgÍgLªIdentifierÍgÍg¢IfLªIdentifierÍgÍg£popÂÂÂS³ExpressionStatementÍg"ÍjT®CallExpressionÍg"ÍjY°MemberExpressionÍg"Íg@U®ThisExpressionÍg"Íg&LªIdentifierÍg'Íg@¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍgAÍjÀÂÂÂ’LªIdentifierÍgBÍgH¦elmtIdLªIdentifierÍgJÍgY¯isInitialRenderM®BlockStatementÍg^Íj’S³ExpressionStatementÍgmÍgyT®CallExpressionÍgmÍgxY°MemberExpressionÍgmÍgvLªIdentifierÍgmÍgo¢IfLªIdentifierÍgpÍgv¦createÂÂÂV«IfStatementÍg‡ÍjY°MemberExpressionÍg‹Íg›U®ThisExpressionÍg‹ÍgLªIdentifierÍgÍg›«explanationÂÂM®BlockStatementÍgÍi—‘S³ExpressionStatementÍg°ÍiˆT®CallExpressionÍg°Íi‡Y°MemberExpressionÍg°ÍgÏU®ThisExpressionÍg°Íg´LªIdentifierÍgµÍgÏºifElseBranchUpdateFunctionÂÂ’R§LiteralÍgĞÍgÑ ¡0O·ArrowFunctionExpressionÍgÓÍi†ÀÂÂÂM®BlockStatementÍgÙÍi†’S³ExpressionStatementÍgğÍiRT®CallExpressionÍgğÍiQY°MemberExpressionÍgğÍhU®ThisExpressionÍgğÍgôLªIdentifierÍgõÍh¹observeComponentCreation2ÂÂ’O·ArrowFunctionExpressionÍhÍiJÀÂÂÂ’LªIdentifierÍhÍh¦elmtIdLªIdentifierÍhÍh'¯isInitialRenderM®BlockStatementÍh,ÍiJ”S³ExpressionStatementÍhGÍheT®CallExpressionÍhGÍhdY°MemberExpressionÍhGÍhRLªIdentifierÍhGÍhK¤TextLªIdentifierÍhLÍhR¦createÂÂ‘Y°MemberExpressionÍhSÍhcU®ThisExpressionÍhSÍhWLªIdentifierÍhXÍhc«explanationÂÂÂS³ExpressionStatementÍhÍhÓT®CallExpressionÍhÍhÒY°MemberExpressionÍhÍhLªIdentifierÍhÍhƒ¤TextLªIdentifierÍh„Íh©debugLineÂÂ’R§LiteralÍhÍhÈÙ8entry/src/main/ets/pages/PracticeActivityPage.ets(303:9)Ù:"entry/src/main/ets/pages/PracticeActivityPage.ets(303:9)"R§LiteralÍhÊÍhÑ¥entry§"entry"ÂS³ExpressionStatementÍhíÍhÿT®CallExpressionÍhíÍhşY°MemberExpressionÍhíÍhúLªIdentifierÍhíÍhñ¤TextLªIdentifierÍhòÍhú¨fontSizeÂÂ‘R§LiteralÍhûÍhı¢14ÂS³ExpressionStatementÍiÍi3T®CallExpressionÍiÍi2Y°MemberExpressionÍiÍi'LªIdentifierÍiÍi¤TextLªIdentifierÍiÍi'©fontColorÂÂ‘R§LiteralÍi(Íi1§#999999©'#999999'ÂLªIdentifierÍiLÍiP¤TextÂS³ExpressionStatementÍihÍisT®CallExpressionÍihÍirY°MemberExpressionÍihÍipLªIdentifierÍihÍil¤TextLªIdentifierÍimÍip£popÂÂÂÂM®BlockStatementÍiªÍj‘S³ExpressionStatementÍi½ÍiüT®CallExpressionÍi½ÍiûY°MemberExpressionÍi½ÍiÜU®ThisExpressionÍi½ÍiÁLªIdentifierÍiÂÍiÜºifElseBranchUpdateFunctionÂÂ’R§LiteralÍiİÍiŞ¡1O·ArrowFunctionExpressionÍiàÍiúÀÂÂÂM®BlockStatementÍiæÍiúÂLªIdentifierÍjÍj¢IfÂS³ExpressionStatementÍj&Íj/T®CallExpressionÍj&Íj.Y°MemberExpressionÍj&Íj,LªIdentifierÍj&Íj(¢IfLªIdentifierÍj)Íj,£popÂÂÂS³ExpressionStatementÍj9ÍjFT®CallExpressionÍj9ÍjEY°MemberExpressionÍj9ÍjCLªIdentifierÍj9Íj?¦ColumnLªIdentifierÍj@ÍjC£popÂÂÂN°MethodDefinitionÍjSÍl¥ÂÂLªIdentifierÍjSÍjd±saveCurrentAnswer¦methodO²FunctionExpressionÍjdÍl¥ÀÂÂÂM®BlockStatementÍjgÍl¥•V«IfStatementÍjrÍjØW±LogicalExpressionÍjvÍjµY°MemberExpressionÍjvÍj‡U®ThisExpressionÍjvÍjzLªIdentifierÍj{Íj‡¬allSubmittedÂÂ¢||W°BinaryExpressionÍj‹ÍjµY°MemberExpressionÍj‹ÍjœU®ThisExpressionÍj‹ÍjLªIdentifierÍjÍjœ¬currentIndexÂÂ¢>=Y°MemberExpressionÍj ÍjµY°MemberExpressionÍj Íj®U®ThisExpressionÍj Íj¤LªIdentifierÍj¥Íj®©questionsÂÂLªIdentifierÍj¯Íjµ¦lengthÂÂM®BlockStatementÍj·ÍjØ‘\¯ReturnStatementÍjÆÍjÍÀÀ]³VariableDeclarationÍjâÍk‘^²VariableDeclaratorÍjèÍkLªIdentifierÍjèÍjğ¨questionY°MemberExpressionÍjóÍkY°MemberExpressionÍjóÍkU®ThisExpressionÍjóÍj÷LªIdentifierÍjøÍk©questionsÂÂY°MemberExpressionÍkÍkU®ThisExpressionÍkÍkLªIdentifierÍkÍk¬currentIndexÂÂÃÂ¥const]³VariableDeclarationÍkÍk/‘^²VariableDeclaratorÍk#Ík.LªIdentifierÍk#Ík)¦answerR§LiteralÍk,Ík. ¢''£letV«IfStatementÍk9ÍköW°BinaryExpressionÍk=ÍktY°MemberExpressionÍk=ÍkJLªIdentifierÍk=ÍkE¨questionLªIdentifierÍkFÍkJ¤typeÂÂ£===Y°MemberExpressionÍkOÍktLªIdentifierÍkOÍk[¬AppConstantsLªIdentifierÍk\Íkt¸QUESTION_TYPE_FILL_BLANKÂÂM®BlockStatementÍkvÍk°‘S³ExpressionStatementÍk…Ík¥X´AssignmentExpressionÍk…Ík¤¡=LªIdentifierÍk…Ík‹¦answerT®CallExpressionÍkÍk¤Y°MemberExpressionÍkÍk¢Y°MemberExpressionÍkÍkU®ThisExpressionÍkÍk’LªIdentifierÍk“ÍkªfillAnswerÂÂLªIdentifierÍkÍk¢¤trimÂÂÂM®BlockStatementÍk¿Íkö‘S³ExpressionStatementÍkÎÍkëX´AssignmentExpressionÍkÎÍkê¡=LªIdentifierÍkÎÍkÔ¦answerY°MemberExpressionÍk×ÍkêU®ThisExpressionÍk×ÍkÛLªIdentifierÍkÜÍkê®selectedAnswerÂÂV«IfStatementÍl ÍlLªIdentifierÍlÍl
+¦answerM®BlockStatementÍlÍlP‘S³ExpressionStatementÍlÍlET®CallExpressionÍlÍlDY°MemberExpressionÍlÍl/Y°MemberExpressionÍlÍl+U®ThisExpressionÍlÍlLªIdentifierÍl Íl+«tempAnswersÂÂLªIdentifierÍl,Íl/£setÂÂ’Y°MemberExpressionÍl0Íl;LªIdentifierÍl0Íl8¨questionLªIdentifierÍl9Íl;¢idÂÂLªIdentifierÍl=ÍlC¦answerÂM®BlockStatementÍl_Íl‘S³ExpressionStatementÍlnÍl“T®CallExpressionÍlnÍl’Y°MemberExpressionÍlnÍl…Y°MemberExpressionÍlnÍl~U®ThisExpressionÍlnÍlrLªIdentifierÍlsÍl~«tempAnswersÂÂLªIdentifierÍlÍl…¦deleteÂÂ‘Y°MemberExpressionÍl†Íl‘LªIdentifierÍl†Íl¨questionLªIdentifierÍlÍl‘¢idÂÂÂN°MethodDefinitionÍl«ÍnÂÂLªIdentifierÍl«Íl»°checkAllAnswered¦methodO²FunctionExpressionÍl»ÍnÀÂÂÂM®BlockStatementÍl¾Ín“V«IfStatementÍlÉÍmW°BinaryExpressionÍlÍÍlèY°MemberExpressionÍlÍÍlâY°MemberExpressionÍlÍÍlÛU®ThisExpressionÍlÍÍlÑLªIdentifierÍlÒÍlÛ©questionsÂÂLªIdentifierÍlÜÍlâ¦lengthÂÂ£===R§LiteralÍlçÍlè ¡0M®BlockStatementÍlêÍm‘\¯ReturnStatementÍlùÍmR§LiteralÍm ÍmÂ¥falseÀÔrg—¤type¥start£end¥await¤left¥right¤body®ForOfStatementÍmÍmõÂ]³VariableDeclarationÍm Ím.‘^²VariableDeclaratorÍm&Ím.LªIdentifierÍm&Ím.¨questionÀ¥constY°MemberExpressionÍm2Ím@U®ThisExpressionÍm2Ím6LªIdentifierÍm7Ím@©questionsÂÂM®BlockStatementÍmBÍmõ’]³VariableDeclarationÍmQÍm‚‘^²VariableDeclaratorÍmWÍmLªIdentifierÍmWÍm]¦answerT®CallExpressionÍm`ÍmY°MemberExpressionÍm`ÍmtY°MemberExpressionÍm`ÍmpU®ThisExpressionÍm`ÍmdLªIdentifierÍmeÍmp«tempAnswersÂÂLªIdentifierÍmqÍmt£getÂÂ‘Y°MemberExpressionÍmuÍm€LªIdentifierÍmuÍm}¨questionLªIdentifierÍm~Ím€¢idÂÂÂ¥constV«IfStatementÍmÍmêW±LogicalExpressionÍm”Ím¹Q¯UnaryExpressionÍm”Ím›¡!ÃLªIdentifierÍm•Ím›¦answer¢||W°BinaryExpressionÍmŸÍm¹Y°MemberExpressionÍmŸÍm³T®CallExpressionÍmŸÍm¬Y°MemberExpressionÍmŸÍmªLªIdentifierÍmŸÍm¥¦answerLªIdentifierÍm¦Ímª¤trimÂÂÂLªIdentifierÍm­Ím³¦lengthÂÂ£===R§LiteralÍm¸Ím¹ ¡0M®BlockStatementÍm»Ímê‘\¯ReturnStatementÍmÎÍmÛR§LiteralÍmÕÍmÚÂ¥falseÀ\¯ReturnStatementÍmÿÍnR§LiteralÍnÍn
+Ã¤trueN°MethodDefinitionÍnÍxYÂÂLªIdentifierÍnÍn.°submitAllAnswers¦methodO²FunctionExpressionÍn.ÍxYÀÂÂÃM®BlockStatementÍn1ÍxYV«IfStatementÍn<Ín¸Q¯UnaryExpressionÍn@ÍnX¡!ÃT®CallExpressionÍnAÍnXY°MemberExpressionÍnAÍnVU®ThisExpressionÍnAÍnELªIdentifierÍnFÍnV°checkAllAnsweredÂÂÂM®BlockStatementÍnZÍn¸’S³ExpressionStatementÍniÍn˜T®CallExpressionÍniÍn—Y°MemberExpressionÍniÍnwU®ThisExpressionÍniÍnmLªIdentifierÍnnÍnw©showToastÂÂ‘T®CallExpressionÍnxÍn–LªIdentifierÍnxÍn©getString‘R§LiteralÍn‚Ín•±please_answer_all³'please_answer_all'ÂÂ\¯ReturnStatementÍn¦Ín­ÀÀS³ExpressionStatementÍnÕÍnîT®CallExpressionÍnÕÍníY°MemberExpressionÍnÕÍnëU®ThisExpressionÍnÕÍnÙLªIdentifierÍnÚÍnë±saveCurrentAnswerÂÂÂ]³VariableDeclarationÍnøÍo‘^²VariableDeclaratorÍnüÍoLªIdentifierÍnüÍo¬correctCountR§LiteralÍoÍo ¡0£let]³VariableDeclarationÍoÍo*‘^²VariableDeclaratorÍoÍo)LªIdentifierÍoÍo%ªwrongCountR§LiteralÍo(Ío) ¡0£let]³VariableDeclarationÍo4ÍoP‘^²VariableDeclaratorÍo:ÍoOLªIdentifierÍo:ÍoJ°wrongQuestionIds[¯ArrayExpressionÍoMÍoO¥constg®ForOfStatementÍomÍuPÂ]³VariableDeclarationÍorÍo€‘^²VariableDeclaratorÍoxÍo€LªIdentifierÍoxÍo€¨questionÀ¥constY°MemberExpressionÍo„Ío’U®ThisExpressionÍo„ÍoˆLªIdentifierÍo‰Ío’©questionsÂÂM®BlockStatementÍo”ÍuP”]³VariableDeclarationÍo£ÍoÚ‘^²VariableDeclaratorÍo©ÍoÙLªIdentifierÍo©Ío¯¦answerW±LogicalExpressionÍo²ÍoÙT®CallExpressionÍo²ÍoÓY°MemberExpressionÍo²ÍoÆY°MemberExpressionÍo²ÍoÂU®ThisExpressionÍo²Ío¶LªIdentifierÍo·ÍoÂ«tempAnswersÂÂLªIdentifierÍoÃÍoÆ£getÂÂ‘Y°MemberExpressionÍoÇÍoÒLªIdentifierÍoÇÍoÏ¨questionLªIdentifierÍoĞÍoÒ¢idÂÂÂ¢||R§LiteralÍo×ÍoÙ ¢''¥const]³VariableDeclarationÍoèÍp,‘^²VariableDeclaratorÍoîÍp+LªIdentifierÍoîÍo÷©isCorrectT®CallExpressionÍoúÍp+Y°MemberExpressionÍoúÍpLªIdentifierÍoúÍp­AnswerCheckerLªIdentifierÍpÍp«checkAnswerÂÂ“LªIdentifierÍpÍp¨questionLªIdentifierÍpÍp$¦answerR§LiteralÍp&Íp*¦æ­£ç¡®¨'æ­£ç¡®'Â¥const]³VariableDeclarationÍpOÍq9‘^²VariableDeclaratorÍpUÍq8LªIdentifierÍpUÍpa¬answerEntityb°ObjectExpressionÍpdÍq8•c¨PropertyÍpwÍpŠÂÂÂLªIdentifierÍpwÍp}¦userIdY°MemberExpressionÍpÍpŠU®ThisExpressionÍpÍpƒLªIdentifierÍp„ÍpŠ¦userIdÂÂ¤initc¨PropertyÍpÍp´ÂÂÂLªIdentifierÍpÍp§ªquestionIdY°MemberExpressionÍp©Íp´LªIdentifierÍp©Íp±¨questionLªIdentifierÍp²Íp´¢idÂÂ¤initc¨PropertyÍpÇÍpÙÂÂÂLªIdentifierÍpÇÍpÑªuserAnswerLªIdentifierÍpÓÍpÙ¦answer¤initc¨PropertyÍpìÍq ÂÂÂLªIdentifierÍpìÍpõ©isCorrectLªIdentifierÍp÷Íq ©isCorrect¤initc¨PropertyÍqÍq)ÂÂÂLªIdentifierÍqÍqªanswerTimeT®CallExpressionÍqÍq)Y°MemberExpressionÍqÍq'LªIdentifierÍqÍq#¤DateLªIdentifierÍq$Íq'£nowÂÂÂ¤init¥const_¬TryStatementÍqGÍuEM®BlockStatementÍqKÍt»’S³ExpressionStatementÍq^Íq—\¯AwaitExpressionÍq^Íq–T®CallExpressionÍqdÍq–Y°MemberExpressionÍqdÍqˆY°MemberExpressionÍqdÍq{U®ThisExpressionÍqdÍqhLªIdentifierÍqiÍq{²questionRepositoryÂÂLªIdentifierÍq|Íqˆ¬insertAnswerÂÂ‘LªIdentifierÍq‰Íq•¬answerEntityÂV«IfStatementÍq©Ít¬LªIdentifierÍq­Íq¶©isCorrectM®BlockStatementÍq¸ÍrÈ’S³ExpressionStatementÍqÏÍqŞQ°UpdateExpressionÍqÏÍqİ¢++ÂLªIdentifierÍqÏÍqÛ¬correctCountV«IfStatementÍr ÍrµY°MemberExpressionÍr$Ír5U®ThisExpressionÍr$Ír(LªIdentifierÍr)Ír5¬isReviewModeÂÂM®BlockStatementÍr7Írµ‘S³ExpressionStatementÍrRÍr\¯AwaitExpressionÍrRÍrT®CallExpressionÍrXÍrY°MemberExpressionÍrXÍrƒY°MemberExpressionÍrXÍroU®ThisExpressionÍrXÍr\LªIdentifierÍr]Íro²questionRepositoryÂÂLªIdentifierÍrpÍrƒ³removeWrongQuestionÂÂ’Y°MemberExpressionÍr„ÍrU®ThisExpressionÍr„ÍrˆLªIdentifierÍr‰Ír¦userIdÂÂY°MemberExpressionÍr‘ÍrœLªIdentifierÍr‘Ír™¨questionLªIdentifierÍršÍrœ¢idÂÂÂÀM®BlockStatementÍrßÍt¬”S³ExpressionStatementÍröÍsQ°UpdateExpressionÍröÍs¢++ÂLªIdentifierÍröÍs ªwrongCountS³ExpressionStatementÍsÍs<T®CallExpressionÍsÍs;Y°MemberExpressionÍsÍs.LªIdentifierÍsÍs)°wrongQuestionIdsLªIdentifierÍs*Ís.¤pushÂÂ‘Y°MemberExpressionÍs/Ís:LªIdentifierÍs/Ís7¨questionLªIdentifierÍs8Ís:¢idÂÂÂS³ExpressionStatementÍsqÍsÂ\¯AwaitExpressionÍsqÍsÁT®CallExpressionÍswÍsÁY°MemberExpressionÍswÍsŸY°MemberExpressionÍswÍsU®ThisExpressionÍswÍs{LªIdentifierÍs|Ís²questionRepositoryÂÂLªIdentifierÍsÍsŸ°addWrongQuestionÂÂ“Y°MemberExpressionÍs Ís«U®ThisExpressionÍs Ís¤LªIdentifierÍs¥Ís«¦userIdÂÂY°MemberExpressionÍs­Ís¸LªIdentifierÍs­Ísµ¨questionLªIdentifierÍs¶Ís¸¢idÂÂLªIdentifierÍsºÍsÀ¦answerÂV«IfStatementÍtÍt™Y°MemberExpressionÍtÍtU®ThisExpressionÍtÍtLªIdentifierÍtÍt¬isReviewModeÂÂM®BlockStatementÍtÍt™‘S³ExpressionStatementÍt5Ít‚\¯AwaitExpressionÍt5ÍtT®CallExpressionÍt;ÍtY°MemberExpressionÍt;ÍtgY°MemberExpressionÍt;ÍtRU®ThisExpressionÍt;Ít?LªIdentifierÍt@ÍtR²questionRepositoryÂÂLªIdentifierÍtSÍtg´incrementReviewCountÂÂ’Y°MemberExpressionÍthÍtsU®ThisExpressionÍthÍtlLªIdentifierÍtmÍts¦userIdÂÂY°MemberExpressionÍtuÍt€LªIdentifierÍtuÍt}¨questionLªIdentifierÍt~Ít€¢idÂÂÂÀa«CatchClauseÍtÉÍuELªIdentifierÍtĞÍtÕ¥errorM®BlockStatementÍt×ÍuE‘S³ExpressionStatementÍtêÍu6T®CallExpressionÍtêÍu5Y°MemberExpressionÍtêÍtıLªIdentifierÍtêÍtğ¦LoggerLªIdentifierÍtñÍtı¬errorWithTagÂÂ“R§LiteralÍtşÍu´PracticeActivityPage¶'PracticeActivityPage'R§LiteralÍuÍu-µFailed to save answer·'Failed to save answer'LªIdentifierÍu/Íu4¥errorÂÀS³ExpressionStatementÍuZÍusX´AssignmentExpressionÍuZÍur¡=Y°MemberExpressionÍuZÍukU®ThisExpressionÍuZÍu^LªIdentifierÍu_Íuk¬allSubmittedÂÂR§LiteralÍunÍurÃ¤trueS³ExpressionStatementÍu}Íu–T®CallExpressionÍu}Íu•Y°MemberExpressionÍu}Íu“Y°MemberExpressionÍu}ÍuU®ThisExpressionÍu}ÍuLªIdentifierÍu‚Íu«tempAnswersÂÂLªIdentifierÍuÍu“¥clearÂÂÂ]³VariableDeclarationÍu±ÍuÕ‘^²VariableDeclaratorÍu·ÍuÔLªIdentifierÍu·Íu¼¥totalY°MemberExpressionÍu¿ÍuÔY°MemberExpressionÍu¿ÍuÍU®ThisExpressionÍu¿ÍuÃLªIdentifierÍuÄÍuÍ©questionsÂÂLªIdentifierÍuÎÍuÔ¦lengthÂÂ¥const]³VariableDeclarationÍußÍv‘^²VariableDeclaratorÍuåÍvLªIdentifierÍuåÍuí¨accuracyVµConditionalExpressionÍuğÍvW°BinaryExpressionÍuğÍuùLªIdentifierÍuğÍuõ¥total¡>R§LiteralÍuøÍuù ¡0W°BinaryExpressionÍuıÍvW°BinaryExpressionÍuıÍvLªIdentifierÍuıÍv	¬correctCount¡*R§LiteralÍvÍvÌd¥100.0¡/LªIdentifierÍvÍv¥totalR§LiteralÍvÍv ¡0¥const]³VariableDeclarationÍv)Ívû‘^²VariableDeclaratorÍv/ÍvúLªIdentifierÍv/Ív6§messaged¯TemplateLiteralÍv9Ívú˜T®CallExpressionÍv<ÍvWLªIdentifierÍv<ÍvE©getString‘R§LiteralÍvFÍvV®total_answered°'total_answered'ÂLªIdentifierÍv\Íva¥totalT®CallExpressionÍvfÍv€LªIdentifierÍvfÍvo©getString‘R§LiteralÍvpÍv­correct_count¯'correct_count'ÂLªIdentifierÍv…Ív‘¬correctCountT®CallExpressionÍv–Ív®LªIdentifierÍv–ÍvŸ©getString‘R§LiteralÍv Ív­«wrong_count­'wrong_count'ÂLªIdentifierÍv³Ív½ªwrongCountT®CallExpressionÍvÂÍvßLªIdentifierÍvÂÍvË©getString‘R§LiteralÍvÌÍvŞ°accuracy_display²'accuracy_display'ÂT®CallExpressionÍväÍv÷Y°MemberExpressionÍväÍvôLªIdentifierÍväÍvì¨accuracyLªIdentifierÍvíÍvô§toFixedÂÂ‘R§LiteralÍvõÍvö¡1Â™e¯TemplateElementÍv:Ív:f  Âe¯TemplateElementÍvXÍvZf¢: ¢: Âe¯TemplateElementÍvbÍvdf¢\n¡
+Âe¯TemplateElementÍvÍvƒf¢: ¢: Âe¯TemplateElementÍv’Ív”f¢\n¡
+Âe¯TemplateElementÍv¯Ív±f¢: ¢: Âe¯TemplateElementÍv¾ÍvÀf¢\n¡
+Âe¯TemplateElementÍvàÍvâf¢: ¢: Âe¯TemplateElementÍvøÍvùf¡%¡%Ã¥constS³ExpressionStatementÍwÍxT®CallExpressionÍwÍxY°MemberExpressionÍwÍwLªIdentifierÍwÍw¬promptActionLªIdentifierÍwÍwªshowDialogÂÂ‘b°ObjectExpressionÍwÍx“c¨PropertyÍw,ÍwNÂÂÂLªIdentifierÍw,Íw1¥titleT®CallExpressionÍw3ÍwNLªIdentifierÍw3Íw<©getString‘R§LiteralÍw=ÍwM®grading_result°'grading_result'Â¤initc¨PropertyÍw]ÍwmÂÂÂLªIdentifierÍw]Íwd§messageLªIdentifierÍwfÍwm§message¤initc¨PropertyÍw|ÍxÂÂÂLªIdentifierÍw|Íwƒ§buttons[¯ArrayExpressionÍw…Íx‘b°ObjectExpressionÍw˜Íx’c¨PropertyÍw¯ÍwÉÂÂÂLªIdentifierÍw¯Íw³¤textT®CallExpressionÍwµÍwÉLªIdentifierÍwµÍw¾©getString‘R§LiteralÍw¿ÍwÈ§confirm©'confirm'Â¤initc¨PropertyÍwàÍwğÂÂÂLªIdentifierÍwàÍwå¥colorR§LiteralÍwçÍwğ§#007DFF©'#007DFF'¤init¤initÂS³ExpressionStatementÍx>ÍxRT®CallExpressionÍx>ÍxQY°MemberExpressionÍx>ÍxOU®ThisExpressionÍx>ÍxBLªIdentifierÍxCÍxO¬loadQuestionÂÂÂN°MethodDefinitionÍx_ÍxïÂÂLªIdentifierÍx_Íxo°previousQuestion¦methodO²FunctionExpressionÍxoÍxïÀÂÂÂM®BlockStatementÍxrÍxï‘V«IfStatementÍx}ÍxèW°BinaryExpressionÍxÍx–Y°MemberExpressionÍxÍx’U®ThisExpressionÍxÍx…LªIdentifierÍx†Íx’¬currentIndexÂÂ¡>R§LiteralÍx•Íx– ¡0M®BlockStatementÍx˜Íxè’S³ExpressionStatementÍx§Íx»Q°UpdateExpressionÍx§Íxº¢--ÂY°MemberExpressionÍx§Íx¸U®ThisExpressionÍx§Íx«LªIdentifierÍx¬Íx¸¬currentIndexÂÂS³ExpressionStatementÍxÉÍxİT®CallExpressionÍxÉÍxÜY°MemberExpressionÍxÉÍxÚU®ThisExpressionÍxÉÍxÍLªIdentifierÍxÎÍxÚ¬loadQuestionÂÂÂÀN°MethodDefinitionÍxõÍy™ÂÂLªIdentifierÍxõÍy¬nextQuestion¦methodO²FunctionExpressionÍyÍy™ÀÂÂÂM®BlockStatementÍyÍy™‘V«IfStatementÍyÍy’W°BinaryExpressionÍyÍy@Y°MemberExpressionÍyÍy$U®ThisExpressionÍyÍyLªIdentifierÍyÍy$¬currentIndexÂÂ¡<W°BinaryExpressionÍy'Íy@Y°MemberExpressionÍy'Íy<Y°MemberExpressionÍy'Íy5U®ThisExpressionÍy'Íy+LªIdentifierÍy,Íy5©questionsÂÂLªIdentifierÍy6Íy<¦lengthÂÂ¡-R§LiteralÍy?Íy@¡1M®BlockStatementÍyBÍy’’S³ExpressionStatementÍyQÍyeQ°UpdateExpressionÍyQÍyd¢++ÂY°MemberExpressionÍyQÍybU®ThisExpressionÍyQÍyULªIdentifierÍyVÍyb¬currentIndexÂÂS³ExpressionStatementÍysÍy‡T®CallExpressionÍysÍy†Y°MemberExpressionÍysÍy„U®ThisExpressionÍysÍywLªIdentifierÍyxÍy„¬loadQuestionÂÂÂÀN°MethodDefinitionÍyŸÍ|ÁÂÂLªIdentifierÍyŸÍy«¬loadQuestion¦methodO²FunctionExpressionÍy«Í|ÁÀÂÂÂM®BlockStatementÍy®Í|Á—V«IfStatementÍy¹Íz
+W°BinaryExpressionÍy½ÍyçY°MemberExpressionÍy½ÍyÎU®ThisExpressionÍy½ÍyÁLªIdentifierÍyÂÍyÎ¬currentIndexÂÂ¢>=Y°MemberExpressionÍyÒÍyçY°MemberExpressionÍyÒÍyàU®ThisExpressionÍyÒÍyÖLªIdentifierÍy×Íyà©questionsÂÂLªIdentifierÍyáÍyç¦lengthÂÂM®BlockStatementÍyéÍz
+‘\¯ReturnStatementÍyøÍyÿÀÀ]³VariableDeclarationÍzÍzG‘^²VariableDeclaratorÍzÍzFLªIdentifierÍzÍz"¨questionY°MemberExpressionÍz%ÍzFY°MemberExpressionÍz%Íz3U®ThisExpressionÍz%Íz)LªIdentifierÍz*Íz3©questionsÂÂY°MemberExpressionÍz4ÍzEU®ThisExpressionÍz4Íz8LªIdentifierÍz9ÍzE¬currentIndexÂÂÃÂ¥constS³ExpressionStatementÍzQÍziX´AssignmentExpressionÍzQÍzh¡=Y°MemberExpressionÍzQÍz`U®ThisExpressionÍzQÍzULªIdentifierÍzVÍz`ªshowResultÂÂR§LiteralÍzcÍzhÂ¥falseS³ExpressionStatementÍzsÍz‰X´AssignmentExpressionÍzsÍzˆ¡=Y°MemberExpressionÍzsÍzƒU®ThisExpressionÍzsÍzwLªIdentifierÍzxÍzƒ«explanationÂÂR§LiteralÍz†Ízˆ ¢'']³VariableDeclarationÍz­Ízâ‘^²VariableDeclaratorÍz³ÍzáLªIdentifierÍz³Íz½ªtempAnswerT®CallExpressionÍzÀÍzáY°MemberExpressionÍzÀÍzÔY°MemberExpressionÍzÀÍzĞU®ThisExpressionÍzÀÍzÄLªIdentifierÍzÅÍzĞ«tempAnswersÂÂLªIdentifierÍzÑÍzÔ£getÂÂ‘Y°MemberExpressionÍzÕÍzàLªIdentifierÍzÕÍzİ¨questionLªIdentifierÍzŞÍzà¢idÂÂÂ¥constV«IfStatementÍzìÍ|MLªIdentifierÍzğÍzúªtempAnswerM®BlockStatementÍzüÍ{è‘V«IfStatementÍ{Í{İW°BinaryExpressionÍ{Í{FY°MemberExpressionÍ{Í{LªIdentifierÍ{Í{¨questionLªIdentifierÍ{Í{¤typeÂÂ£===Y°MemberExpressionÍ{!Í{FLªIdentifierÍ{!Í{-¬AppConstantsLªIdentifierÍ{.Í{F¸QUESTION_TYPE_FILL_BLANKÂÂM®BlockStatementÍ{HÍ{‡‘S³ExpressionStatementÍ{[Í{xX´AssignmentExpressionÍ{[Í{w¡=Y°MemberExpressionÍ{[Í{jU®ThisExpressionÍ{[Í{_LªIdentifierÍ{`Í{jªfillAnswerÂÂLªIdentifierÍ{mÍ{wªtempAnswerM®BlockStatementÍ{šÍ{İ‘S³ExpressionStatementÍ{­Í{ÎX´AssignmentExpressionÍ{­Í{Í¡=Y°MemberExpressionÍ{­Í{ÀU®ThisExpressionÍ{­Í{±LªIdentifierÍ{²Í{À®selectedAnswerÂÂLªIdentifierÍ{ÃÍ{ÍªtempAnswerM®BlockStatementÍ{÷Í|M’S³ExpressionStatementÍ|Í|X´AssignmentExpressionÍ|Í|¡=Y°MemberExpressionÍ|Í|U®ThisExpressionÍ|Í|
+LªIdentifierÍ|Í|ªfillAnswerÂÂR§LiteralÍ|Í| ¢''S³ExpressionStatementÍ|)Í|BX´AssignmentExpressionÍ|)Í|A¡=Y°MemberExpressionÍ|)Í|<U®ThisExpressionÍ|)Í|-LªIdentifierÍ|.Í|<®selectedAnswerÂÂR§LiteralÍ|?Í|A ¢''V«IfStatementÍ|nÍ|ºY°MemberExpressionÍ|rÍ|ƒU®ThisExpressionÍ|rÍ|vLªIdentifierÍ|wÍ|ƒ¬allSubmittedÂÂM®BlockStatementÍ|…Í|º‘S³ExpressionStatementÍ|”Í|¯T®CallExpressionÍ|”Í|®Y°MemberExpressionÍ|”Í|¬U®ThisExpressionÍ|”Í|˜LªIdentifierÍ|™Í|¬³loadSubmittedAnswerÂÂÂÀN°MethodDefinitionÍ|ÇÍ}LÂÂLªIdentifierÍ|ÇÍ|Ğ©showToast¦methodO²FunctionExpressionÍ|ĞÍ}LÀÂÂÂ‘LªIdentifierÍ|ÑÍ|Ø§messageM®BlockStatementÍ|ÚÍ}L‘S³ExpressionStatementÍ|åÍ}ET®CallExpressionÍ|åÍ}DY°MemberExpressionÍ|åÍ|ûLªIdentifierÍ|åÍ|ñ¬promptActionLªIdentifierÍ|òÍ|û©showToastÂÂ‘b°ObjectExpressionÍ|üÍ}C’c¨PropertyÍ}Í}ÂÂÂLªIdentifierÍ}Í}§messageLªIdentifierÍ}Í}§message¤initc¨PropertyÍ}*Í}8ÂÂÂLªIdentifierÍ}*Í}2¨durationR§LiteralÍ}4Í}8ÍĞ¤2000¤initÂN°MethodDefinitionÍ}RÍ}ŠÂÂLªIdentifierÍ}RÍ}Z¨rerender¦methodO²FunctionExpressionÍ}ZÍ}ŠÀÂÂÂM®BlockStatementÍ}]Í}Š‘S³ExpressionStatementÍ}hÍ}ƒT®CallExpressionÍ}hÍ}‚Y°MemberExpressionÍ}hÍ}€U®ThisExpressionÍ}hÍ}lLªIdentifierÍ}mÍ}€³updateDirtyElementsÂÂÂN°MethodDefinitionÍ}Í}ÖÃÂLªIdentifierÍ}—Í}£¬getEntryName¦methodO²FunctionExpressionÍ}£Í}ÖÀÂÂÂM®BlockStatementÍ}¦Í}Ö‘\¯ReturnStatementÍ}±Í}ÏR§LiteralÍ}¸Í}Î´PracticeActivityPage¶"PracticeActivityPage"À™Ôrh•¤type¥start£endªspecifiers¦source±ImportDeclarationÌ€Ì¢‘Ôri”¤type¥start£end¥local¶ImportDefaultSpecifierÌ‡ÌLªIdentifierÌ‡Ì¦routerR§LiteralÌ“Ì¡¬@ohos.router®'@ohos.router'h±ImportDeclarationÌ¤ÌÒ‘i¶ImportDefaultSpecifierÌ«Ì·LªIdentifierÌ«Ì·¬promptActionR§LiteralÌ½ÌÑ²@ohos.promptAction´'@ohos.promptAction'h±ImportDeclarationÌÔÍ‘Ôrj•¤type¥start£end¨imported¥local¯ImportSpecifierÌİÌæLªIdentifierÌİÌæ©getStringLªIdentifierÌİÌæ©getStringR§LiteralÌîÍµ../utils/ResourceUtil·'../utils/ResourceUtil'h±ImportDeclarationÍÍA‘j¯ImportSpecifierÍÍLªIdentifierÍÍ¬AppConstantsLªIdentifierÍÍ¬AppConstantsR§LiteralÍ%Í@¹../constants/AppConstants»'../constants/AppConstants'h±ImportDeclarationÍCÍ‰‘j¯ImportSpecifierÍLÍ^LªIdentifierÍLÍ^²QuestionRepositoryLªIdentifierÍLÍ^²QuestionRepositoryR§LiteralÍfÍˆÙ ../repository/QuestionRepositoryÙ"'../repository/QuestionRepository'h±ImportDeclarationÍ‹ÍÉ‘j¯ImportSpecifierÍ”Í¢LªIdentifierÍ”Í¢®UserRepositoryLªIdentifierÍ”Í¢®UserRepositoryR§LiteralÍªÍÈ¼../repository/UserRepository¾'../repository/UserRepository'h±ImportDeclarationÍËÍ‘j¯ImportSpecifierÍÔÍáLªIdentifierÍÔÍá­AnswerCheckerLªIdentifierÍÔÍá­AnswerCheckerR§LiteralÍéÍ¶../utils/AnswerChecker¸'../utils/AnswerChecker'h±ImportDeclarationÍÍ-‘j¯ImportSpecifierÍÍLªIdentifierÍÍ¦LoggerLªIdentifierÍÍ¦LoggerR§LiteralÍÍ,¯../utils/Logger±'../utils/Logger'h±ImportDeclarationÍ/Íh‘j¯ImportSpecifierÍ8ÍFLªIdentifierÍ8ÍF®InputValidatorLªIdentifierÍ8ÍF®InputValidatorR§LiteralÍNÍg·../utils/InputValidator¹'../utils/InputValidator'

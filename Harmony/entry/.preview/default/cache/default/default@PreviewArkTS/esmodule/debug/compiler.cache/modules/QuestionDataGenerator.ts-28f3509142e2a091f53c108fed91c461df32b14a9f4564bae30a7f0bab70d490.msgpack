@@ -1,0 +1,1073 @@
+Ôr@Ÿªassertions¤code´customTransformCache¬dependencies¢id¤meta±moduleSideEffects¬originalCode±originalSourcemap«resolvedIds®sourcemapChainµsyntheticNamedExportsµtransformDependencies®transformFiles¨cacheAstÔrAÚ<fimport { AppConstants } from '../constants/AppConstants';
+import { Question } from '../model/Question';
+/**
+ * é¢˜ç›®æ•°æ®ç”Ÿæˆå™¨
+ */
+export class QuestionDataGenerator {
+    /**
+     * ç”ŸæˆæŒ‡å®šæ•°é‡çš„æ•°å­¦é¢˜ç›®
+     * @param grade å¹´çº§ (1-6)
+     * @param count é¢˜ç›®æ•°é‡
+     * @returns é¢˜ç›®åˆ—è¡¨
+     */
+    static generateMathQuestions(grade, count) {
+        const questions = [];
+        // å¦‚æœæ•°é‡ä¸º5ï¼Œç¡®ä¿è¦†ç›–æ‰€æœ‰é¢˜å‹ï¼ˆ2é“å•é€‰ã€2é“å¡«ç©ºã€1é“åˆ¤æ–­ï¼‰
+        if (count === 5) {
+            return this.generateMathQuestionsWithAllTypes(grade);
+        }
+        // å…¶ä»–æ•°é‡éšæœºç”Ÿæˆ
+        for (let i = 0; i < count; i++) {
+            const question = this.generateRandomMathQuestion(grade);
+            if (question !== null) {
+                questions.push(question);
+            }
+        }
+        return questions;
+    }
+    /**
+     * ç”Ÿæˆè¦†ç›–æ‰€æœ‰é¢˜å‹çš„æ•°å­¦é¢˜ç›®ï¼ˆ5é“é¢˜ï¼š2é“å•é€‰ã€2é“å¡«ç©ºã€1é“åˆ¤æ–­ï¼‰
+     */
+    static generateMathQuestionsWithAllTypes(grade) {
+        const questions = [];
+        // 2é“å•é€‰é¢˜
+        for (let i = 0; i < 2; i++) {
+            const question = new Question();
+            question.subjectId = AppConstants.SUBJECT_MATH;
+            question.grade = grade;
+            question.difficulty = Math.min(grade, AppConstants.MAX_DIFFICULTY);
+            const singleChoice = this.generateSingleChoiceQuestion(question, grade);
+            if (singleChoice !== null) {
+                questions.push(singleChoice);
+            }
+        }
+        // 2é“å¡«ç©ºé¢˜
+        for (let i = 0; i < 2; i++) {
+            const question = new Question();
+            question.subjectId = AppConstants.SUBJECT_MATH;
+            question.grade = grade;
+            question.difficulty = Math.min(grade, AppConstants.MAX_DIFFICULTY);
+            const fillBlank = this.generateFillBlankQuestion(question, grade);
+            if (fillBlank !== null) {
+                questions.push(fillBlank);
+            }
+        }
+        // 1é“åˆ¤æ–­é¢˜
+        const question = new Question();
+        question.subjectId = AppConstants.SUBJECT_MATH;
+        question.grade = grade;
+        question.difficulty = Math.min(grade, AppConstants.MAX_DIFFICULTY);
+        const judgment = this.generateJudgmentQuestion(question, grade);
+        if (judgment !== null) {
+            questions.push(judgment);
+        }
+        return questions;
+    }
+    /**
+     * ç”Ÿæˆéšæœºæ•°å­¦é¢˜ç›®
+     */
+    static generateRandomMathQuestion(grade) {
+        const question = new Question();
+        question.subjectId = AppConstants.SUBJECT_MATH;
+        question.grade = grade;
+        question.difficulty = Math.min(grade, AppConstants.MAX_DIFFICULTY);
+        // éšæœºé€‰æ‹©é¢˜ç›®ç±»å‹
+        const typeIndex = Math.floor(Math.random() * 3);
+        switch (typeIndex) {
+            case 0:
+                return this.generateSingleChoiceQuestion(question, grade);
+            case 1:
+                return this.generateFillBlankQuestion(question, grade);
+            case 2:
+                return this.generateJudgmentQuestion(question, grade);
+            default:
+                return this.generateSingleChoiceQuestion(question, grade);
+        }
+    }
+    /**
+     * ç”Ÿæˆé€‰æ‹©é¢˜
+     */
+    static generateSingleChoiceQuestion(question, grade) {
+        question.type = AppConstants.QUESTION_TYPE_SINGLE_CHOICE;
+        let num1, num2, result;
+        let operator;
+        const maxNum = this.getMaxNumber(grade);
+        // æ ¹æ®å¹´çº§ç”Ÿæˆä¸åŒéš¾åº¦çš„é¢˜ç›®
+        if (grade <= 2) {
+            // 1-2å¹´çº§ï¼šç®€å•åŠ å‡æ³•
+            num1 = Math.floor(Math.random() * maxNum) + 1;
+            num2 = Math.floor(Math.random() * maxNum) + 1;
+            if (Math.random() > 0.5) {
+                operator = '+';
+                result = num1 + num2;
+            }
+            else {
+                operator = '-';
+                if (num1 < num2) {
+                    const temp = num1;
+                    num1 = num2;
+                    num2 = temp;
+                }
+                result = num1 - num2;
+            }
+        }
+        else if (grade <= 4) {
+            // 3-4å¹´çº§ï¼šåŠ å‡ä¹˜é™¤
+            const op = Math.floor(Math.random() * 4);
+            num1 = Math.floor(Math.random() * maxNum) + 1;
+            num2 = Math.floor(Math.random() * maxNum) + 1;
+            switch (op) {
+                case 0:
+                    operator = '+';
+                    result = num1 + num2;
+                    break;
+                case 1:
+                    operator = '-';
+                    if (num1 < num2) {
+                        const temp = num1;
+                        num1 = num2;
+                        num2 = temp;
+                    }
+                    result = num1 - num2;
+                    break;
+                case 2:
+                    operator = 'Ã—';
+                    result = num1 * num2;
+                    break;
+                default:
+                    operator = 'Ã·';
+                    if (num2 === 0)
+                        num2 = 1;
+                    result = Math.floor(num1 / num2);
+                    num1 = result * num2; // ç¡®ä¿èƒ½æ•´é™¤
+                    break;
+            }
+        }
+        else {
+            // 5-6å¹´çº§ï¼šå¤æ‚è¿ç®—
+            const op = Math.floor(Math.random() * 4);
+            num1 = Math.floor(Math.random() * maxNum) + 10;
+            num2 = Math.floor(Math.random() * maxNum) + 1;
+            switch (op) {
+                case 0:
+                    operator = '+';
+                    result = num1 + num2;
+                    break;
+                case 1:
+                    operator = '-';
+                    if (num1 < num2) {
+                        const temp = num1;
+                        num1 = num2;
+                        num2 = temp;
+                    }
+                    result = num1 - num2;
+                    break;
+                case 2:
+                    operator = 'Ã—';
+                    result = num1 * num2;
+                    break;
+                default:
+                    operator = 'Ã·';
+                    if (num2 === 0)
+                        num2 = 1;
+                    const quotient = Math.floor(num1 / num2);
+                    num1 = quotient * num2;
+                    result = quotient;
+                    break;
+            }
+        }
+        question.content = `${num1} ${operator} ${num2} = ?`;
+        question.correctAnswer = String(result);
+        // ç”Ÿæˆé€‰é¡¹ï¼ˆåŒ…å«æ­£ç¡®ç­”æ¡ˆå’Œ3ä¸ªé”™è¯¯ç­”æ¡ˆï¼‰
+        const options = [question.correctAnswer];
+        // ç”Ÿæˆé”™è¯¯é€‰é¡¹
+        for (let i = 0; i < 3; i++) {
+            let wrongAnswer = result + Math.floor(Math.random() * 20) - 10;
+            if (wrongAnswer < 0)
+                wrongAnswer = Math.abs(wrongAnswer);
+            if (wrongAnswer === result)
+                wrongAnswer += Math.floor(Math.random() * 5) + 1;
+            options.push(String(wrongAnswer));
+        }
+        // æ‰“ä¹±é€‰é¡¹é¡ºåº
+        for (let i = options.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [options[i], options[j]] = [options[j], options[i]];
+        }
+        question.options = options;
+        question.explanation = `${num1} ${operator} ${num2} = ${result}`;
+        return question;
+    }
+    /**
+     * ç”Ÿæˆå¡«ç©ºé¢˜
+     */
+    static generateFillBlankQuestion(question, grade) {
+        question.type = AppConstants.QUESTION_TYPE_FILL_BLANK;
+        let num1, num2, result;
+        let operator;
+        const maxNum = this.getMaxNumber(grade);
+        if (grade <= 2) {
+            num1 = Math.floor(Math.random() * maxNum) + 1;
+            num2 = Math.floor(Math.random() * maxNum) + 1;
+            if (Math.random() > 0.5) {
+                operator = '+';
+                result = num1 + num2;
+                question.content = `${num1} + ${num2} = (    )`;
+            }
+            else {
+                operator = '-';
+                if (num1 < num2) {
+                    const temp = num1;
+                    num1 = num2;
+                    num2 = temp;
+                }
+                result = num1 - num2;
+                question.content = `${num1} - ${num2} = (    )`;
+            }
+        }
+        else if (grade <= 4) {
+            const op = Math.floor(Math.random() * 4);
+            num1 = Math.floor(Math.random() * maxNum) + 1;
+            num2 = Math.floor(Math.random() * maxNum) + 1;
+            switch (op) {
+                case 0:
+                    operator = '+';
+                    result = num1 + num2;
+                    question.content = `${num1} + ${num2} = (    )`;
+                    break;
+                case 1:
+                    operator = '-';
+                    if (num1 < num2) {
+                        const temp = num1;
+                        num1 = num2;
+                        num2 = temp;
+                    }
+                    result = num1 - num2;
+                    question.content = `${num1} - ${num2} = (    )`;
+                    break;
+                case 2:
+                    operator = 'Ã—';
+                    result = num1 * num2;
+                    question.content = `${num1} Ã— ${num2} = (    )`;
+                    break;
+                default:
+                    operator = 'Ã·';
+                    if (num2 === 0)
+                        num2 = 1;
+                    result = Math.floor(num1 / num2);
+                    num1 = result * num2; // ç¡®ä¿èƒ½æ•´é™¤
+                    question.content = `${num1} Ã· ${num2} = (    )`;
+                    break;
+            }
+        }
+        else {
+            const op = Math.floor(Math.random() * 4);
+            num1 = Math.floor(Math.random() * maxNum) + 10;
+            num2 = Math.floor(Math.random() * maxNum) + 1;
+            switch (op) {
+                case 0:
+                    operator = '+';
+                    result = num1 + num2;
+                    question.content = `${num1} + ${num2} = (    )`;
+                    break;
+                case 1:
+                    operator = '-';
+                    if (num1 < num2) {
+                        const temp = num1;
+                        num1 = num2;
+                        num2 = temp;
+                    }
+                    result = num1 - num2;
+                    question.content = `${num1} - ${num2} = (    )`;
+                    break;
+                case 2:
+                    operator = 'Ã—';
+                    result = num1 * num2;
+                    question.content = `${num1} Ã— ${num2} = (    )`;
+                    break;
+                default:
+                    operator = 'Ã·';
+                    if (num2 === 0)
+                        num2 = 1;
+                    const quotient = Math.floor(num1 / num2);
+                    num1 = quotient * num2;
+                    result = quotient;
+                    question.content = `${num1} Ã· ${num2} = (    )`;
+                    break;
+            }
+        }
+        question.correctAnswer = String(result);
+        question.explanation = `${num1} ${operator} ${num2} = ${result}`;
+        return question;
+    }
+    /**
+     * ç”Ÿæˆåˆ¤æ–­é¢˜
+     */
+    static generateJudgmentQuestion(question, grade) {
+        question.type = AppConstants.QUESTION_TYPE_JUDGMENT;
+        let num1, num2, result;
+        let operator;
+        const isCorrect = Math.random() > 0.5;
+        const maxNum = this.getMaxNumber(grade);
+        if (grade <= 2) {
+            num1 = Math.floor(Math.random() * maxNum) + 1;
+            num2 = Math.floor(Math.random() * maxNum) + 1;
+            if (Math.random() > 0.5) {
+                operator = '+';
+                result = num1 + num2;
+            }
+            else {
+                operator = '-';
+                if (num1 < num2) {
+                    const temp = num1;
+                    num1 = num2;
+                    num2 = temp;
+                }
+                result = num1 - num2;
+            }
+        }
+        else {
+            const op = Math.floor(Math.random() * 4);
+            num1 = Math.floor(Math.random() * maxNum) + 1;
+            num2 = Math.floor(Math.random() * maxNum) + 1;
+            switch (op) {
+                case 0:
+                    operator = '+';
+                    result = num1 + num2;
+                    break;
+                case 1:
+                    operator = '-';
+                    if (num1 < num2) {
+                        const temp = num1;
+                        num1 = num2;
+                        num2 = temp;
+                    }
+                    result = num1 - num2;
+                    break;
+                case 2:
+                    operator = 'Ã—';
+                    result = num1 * num2;
+                    break;
+                default:
+                    operator = 'Ã·';
+                    if (num2 === 0)
+                        num2 = 1;
+                    result = Math.floor(num1 / num2);
+                    num1 = result * num2; // ç¡®ä¿èƒ½æ•´é™¤
+                    break;
+            }
+        }
+        // å¦‚æœæ˜¯é”™è¯¯é¢˜ç›®ï¼Œç”Ÿæˆä¸€ä¸ªé”™è¯¯çš„ç­”æ¡ˆ
+        let displayedResult = result;
+        if (!isCorrect) {
+            displayedResult = result + Math.floor(Math.random() * 10) - 5;
+            if (displayedResult < 0)
+                displayedResult = Math.abs(displayedResult);
+            if (displayedResult === result)
+                displayedResult = result + 1;
+        }
+        question.content = `${num1} ${operator} ${num2} = ${displayedResult}`;
+        question.correctAnswer = isCorrect ? 'æ­£ç¡®' : 'é”™è¯¯';
+        question.explanation = isCorrect
+            ? `${num1} ${operator} ${num2} = ${result}ï¼Œæ‰€ä»¥è¿™ä¸ªç­‰å¼æ˜¯æ­£ç¡®çš„`
+            : `${num1} ${operator} ${num2} = ${result}ï¼Œä½†é¢˜ç›®ä¸­å†™çš„æ˜¯ ${displayedResult}ï¼Œæ‰€ä»¥è¿™ä¸ªç­‰å¼æ˜¯é”™è¯¯çš„`;
+        return question;
+    }
+    /**
+     * æ ¹æ®å¹´çº§è·å–æœ€å¤§æ•°å­—èŒƒå›´
+     */
+    static getMaxNumber(grade) {
+        switch (grade) {
+            case 1:
+                return 20;
+            case 2:
+                return 50;
+            case 3:
+                return 100;
+            case 4:
+                return 200;
+            case 5:
+                return 500;
+            case 6:
+                return 1000;
+            default:
+                return 100;
+        }
+    }
+    /**
+     * ä¸ºæ‰€æœ‰å¹´çº§ç”Ÿæˆæ•°å­¦é¢˜ç›®
+     * @param questionsPerGrade æ¯ä¸ªå¹´çº§çš„é¢˜ç›®æ•°é‡
+     * @returns æ‰€æœ‰é¢˜ç›®åˆ—è¡¨
+     */
+    static generateAllMathQuestions(questionsPerGrade) {
+        const allQuestions = [];
+        for (let grade = AppConstants.MIN_GRADE; grade <= AppConstants.MAX_GRADE; grade++) {
+            const questions = this.generateMathQuestions(grade, questionsPerGrade);
+            allQuestions.push(...questions);
+        }
+        return allQuestions;
+    }
+}
+//# sourceMappingURL=QuestionDataGenerator.js.mapÂ’Ù^D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\constants\AppConstants.tsÙVD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\model\Question.tsÙcD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\utils\QuestionDataGenerator.tsÔrBœªmoduleName±isLocalDependency¯isNodeEntryFile§pkgPath±belongProjectPath§pkgNameªpkgVersion±dependencyPkgInfo¯hostModulesInfo°belongModulePath§checker¬shouldEmitJs¥entryÃÂÙ7D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entryÙ1D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony¥entry¥1.0.0Ô  ‘ÔrC’²hostDependencyName®hostModuleName·./QuestionDataGenerator¥entryÙ7D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entryÔrDÜ ®¬getNodeCount²getIdentifierCount®getSymbolCount¬getTypeCountµgetInstantiationCountµgetRelationCacheSizes±isUndefinedSymbol±isArgumentsSymbol¯isUnknownSymbol¯getMergedSymbol®getDiagnostics´getGlobalDiagnostics´getRecursionIdentity¶getUnmatchedProperties¹getTypeOfSymbolAtLocation¯getTypeOfSymbolÙ(getSymbolsOfParameterPropertyDeclaration·getDeclaredTypeOfSymbol³getPropertiesOfType±getPropertyOfTypeÙ"getPrivateIdentifierPropertyOfType·getTypeOfPropertyOfType²getIndexInfoOfType³getIndexInfosOfTypeºgetIndexInfosOfIndexSymbol³getSignaturesOfType²getIndexTypeOfType¬getIndexType¬getBaseTypes¸getBaseTypeOfLiteralType®getWidenedType³getTypeFromTypeNode°getParameterTypeÙ$getParameterIdentifierNameAtPosition¸getPromisedTypeOfPromise®getAwaitedType¸getReturnTypeOfSignature®isNullableType¯getNullableType²getNonNullableType²getNonOptionalType°getTypeArguments®typeToTypeNodeÙ$indexInfoToIndexSignatureDeclaration¿signatureToSignatureDeclaration²symbolToEntityName²symbolToExpression¬symbolToNodeÙ!symbolToTypeParameterDeclarations¼symbolToParameterDeclarationºtypeParameterToDeclaration±getSymbolsInScope³getSymbolAtLocation·getIndexInfosAtLocationÙ!getShorthandAssignmentValueSymbolÙ#getExportSpecifierLocalTargetSymbol·getExportSymbolOfSymbol±getTypeAtLocationºgetTypeAtLocationForLinterÙ tryGetTypeAtLocationWithoutCheckºgetTypeOfAssignmentPatternÙ*getPropertySymbolOfDestructuringAssignment±signatureToString¬typeToString®symbolToStringµtypePredicateToString®writeSignature©writeType«writeSymbol²writeTypePredicate¼getAugmentedPropertiesOfType®getRootSymbols²getSymbolOfExpando±getContextualTypeÙ(getContextualTypeForObjectLiteralElementÙ#getContextualTypeForArgumentAtIndexÙ getContextualTypeForJsxAttribute²isContextSensitiveÙ!getTypeOfPropertyOfContextualTypeµgetFullyQualifiedNameÙ#tryGetResolvedSignatureWithoutCheck´getResolvedSignatureÙ/getResolvedSignatureForStringLiteralCompletionsÙ$getResolvedSignatureForSignatureHelpµgetExpandedParameters¹hasEffectiveRestParameterºcontainsArgumentsReference°getConstantValueµisValidPropertyAccessÙ#isValidPropertyAccessForCompletions»getSignatureFromDeclarationºisImplementationOfOverload¹getImmediateAliasedSymbol°getAliasedSymbol¯getEmitResolver²getExportsOfModule¿getExportsAndPropertiesOfModuleÙ forEachExportAndPropertyOfModule¯getSymbolWalker±getAmbientModules¹getJsxIntrinsicTagNamesAt³isOptionalParameter»tryGetMemberInModuleExportsÙ(tryGetMemberInModuleExportsAndProperties´tryFindAmbientModuleÙ(tryFindAmbientModuleWithoutAugmentations¯getApparentType¬getUnionType²isTypeAssignableTo³createAnonymousType¯createSignature¬createSymbol¯createIndexInfoªgetAnyType­getStringType­getNumberType±createPromiseType¯createArrayType¹getElementTypeOfArrayType®getBooleanType¬getFalseType«getTrueType«getVoidType°getUndefinedType«getNullType¯getESSymbolType¬getNeverType¯getOptionalType®getPromiseType²getPromiseLikeType´getAsyncIterableType²isSymbolAccessible«isArrayType«isTupleType¯isArrayLikeTypeÙ#isTypeInvalidDueToUnionDiscriminantºgetExactOptionalProperties¿getAllPossiblePropertiesOfTypesÙ(getSuggestedSymbolForNonexistentPropertyÙ#getSuggestionForNonexistentPropertyÙ,getSuggestedSymbolForNonexistentJSXAttributeÙ&getSuggestedSymbolForNonexistentSymbolÙ!getSuggestionForNonexistentSymbolÙ&getSuggestedSymbolForNonexistentModuleÙ!getSuggestionForNonexistentExportÙ+getSuggestedSymbolForNonexistentClassMember·getBaseConstraintOfType»getDefaultFromTypeParameter«resolveName¯getJsxNamespaceµgetJsxFragmentFactory¸getAccessibleSymbolChain»getTypePredicateOfSignature¹resolveExternalModuleName»resolveExternalModuleSymbol°tryGetThisTypeAt¹getTypeArgumentConstraint¸getSuggestionDiagnostics¸runWithCancellationTokenÙ3getLocalTypeParametersOfClassOrInterfaceOrTypeAlias´isDeclarationVisible´isPropertyAccessible»getTypeOnlyAliasDeclaration¿getMemberOverrideModifierStatusÙ!isTypeParameterPossiblyReferenced²getConstEnumRelate´clearConstEnumRelateµdeleteConstEnumRelateÙ$getTypeArgumentsForResolvedSignatureµgetCheckedSourceFilesÙ"collectHaveTsNoCheckFilesForLinter·clearQualifiedNameCache®isStaticRecord²isStaticSourceFileÔ  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  Ô  ÃÃÚ3eimport { AppConstants } from '../constants/AppConstants';
+import { Question } from '../model/Question';
+
+/**
+ * é¢˜ç›®æ•°æ®ç”Ÿæˆå™¨
+ */
+export class QuestionDataGenerator {
+  /**
+   * ç”ŸæˆæŒ‡å®šæ•°é‡çš„æ•°å­¦é¢˜ç›®
+   * @param grade å¹´çº§ (1-6)
+   * @param count é¢˜ç›®æ•°é‡
+   * @returns é¢˜ç›®åˆ—è¡¨
+   */
+  static generateMathQuestions(grade: number, count: number): Question[] {
+    const questions: Question[] = [];
+    
+    // å¦‚æœæ•°é‡ä¸º5ï¼Œç¡®ä¿è¦†ç›–æ‰€æœ‰é¢˜å‹ï¼ˆ2é“å•é€‰ã€2é“å¡«ç©ºã€1é“åˆ¤æ–­ï¼‰
+    if (count === 5) {
+      return this.generateMathQuestionsWithAllTypes(grade);
+    }
+    
+    // å…¶ä»–æ•°é‡éšæœºç”Ÿæˆ
+    for (let i = 0; i < count; i++) {
+      const question = this.generateRandomMathQuestion(grade);
+      if (question !== null) {
+        questions.push(question);
+      }
+    }
+    
+    return questions;
+  }
+
+  /**
+   * ç”Ÿæˆè¦†ç›–æ‰€æœ‰é¢˜å‹çš„æ•°å­¦é¢˜ç›®ï¼ˆ5é“é¢˜ï¼š2é“å•é€‰ã€2é“å¡«ç©ºã€1é“åˆ¤æ–­ï¼‰
+   */
+  private static generateMathQuestionsWithAllTypes(grade: number): Question[] {
+    const questions: Question[] = [];
+    
+    // 2é“å•é€‰é¢˜
+    for (let i = 0; i < 2; i++) {
+      const question = new Question();
+      question.subjectId = AppConstants.SUBJECT_MATH;
+      question.grade = grade;
+      question.difficulty = Math.min(grade, AppConstants.MAX_DIFFICULTY);
+      const singleChoice = this.generateSingleChoiceQuestion(question, grade);
+      if (singleChoice !== null) {
+        questions.push(singleChoice);
+      }
+    }
+    
+    // 2é“å¡«ç©ºé¢˜
+    for (let i = 0; i < 2; i++) {
+      const question = new Question();
+      question.subjectId = AppConstants.SUBJECT_MATH;
+      question.grade = grade;
+      question.difficulty = Math.min(grade, AppConstants.MAX_DIFFICULTY);
+      const fillBlank = this.generateFillBlankQuestion(question, grade);
+      if (fillBlank !== null) {
+        questions.push(fillBlank);
+      }
+    }
+    
+    // 1é“åˆ¤æ–­é¢˜
+    const question = new Question();
+    question.subjectId = AppConstants.SUBJECT_MATH;
+    question.grade = grade;
+    question.difficulty = Math.min(grade, AppConstants.MAX_DIFFICULTY);
+    const judgment = this.generateJudgmentQuestion(question, grade);
+    if (judgment !== null) {
+      questions.push(judgment);
+    }
+    
+    return questions;
+  }
+
+  /**
+   * ç”Ÿæˆéšæœºæ•°å­¦é¢˜ç›®
+   */
+  private static generateRandomMathQuestion(grade: number): Question | null {
+    const question = new Question();
+    question.subjectId = AppConstants.SUBJECT_MATH;
+    question.grade = grade;
+    question.difficulty = Math.min(grade, AppConstants.MAX_DIFFICULTY);
+    
+    // éšæœºé€‰æ‹©é¢˜ç›®ç±»å‹
+    const typeIndex = Math.floor(Math.random() * 3);
+    switch (typeIndex) {
+      case 0:
+        return this.generateSingleChoiceQuestion(question, grade);
+      case 1:
+        return this.generateFillBlankQuestion(question, grade);
+      case 2:
+        return this.generateJudgmentQuestion(question, grade);
+      default:
+        return this.generateSingleChoiceQuestion(question, grade);
+    }
+  }
+
+  /**
+   * ç”Ÿæˆé€‰æ‹©é¢˜
+   */
+  private static generateSingleChoiceQuestion(question: Question, grade: number): Question | null {
+    question.type = AppConstants.QUESTION_TYPE_SINGLE_CHOICE;
+    
+    let num1: number, num2: number, result: number;
+    let operator: string;
+    const maxNum = this.getMaxNumber(grade);
+    
+    // æ ¹æ®å¹´çº§ç”Ÿæˆä¸åŒéš¾åº¦çš„é¢˜ç›®
+    if (grade <= 2) {
+      // 1-2å¹´çº§ï¼šç®€å•åŠ å‡æ³•
+      num1 = Math.floor(Math.random() * maxNum) + 1;
+      num2 = Math.floor(Math.random() * maxNum) + 1;
+      if (Math.random() > 0.5) {
+        operator = '+';
+        result = num1 + num2;
+      } else {
+        operator = '-';
+        if (num1 < num2) {
+          const temp = num1;
+          num1 = num2;
+          num2 = temp;
+        }
+        result = num1 - num2;
+      }
+    } else if (grade <= 4) {
+      // 3-4å¹´çº§ï¼šåŠ å‡ä¹˜é™¤
+      const op = Math.floor(Math.random() * 4);
+      num1 = Math.floor(Math.random() * maxNum) + 1;
+      num2 = Math.floor(Math.random() * maxNum) + 1;
+      switch (op) {
+        case 0:
+          operator = '+';
+          result = num1 + num2;
+          break;
+        case 1:
+          operator = '-';
+          if (num1 < num2) {
+            const temp = num1;
+            num1 = num2;
+            num2 = temp;
+          }
+          result = num1 - num2;
+          break;
+        case 2:
+          operator = 'Ã—';
+          result = num1 * num2;
+          break;
+        default:
+          operator = 'Ã·';
+          if (num2 === 0) num2 = 1;
+          result = Math.floor(num1 / num2);
+          num1 = result * num2; // ç¡®ä¿èƒ½æ•´é™¤
+          break;
+      }
+    } else {
+      // 5-6å¹´çº§ï¼šå¤æ‚è¿ç®—
+      const op = Math.floor(Math.random() * 4);
+      num1 = Math.floor(Math.random() * maxNum) + 10;
+      num2 = Math.floor(Math.random() * maxNum) + 1;
+      switch (op) {
+        case 0:
+          operator = '+';
+          result = num1 + num2;
+          break;
+        case 1:
+          operator = '-';
+          if (num1 < num2) {
+            const temp = num1;
+            num1 = num2;
+            num2 = temp;
+          }
+          result = num1 - num2;
+          break;
+        case 2:
+          operator = 'Ã—';
+          result = num1 * num2;
+          break;
+        default:
+          operator = 'Ã·';
+          if (num2 === 0) num2 = 1;
+          const quotient = Math.floor(num1 / num2);
+          num1 = quotient * num2;
+          result = quotient;
+          break;
+      }
+    }
+    
+    question.content = `${num1} ${operator} ${num2} = ?`;
+    question.correctAnswer = String(result);
+    
+    // ç”Ÿæˆé€‰é¡¹ï¼ˆåŒ…å«æ­£ç¡®ç­”æ¡ˆå’Œ3ä¸ªé”™è¯¯ç­”æ¡ˆï¼‰
+    const options: string[] = [question.correctAnswer];
+    
+    // ç”Ÿæˆé”™è¯¯é€‰é¡¹
+    for (let i = 0; i < 3; i++) {
+      let wrongAnswer = result + Math.floor(Math.random() * 20) - 10;
+      if (wrongAnswer < 0) wrongAnswer = Math.abs(wrongAnswer);
+      if (wrongAnswer === result) wrongAnswer += Math.floor(Math.random() * 5) + 1;
+      options.push(String(wrongAnswer));
+    }
+    
+    // æ‰“ä¹±é€‰é¡¹é¡ºåº
+    for (let i = options.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [options[i], options[j]] = [options[j], options[i]];
+    }
+    question.options = options;
+    question.explanation = `${num1} ${operator} ${num2} = ${result}`;
+    
+    return question;
+  }
+
+  /**
+   * ç”Ÿæˆå¡«ç©ºé¢˜
+   */
+  private static generateFillBlankQuestion(question: Question, grade: number): Question | null {
+    question.type = AppConstants.QUESTION_TYPE_FILL_BLANK;
+    
+    let num1: number, num2: number, result: number;
+    let operator: string;
+    const maxNum = this.getMaxNumber(grade);
+    
+    if (grade <= 2) {
+      num1 = Math.floor(Math.random() * maxNum) + 1;
+      num2 = Math.floor(Math.random() * maxNum) + 1;
+      if (Math.random() > 0.5) {
+        operator = '+';
+        result = num1 + num2;
+        question.content = `${num1} + ${num2} = (    )`;
+      } else {
+        operator = '-';
+        if (num1 < num2) {
+          const temp = num1;
+          num1 = num2;
+          num2 = temp;
+        }
+        result = num1 - num2;
+        question.content = `${num1} - ${num2} = (    )`;
+      }
+    } else if (grade <= 4) {
+      const op = Math.floor(Math.random() * 4);
+      num1 = Math.floor(Math.random() * maxNum) + 1;
+      num2 = Math.floor(Math.random() * maxNum) + 1;
+      switch (op) {
+        case 0:
+          operator = '+';
+          result = num1 + num2;
+          question.content = `${num1} + ${num2} = (    )`;
+          break;
+        case 1:
+          operator = '-';
+          if (num1 < num2) {
+            const temp = num1;
+            num1 = num2;
+            num2 = temp;
+          }
+          result = num1 - num2;
+          question.content = `${num1} - ${num2} = (    )`;
+          break;
+        case 2:
+          operator = 'Ã—';
+          result = num1 * num2;
+          question.content = `${num1} Ã— ${num2} = (    )`;
+          break;
+        default:
+          operator = 'Ã·';
+          if (num2 === 0) num2 = 1;
+          result = Math.floor(num1 / num2);
+          num1 = result * num2; // ç¡®ä¿èƒ½æ•´é™¤
+          question.content = `${num1} Ã· ${num2} = (    )`;
+          break;
+      }
+    } else {
+      const op = Math.floor(Math.random() * 4);
+      num1 = Math.floor(Math.random() * maxNum) + 10;
+      num2 = Math.floor(Math.random() * maxNum) + 1;
+      switch (op) {
+        case 0:
+          operator = '+';
+          result = num1 + num2;
+          question.content = `${num1} + ${num2} = (    )`;
+          break;
+        case 1:
+          operator = '-';
+          if (num1 < num2) {
+            const temp = num1;
+            num1 = num2;
+            num2 = temp;
+          }
+          result = num1 - num2;
+          question.content = `${num1} - ${num2} = (    )`;
+          break;
+        case 2:
+          operator = 'Ã—';
+          result = num1 * num2;
+          question.content = `${num1} Ã— ${num2} = (    )`;
+          break;
+        default:
+          operator = 'Ã·';
+          if (num2 === 0) num2 = 1;
+          const quotient = Math.floor(num1 / num2);
+          num1 = quotient * num2;
+          result = quotient;
+          question.content = `${num1} Ã· ${num2} = (    )`;
+          break;
+      }
+    }
+    
+    question.correctAnswer = String(result);
+    question.explanation = `${num1} ${operator} ${num2} = ${result}`;
+    
+    return question;
+  }
+
+  /**
+   * ç”Ÿæˆåˆ¤æ–­é¢˜
+   */
+  private static generateJudgmentQuestion(question: Question, grade: number): Question | null {
+    question.type = AppConstants.QUESTION_TYPE_JUDGMENT;
+    
+    let num1: number, num2: number, result: number;
+    let operator: string;
+    const isCorrect = Math.random() > 0.5;
+    const maxNum = this.getMaxNumber(grade);
+    
+    if (grade <= 2) {
+      num1 = Math.floor(Math.random() * maxNum) + 1;
+      num2 = Math.floor(Math.random() * maxNum) + 1;
+      if (Math.random() > 0.5) {
+        operator = '+';
+        result = num1 + num2;
+      } else {
+        operator = '-';
+        if (num1 < num2) {
+          const temp = num1;
+          num1 = num2;
+          num2 = temp;
+        }
+        result = num1 - num2;
+      }
+    } else {
+      const op = Math.floor(Math.random() * 4);
+      num1 = Math.floor(Math.random() * maxNum) + 1;
+      num2 = Math.floor(Math.random() * maxNum) + 1;
+      switch (op) {
+        case 0:
+          operator = '+';
+          result = num1 + num2;
+          break;
+        case 1:
+          operator = '-';
+          if (num1 < num2) {
+            const temp = num1;
+            num1 = num2;
+            num2 = temp;
+          }
+          result = num1 - num2;
+          break;
+        case 2:
+          operator = 'Ã—';
+          result = num1 * num2;
+          break;
+        default:
+          operator = 'Ã·';
+          if (num2 === 0) num2 = 1;
+          result = Math.floor(num1 / num2);
+          num1 = result * num2; // ç¡®ä¿èƒ½æ•´é™¤
+          break;
+      }
+    }
+    
+    // å¦‚æœæ˜¯é”™è¯¯é¢˜ç›®ï¼Œç”Ÿæˆä¸€ä¸ªé”™è¯¯çš„ç­”æ¡ˆ
+    let displayedResult = result;
+    if (!isCorrect) {
+      displayedResult = result + Math.floor(Math.random() * 10) - 5;
+      if (displayedResult < 0) displayedResult = Math.abs(displayedResult);
+      if (displayedResult === result) displayedResult = result + 1;
+    }
+    
+    question.content = `${num1} ${operator} ${num2} = ${displayedResult}`;
+    question.correctAnswer = isCorrect ? 'æ­£ç¡®' : 'é”™è¯¯';
+    question.explanation = isCorrect 
+      ? `${num1} ${operator} ${num2} = ${result}ï¼Œæ‰€ä»¥è¿™ä¸ªç­‰å¼æ˜¯æ­£ç¡®çš„`
+      : `${num1} ${operator} ${num2} = ${result}ï¼Œä½†é¢˜ç›®ä¸­å†™çš„æ˜¯ ${displayedResult}ï¼Œæ‰€ä»¥è¿™ä¸ªç­‰å¼æ˜¯é”™è¯¯çš„`;
+    
+    return question;
+  }
+
+  /**
+   * æ ¹æ®å¹´çº§è·å–æœ€å¤§æ•°å­—èŒƒå›´
+   */
+  private static getMaxNumber(grade: number): number {
+    switch (grade) {
+      case 1:
+        return 20;
+      case 2:
+        return 50;
+      case 3:
+        return 100;
+      case 4:
+        return 200;
+      case 5:
+        return 500;
+      case 6:
+        return 1000;
+      default:
+        return 100;
+    }
+  }
+
+  /**
+   * ä¸ºæ‰€æœ‰å¹´çº§ç”Ÿæˆæ•°å­¦é¢˜ç›®
+   * @param questionsPerGrade æ¯ä¸ªå¹´çº§çš„é¢˜ç›®æ•°é‡
+   * @returns æ‰€æœ‰é¢˜ç›®åˆ—è¡¨
+   */
+  static generateAllMathQuestions(questionsPerGrade: number): Question[] {
+    const allQuestions: Question[] = [];
+    
+    for (let grade = AppConstants.MIN_GRADE; grade <= AppConstants.MAX_GRADE; grade++) {
+      const questions = this.generateMathQuestions(grade, questionsPerGrade);
+      allQuestions.push(...questions);
+    }
+    
+    return allQuestions;
+  }
+}
+ÀÔrE’±../model/Question¹../constants/AppConstantsÔrF—ªassertions¨external¢id¤meta±moduleSideEffectsªresolvedByµsyntheticNamedExportsAÂÙVD:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\model\Question.tsAÃªoh-resolveÂFAÂÙ^D:\9-Tools\AndroidWorkspace\GoodGoodStudy\Harmony\entry\src\main\ets\constants\AppConstants.tsAÃªoh-resolveÂ“ÔrG–§version¤fileªsourceRoot§sources¥names¨mappings¸QuestionDataGenerator.js ‘¸QuestionDataGenerator.tsÜš˜”    ”  ”	  	”  ”  ”  ”8  8”9  9˜”   ” ”	 	” ” ” ”, ,”- -‘”   ‘” ””   ” ” ”" "‘” ‘” ˜” ”
+ ” 	”  ”! ”& ,”( .”- ;–” ” 
+” ” "” $” %’” ”* &–” ” ” ” ” ” ™” ” ” ” ”9 3”: 4”? 9”Ì@ :”ÌA ;‘”	 ’” ” ” ” 	” ” ” ” ” ” ” ”! ”# ”$  ”& "”( $›” ” ” ” ”! ”" ”< 6”= 7”ÌB <”ÌC =”ÌD >–” ” 
+” ” ”! ”# ˜” ” ” ” ” ”' ”(  ”) !‘” ‘”	 ”” ” ” ” ’” ” ‘”  ‘” "–” #
+”
+ #” #”, #2”- #3”2 #Ì@–” $” $
+” $” $"” $$” $%’” &” &” '” '	” '” '” '” '” '” '” '” '” '”  '”" '”$ ' ˜” (” (” (” (”! (”) (#”+ (%”, (&™” )” )” )” )”! )”- )'”. )(”: )4”; )5—” *” *” *” *” *”" *”# *Ü ” +” +” +” +”" +”& + ”' +!”* +$”+ +%”0 +*”2 +,”> +8”? +9”ÌM +ÌG”ÌN +ÌH”ÌO +ÌI” ,” ,” ,”! ,”% ,”& , ”ÌB ,<”ÌC ,=”ÌK ,ÌE”ÌM ,ÌG”ÌR ,ÌL”ÌS ,ÌM”ÌT ,ÌN–” -” -
+” -”! -”% -”' -!˜” .” .” .” .” .”+ .#”, .$”- .%‘” /‘”	 0’” 2” 2” 3” 3	” 3” 3” 3” 3” 3” 3” 3” 3” 3”  3”" 3”$ 3 ˜” 4” 4” 4” 4”! 4”) 4#”+ 4%”, 4&™” 5” 5” 5” 5”! 5”- 5'”. 5(”: 54”; 55—” 6” 6” 6” 6” 6”" 6”# 6Ü ” 7” 7” 7” 7”" 7”& 7 ”' 7!”* 7$”+ 7%”0 7*”2 7,”> 78”? 79”ÌM 7ÌG”ÌN 7ÌH”ÌO 7ÌI” 8” 8” 8” 8”" 8”# 8”< 86”= 87”ÌE 8?”ÌG 8ÌA”ÌL 8ÌF”ÌM 8ÌG”ÌN 8ÌH–” 9” 9
+” 9” 9”" 9”$ 9˜” :” :” :” :” :”( : ”) :!”* :"‘” ;‘”	 <’” >” >˜” ?” ?
+” ?” ?” ?”% ?!”' ?#”( ?$™” Ì@” Ì@” Ì@” Ì@” Ì@”) Ì@%”* Ì@&”6 Ì@2”7 Ì@3—” ÌA” ÌA” ÌA” ÌA” ÌA” ÌA” ÌAÜ ” ÌB” ÌB” ÌB” ÌB” ÌB”" ÌB”# ÌB”& ÌB"”' ÌB#”, ÌB(”. ÌB*”: ÌB6”; ÌB7”ÌI ÌBÌE”ÌJ ÌBÌF”ÌK ÌBÌG” ÌC” ÌC
+” ÌC” ÌC” ÌC” ÌC”6 ÌC2”7 ÌC3”? ÌC;”ÌA ÌC=”ÌF ÌCÌB”ÌG ÌCÌC”ÌH ÌCÌD–” ÌD” ÌD” ÌD” ÌD” ÌD” ÌD˜” ÌE” ÌE” ÌE” ÌE” ÌE”# ÌE”$ ÌE”% ÌE‘”	 ÌF”” ÌH” ÌH” ÌH” ÌH’” ÌI” ÌI‘” ÌK‘” ÌM–” ÌN
+”
+ ÌN” ÌN”% ÌN+”& ÌN,”+ ÌN9˜” ÌO” ÌO
+” ÌO” ÌO” ÌO”% ÌO!”' ÌO#”( ÌO$™” ÌP” ÌP” ÌP” ÌP” ÌP”) ÌP%”* ÌP&”6 ÌP2”7 ÌP3—” ÌQ” ÌQ” ÌQ” ÌQ” ÌQ” ÌQ” ÌQÜ ” ÌR” ÌR” ÌR” ÌR” ÌR”" ÌR”# ÌR”& ÌR"”' ÌR#”, ÌR(”. ÌR*”: ÌR6”; ÌR7”ÌI ÌRÌE”ÌJ ÌRÌF”ÌK ÌRÌG’” ÌT” ÌTÜ ” ÌU” ÌU
+” ÌU” ÌU” ÌU” ÌU”$ ÌU ”% ÌU!”) ÌU%”* ÌU&”0 ÌU,”2 ÌU.”5 ÌU1”6 ÌU2”7 ÌU3”8 ÌU4”” ÌV” ÌV” ÌV” ÌV“” ÌW” ÌW” ÌW›” ÌX” ÌX” ÌX” ÌX”8 ÌX0”9 ÌX1”ÌA ÌX9”ÌC ÌX;”ÌH ÌXÌ@”ÌI ÌXÌA”ÌJ ÌXÌB“” ÌY” ÌY” ÌY›” ÌZ” ÌZ” ÌZ” ÌZ”5 ÌZ-”6 ÌZ.”> ÌZ6”Ì@ ÌZ8”ÌE ÌZ=”ÌF ÌZ>”ÌG ÌZ?“” Ì[” Ì[” Ì[›” Ì\” Ì\” Ì\” Ì\”4 Ì\,”5 Ì\-”= Ì\5”? Ì\7”ÌD Ì\<”ÌE Ì\=”ÌF Ì\>‘” Ì]›” Ì^” Ì^” Ì^” Ì^”8 Ì^0”9 Ì^1”ÌA Ì^9”ÌC Ì^;”ÌH Ì^Ì@”ÌI Ì^ÌA”ÌJ Ì^ÌB‘”	 Ì_’” Ì`” Ì`‘” Ìb‘” Ìd˜” Ìe
+”
+ Ìe” Ìe”' Ìe-”( Ìe.”0 ÌeÌ@”2 ÌeÌB”7 ÌeÌO™” Ìf” Ìf” Ìf” Ìf” Ìf”$ Ìf ”% Ìf!”Ì@ Ìf<”ÌA Ìf=˜” Ìh” Ìh” Ìh” Ìh” Ìh"” Ìh$” Ìh2” Ìh3”” Ìi” Ìi” Ìi” Ìi›” Ìj” Ìj
+” Ìj” Ìj” Ìj” Ìj”( Ìj$”) Ìj%”. Ìj*”/ Ìj+”0 Ìj,’” Ìl” Ìl–” Ìm” Ìm” Ìm” Ìm” Ìm” Ìm’” Ìn” ÌnÜ ” Ìo” Ìo
+” Ìo” Ìo” Ìo” Ìo” Ìo”" Ìo”# Ìo”) Ìo#”+ Ìo%”. Ìo(”4 Ìo.”5 Ìo/”8 Ìo2”9 Ìo3”: Ìo4Ü ” Ìp” Ìp
+” Ìp” Ìp” Ìp” Ìp” Ìp”" Ìp”# Ìp”) Ìp#”+ Ìp%”. Ìp(”4 Ìp.”5 Ìp/”8 Ìp2”9 Ìp3”: Ìp4™” Ìq” Ìq
+” Ìq” Ìq” Ìq” Ìq”  Ìq”# Ìq”% Ìq•” Ìr” Ìr” Ìr” Ìr” Ìr—” Ìs” Ìs” Ìs” Ìs”  Ìs”$ Ìs”% Ìs‘” Ìt‘” Ìt•” Ìu” Ìu” Ìu” Ìu” Ìu–” Ìv” Ìv” Ìv” Ìv” Ìv”! Ìv–” Ìw
+” Ìw” Ìw”! Ìw”% Ìw”& Ìw•” Ìx
+” Ìx” Ìx” Ìx”  Ìx•” Ìy
+” Ìy” Ìy” Ìy”  Ìy‘” Ìz	—” Ì{” Ì{” Ì{” Ì{”  Ì{”$ Ì{”% Ì{‘” Ì|‘”	 Ì}–” Ì}” Ì}” Ì}” Ì}” Ì}” Ì}’” Ì~” Ì~Ü ” Ì” Ì” Ì” Ì” Ì” Ì”! Ì”" Ì”& Ì ”' Ì!”- Ì'”/ Ì)”2 Ì,”3 Ì-”4 Ì.”5 Ì/Ü ” Ì€” Ì€
+” Ì€” Ì€” Ì€” Ì€” Ì€”" Ì€”# Ì€”) Ì€#”+ Ì€%”. Ì€(”4 Ì€.”5 Ì€/”8 Ì€2”9 Ì€3”: Ì€4Ü ” Ì” Ì
+” Ì” Ì” Ì” Ì” Ì”" Ì”# Ì”) Ì#”+ Ì%”. Ì(”4 Ì.”5 Ì/”8 Ì2”9 Ì3”: Ì4”” Ì‚” Ì‚” Ì‚” Ì‚“” Ìƒ” Ìƒ” Ìƒ•” Ì„
+” Ì„” Ì„”" Ì„”# Ì„—” Ì…
+” Ì…” Ì…”! Ì…”$ Ì…”( Ì…”) Ì…’” Ì†
+” Ì†“” Ì‡” Ì‡” Ì‡•” Ìˆ
+” Ìˆ” Ìˆ”" Ìˆ”# Ìˆ–” Ì‰
+” Ì‰” Ì‰” Ì‰”# Ì‰”% Ì‰–” ÌŠ” ÌŠ”" ÌŠ”% ÌŠ”) ÌŠ”* ÌŠ•” Ì‹” Ì‹” Ì‹”# Ì‹”$ Ì‹•” ÌŒ” ÌŒ” ÌŒ”# ÌŒ”$ ÌŒ‘” Ì—” Ì
+” Ì” Ì”! Ì”$ Ì”( Ì”) Ì’” Ì
+” Ì“” Ì” Ì” Ì•” Ì‘
+” Ì‘” Ì‘”" Ì‘”# Ì‘—” Ì’
+” Ì’” Ì’”! Ì’”$ Ì’”( Ì’”) Ì’’” Ì“
+” Ì“‘” Ì”•” Ì•
+” Ì•” Ì•”" Ì•”# Ì••” Ì–
+” Ì–” Ì–”! Ì–”" Ì–•” Ì–” Ì–” Ì–!”  Ì–"”! Ì–#œ” Ì—
+” Ì—” Ì—”! Ì—”" Ì—”' Ì—”( Ì—”, Ì—"”/ Ì—%”3 Ì—)”4 Ì—*”5 Ì—+™” Ì˜
+” Ì˜” Ì˜”! Ì˜”$ Ì˜”( Ì˜”) Ì˜”* Ì˜ ”2 Ì˜(’” Ì™
+” Ì™‘” Ìš‘”	 Ì›‘” Ì›’” Ìœ” ÌœÜ ” Ì” Ì” Ì” Ì” Ì” Ì”! Ì”" Ì”& Ì ”' Ì!”- Ì'”/ Ì)”2 Ì,”3 Ì-”4 Ì.”5 Ì/Ü ” Ì” Ì
+” Ì” Ì” Ì” Ì” Ì”" Ì”# Ì”) Ì#”+ Ì%”. Ì(”4 Ì.”5 Ì/”8 Ì2”: Ì4”; Ì5Ü ” ÌŸ” ÌŸ
+” ÌŸ” ÌŸ” ÌŸ” ÌŸ” ÌŸ”" ÌŸ”# ÌŸ”) ÌŸ#”+ ÌŸ%”. ÌŸ(”4 ÌŸ.”5 ÌŸ/”8 ÌŸ2”9 ÌŸ3”: ÌŸ4”” Ì ” Ì ” Ì ” Ì “” Ì¡” Ì¡” Ì¡•” Ì¢
+” Ì¢” Ì¢”" Ì¢”# Ì¢—” Ì£
+” Ì£” Ì£”! Ì£”$ Ì£”( Ì£”) Ì£’” Ì¤
+” Ì¤“” Ì¥” Ì¥” Ì¥•” Ì¦
+” Ì¦” Ì¦”" Ì¦”# Ì¦–” Ì§
+” Ì§” Ì§” Ì§”# Ì§”% Ì§–” Ì¨” Ì¨”" Ì¨”% Ì¨”) Ì¨”* Ì¨•” Ì©” Ì©” Ì©”# Ì©”$ Ì©•” Ìª” Ìª” Ìª”# Ìª”$ Ìª‘” Ì«—” Ì¬
+” Ì¬” Ì¬”! Ì¬”$ Ì¬”( Ì¬”) Ì¬’” Ì­
+” Ì­“” Ì®” Ì®” Ì®•” Ì¯
+” Ì¯” Ì¯”" Ì¯”# Ì¯—” Ì°
+” Ì°” Ì°”! Ì°”$ Ì°”( Ì°”) Ì°’” Ì±
+” Ì±‘” Ì²•” Ì³
+” Ì³” Ì³”" Ì³”# Ì³•” Ì´
+” Ì´” Ì´”! Ì´”" Ì´•” Ì´” Ì´” Ì´!”  Ì´"”! Ì´#” Ìµ
+” Ìµ”" Ìµ”% Ìµ”) Ìµ”* Ìµ ”/ Ìµ%”0 Ìµ&”4 Ìµ*”7 Ìµ-”; Ìµ1”< Ìµ2”= Ìµ3—” Ì¶
+” Ì¶” Ì¶”# Ì¶”& Ì¶”* Ì¶ ”+ Ì¶!•” Ì·
+” Ì·” Ì·”% Ì·”& Ì·’” Ì¸
+” Ì¸‘” Ì¹‘”	 Ìº” Ì¼” Ì¼” Ì¼” Ì¼” Ì¼” Ì¼”" Ì¼”& Ì¼"”. Ì¼*”2 Ì¼.”6 Ì¼2”< Ì¼8”= Ì¼9š” Ì½” Ì½” Ì½” Ì½”! Ì½”' Ì½#”( Ì½$”. Ì½*”/ Ì½+”0 Ì½,’” Ì¿” Ì¿š” ÌÀ” ÌÀ
+” ÌÀ” ÌÀ” ÌÀ”! ÌÀ'”" ÌÀ(”/ ÌÀ5”0 ÌÀ6”1 ÌÀ7’” ÌÂ” ÌÂ” ÌÃ” ÌÃ	” ÌÃ” ÌÃ” ÌÃ” ÌÃ” ÌÃ” ÌÃ” ÌÃ” ÌÃ” ÌÃ”  ÌÃ”" ÌÃ”$ ÌÃ Ü ” ÌÄ” ÌÄ
+” ÌÄ” ÌÄ”$ ÌÄ”' ÌÄ!”+ ÌÄ%”, ÌÄ&”1 ÌÄ+”2 ÌÄ,”6 ÌÄ0”7 ÌÄ1”= ÌÄ7”? ÌÄ9”ÌB ÌÄ<”ÌD ÌÄ>”ÌE ÌÄ?”ÌH ÌÄÌB”ÌJ ÌÄÌD”ÌK ÌÄÌE•” ÌÅ” ÌÅ
+” ÌÅ” ÌÅ” ÌÅš” ÌÅ” ÌÅ&” ÌÅ)”" ÌÅ-”# ÌÅ.”& ÌÅ1”' ÌÅ2”2 ÌÅ=”3 ÌÅ>”4 ÌÅ?•” ÌÆ” ÌÆ
+” ÌÆ”  ÌÆ”& ÌÆ Ü ” ÌÆ"” ÌÆ-” ÌÆ1”# ÌÆ5”$ ÌÆ6”) ÌÆ;”* ÌÆ<”. ÌÆÌ@”/ ÌÆÌA”5 ÌÆÌG”7 ÌÆÌI”: ÌÆÌL”; ÌÆÌM”< ÌÆÌN”? ÌÆÌQ”Ì@ ÌÆÌR”ÌA ÌÆÌS›” ÌÇ” ÌÇ” ÌÇ” ÌÇ” ÌÇ” ÌÇ”  ÌÇ”+ ÌÇ%”, ÌÇ&”- ÌÇ'”. ÌÇ(‘”	 ÌÈ’” ÌÊ” ÌÊÜ ” ÌË” ÌË	” ÌË” ÌË” ÌË” ÌË” ÌË”# ÌË”& ÌË"”' ÌË#”) ÌË%”* ÌË&”- ÌË)”. ÌË*”0 ÌË,”1 ÌË-”3 ÌË/”5 ÌË1Ü ” ÌÌ” ÌÌ” ÌÌ” ÌÌ” ÌÌ” ÌÌ”  ÌÌ”! ÌÌ”% ÌÌ”& ÌÌ ”, ÌÌ&”. ÌÌ(”1 ÌÌ+”2 ÌÌ,”3 ÌÌ-”6 ÌÌ0”7 ÌÌ1”8 ÌÌ2”9 ÌÌ3”: ÌÌ4Ü ” ÌÍ” ÌÍ” ÌÍ” ÌÍ” ÌÍ” ÌÍ” ÌÍ”  ÌÍ”! ÌÍ”" ÌÍ”# ÌÍ”$ ÌÍ”' ÌÍ!”( ÌÍ"”/ ÌÍ)”0 ÌÍ*”1 ÌÍ+”2 ÌÍ,”4 ÌÍ.”; ÌÍ5”< ÌÍ6”= ÌÍ7”> ÌÍ8”? ÌÍ9”Ì@ ÌÍ:‘”	 ÌÎ—” ÌÏ” ÌÏ” ÌÏ” ÌÏ” ÌÏ”" ÌÏ”# ÌÏŸ” ÌĞ” ÌĞ” ÌĞ” ÌĞ” ÌĞ”" ÌĞ”& ÌĞ"”* ÌĞ&”2 ÌĞ.”6 ÌĞ2”: ÌĞ6”Ì@ ÌĞ<”ÌF ÌĞÌB”ÌH ÌĞÌD”ÌI ÌĞÌE”” ÌÒ” ÌÒ” ÌÒ” ÌÒ’” ÌÓ” ÌÓ‘” ÌÕ‘” Ì×˜” ÌØ
+”
+ ÌØ” ÌØ”$ ÌØ*”% ÌØ+”- ÌØ=”/ ÌØ?”4 ÌØÌL™” ÌÙ” ÌÙ” ÌÙ” ÌÙ” ÌÙ”$ ÌÙ ”% ÌÙ!”= ÌÙ9”> ÌÙ:˜” ÌÛ” ÌÛ” ÌÛ” ÌÛ” ÌÛ"” ÌÛ$” ÌÛ2” ÌÛ3”” ÌÜ” ÌÜ” ÌÜ” ÌÜ›” Ìİ” Ìİ
+” Ìİ” Ìİ” Ìİ” Ìİ”( Ìİ$”) Ìİ%”. Ìİ*”/ Ìİ+”0 Ìİ,–” Ìß” Ìß” Ìß” Ìß” Ìß” ÌßÜ ” Ìà” Ìà
+” Ìà” Ìà” Ìà” Ìà” Ìà”" Ìà”# Ìà”) Ìà#”+ Ìà%”. Ìà(”4 Ìà.”5 Ìà/”8 Ìà2”9 Ìà3”: Ìà4Ü ” Ìá” Ìá
+” Ìá” Ìá” Ìá” Ìá” Ìá”" Ìá”# Ìá”) Ìá#”+ Ìá%”. Ìá(”4 Ìá.”5 Ìá/”8 Ìá2”9 Ìá3”: Ìá4™” Ìâ” Ìâ
+” Ìâ” Ìâ” Ìâ” Ìâ”  Ìâ”# Ìâ”% Ìâ•” Ìã” Ìã” Ìã” Ìã” Ìã—” Ìä” Ìä” Ìä” Ìä”  Ìä”$ Ìä”% Ìä›” Ìå” Ìå” Ìå”  Ìå”# Ìå”& Ìå”* Ìå"”0 Ìå(”4 Ìå,”? Ìå7”Ì@ Ìå8‘” Ìæ‘” Ìæ•” Ìç” Ìç” Ìç” Ìç” Ìç–” Ìè” Ìè” Ìè” Ìè” Ìè”! Ìè–” Ìé
+” Ìé” Ìé”! Ìé”% Ìé”& Ìé•” Ìê
+” Ìê” Ìê” Ìê”  Ìê•” Ìë
+” Ìë” Ìë” Ìë”  Ìë‘” Ìì	—” Ìí” Ìí” Ìí” Ìí”  Ìí”$ Ìí”% Ìí›” Ìî” Ìî” Ìî”  Ìî”# Ìî”& Ìî”* Ìî"”0 Ìî(”4 Ìî,”? Ìî7”Ì@ Ìî8‘” Ìï‘”	 Ìğ–” Ìğ” Ìğ” Ìğ” Ìğ” Ìğ” ÌğÜ ” Ìñ” Ìñ” Ìñ” Ìñ” Ìñ” Ìñ”! Ìñ”" Ìñ”& Ìñ ”' Ìñ!”- Ìñ'”/ Ìñ)”2 Ìñ,”3 Ìñ-”4 Ìñ.”5 Ìñ/Ü ” Ìò” Ìò
+” Ìò” Ìò” Ìò” Ìò” Ìò”" Ìò”# Ìò”) Ìò#”+ Ìò%”. Ìò(”4 Ìò.”5 Ìò/”8 Ìò2”9 Ìò3”: Ìò4Ü ” Ìó” Ìó
+” Ìó” Ìó” Ìó” Ìó” Ìó”" Ìó”# Ìó”) Ìó#”+ Ìó%”. Ìó(”4 Ìó.”5 Ìó/”8 Ìó2”9 Ìó3”: Ìó4”” Ìô” Ìô” Ìô” Ìô“” Ìõ” Ìõ” Ìõ•” Ìö
+” Ìö” Ìö”" Ìö”# Ìö—” Ì÷
+” Ì÷” Ì÷”! Ì÷”$ Ì÷”( Ì÷”) Ì÷›” Ìø
+” Ìø” Ìø”$ Ìø”' Ìø”* Ìø ”. Ìø$”4 Ìø*”8 Ìø.”ÌC Ìø9”ÌD Ìø:’” Ìù
+” Ìù“” Ìú” Ìú” Ìú•” Ìû
+” Ìû” Ìû”" Ìû”# Ìû–” Ìü
+” Ìü” Ìü” Ìü”# Ìü”% Ìü–” Ìı” Ìı”" Ìı”% Ìı”) Ìı”* Ìı•” Ìş” Ìş” Ìş”# Ìş”$ Ìş•” Ìÿ” Ìÿ” Ìÿ”# Ìÿ”$ Ìÿ‘” Í —” Í
+” Í” Í”! Í”$ Í”( Í”) Í›” Í
+” Í” Í”$ Í”' Í”* Í ”. Í$”4 Í*”8 Í.”ÌC Í9”ÌD Í:’” Í
+” Í“” Í” Í” Í•” Í
+” Í” Í”" Í”# Í—” Í
+” Í” Í”! Í”$ Í”( Í”) Í›” Í
+” Í” Í”$ Í”' Í”* Í ”. Í$”4 Í*”8 Í.”ÌC Í9”ÌD Í:’” Í
+” Í‘” Í	•” Í
+
+” Í
+” Í
+”" Í
+”# Í
+•” Í
+” Í” Í”! Í”" Í•” Í” Í” Í!”  Í"”! Í#œ” Í
+” Í” Í”! Í”" Í”' Í”( Í”, Í"”/ Í%”3 Í)”4 Í*”5 Í+™” Í
+” Í” Í”! Í”$ Í”( Í”) Í”* Í ”2 Í(›” Í
+” Í” Í”$ Í”' Í”* Í ”. Í$”4 Í*”8 Í.”ÌC Í9”ÌD Í:’” Í
+” Í‘” Í‘”	 Í‘” ÍÜ ” Í” Í” Í” Í” Í” Í”! Í”" Í”& Í ”' Í!”- Í'”/ Í)”2 Í,”3 Í-”4 Í.”5 Í/Ü ” Í” Í
+” Í” Í” Í” Í” Í”" Í”# Í”) Í#”+ Í%”. Í(”4 Í.”5 Í/”8 Í2”: Í4”; Í5Ü ” Í” Í
+” Í” Í” Í” Í” Í”" Í”# Í”) Í#”+ Í%”. Í(”4 Í.”5 Í/”8 Í2”9 Í3”: Í4”” Í” Í” Í” Í“” Í” Í” Í•” Í
+” Í” Í”" Í”# Í—” Í
+” Í” Í”! Í”$ Í”( Í”) Í›” Í
+” Í” Í”$ Í”' Í”* Í ”. Í$”4 Í*”8 Í.”ÌC Í9”ÌD Í:’” Í
+” Í“” Í” Í” Í•” Í
+” Í” Í”" Í”# Í–” Í
+” Í” Í” Í”# Í”% Í–” Í” Í”" Í”% Í”) Í”* Í•” Í” Í” Í”# Í”$ Í•” Í ” Í ” Í ”# Í ”$ Í ‘” Í!—” Í"
+” Í"” Í"”! Í"”$ Í"”( Í"”) Í"›” Í#
+” Í#” Í#”$ Í#”' Í#”* Í# ”. Í#$”4 Í#*”8 Í#.”ÌC Í#9”ÌD Í#:’” Í$
+” Í$“” Í%” Í%” Í%•” Í&
+” Í&” Í&”" Í&”# Í&—” Í'
+” Í'” Í'”! Í'”$ Í'”( Í'”) Í'›” Í(
+” Í(” Í(”$ Í(”' Í(”* Í( ”. Í($”4 Í(*”8 Í(.”ÌC Í(9”ÌD Í(:’” Í)
+” Í)‘” Í*•” Í+
+” Í+” Í+”" Í+”# Í+•” Í,
+” Í,” Í,”! Í,”" Í,•” Í,” Í,” Í,!”  Í,"”! Í,#” Í-
+” Í-”" Í-”% Í-”) Í-”* Í- ”/ Í-%”0 Í-&”4 Í-*”7 Í--”; Í-1”< Í-2”= Í-3—” Í.
+” Í.” Í.”# Í.”& Í.”* Í. ”+ Í.!•” Í/
+” Í/” Í/”% Í/”& Í/›” Í0
+” Í0” Í0”$ Í0”' Í0”* Í0 ”. Í0$”4 Í0*”8 Í0.”ÌC Í09”ÌD Í0:’” Í1
+” Í1‘” Í2‘”	 Í3š” Í5” Í5” Í5” Í5”! Í5”' Í5#”( Í5$”. Í5*”/ Í5+”0 Í5,Ÿ” Í6” Í6” Í6” Í6” Í6”" Í6”& Í6"”* Í6&”2 Í6.”6 Í62”: Í66”Ì@ Í6<”ÌF Í6ÌB”ÌH Í6ÌD”ÌI Í6ÌE”” Í8” Í8” Í8” Í8’” Í9” Í9‘” Í;‘” Í=˜” Í>
+”
+ Í>” Í>”# Í>)”$ Í>*”, Í><”. Í>>”3 Í>ÌK™” Í?” Í?” Í?” Í?” Í?”$ Í? ”% Í?!”; Í?7”< Í?8˜” ÍA” ÍA” ÍA” ÍA” ÍA"” ÍA$” ÍA2” ÍA3”” ÍB” ÍB” ÍB” ÍB›” ÍC” ÍC
+” ÍC” ÍC” ÍC” ÍC”% ÍC!”' ÍC#”* ÍC&”- ÍC)”. ÍC*›” ÍD” ÍD
+” ÍD” ÍD” ÍD” ÍD”( ÍD$”) ÍD%”. ÍD*”/ ÍD+”0 ÍD,–” ÍF” ÍF” ÍF” ÍF” ÍF” ÍFÜ ” ÍG” ÍG
+” ÍG” ÍG” ÍG” ÍG” ÍG”" ÍG”# ÍG”) ÍG#”+ ÍG%”. ÍG(”4 ÍG.”5 ÍG/”8 ÍG2”9 ÍG3”: ÍG4Ü ” ÍH” ÍH
+” ÍH” ÍH” ÍH” ÍH” ÍH”" ÍH”# ÍH”) ÍH#”+ ÍH%”. ÍH(”4 ÍH.”5 ÍH/”8 ÍH2”9 ÍH3”: ÍH4™” ÍI” ÍI
+” ÍI” ÍI” ÍI” ÍI”  ÍI”# ÍI”% ÍI•” ÍJ” ÍJ” ÍJ” ÍJ” ÍJ—” ÍK” ÍK” ÍK” ÍK”  ÍK”$ ÍK”% ÍK‘” ÍL‘” ÍL•” ÍM” ÍM” ÍM” ÍM” ÍM–” ÍN” ÍN” ÍN” ÍN” ÍN”! ÍN–” ÍO
+” ÍO” ÍO”! ÍO”% ÍO”& ÍO•” ÍP
+” ÍP” ÍP” ÍP”  ÍP•” ÍQ
+” ÍQ” ÍQ” ÍQ”  ÍQ‘” ÍR	—” ÍS” ÍS” ÍS” ÍS”  ÍS”$ ÍS”% ÍS‘” ÍT‘”	 ÍU‘” ÍUÜ ” ÍV” ÍV” ÍV” ÍV” ÍV” ÍV”! ÍV”" ÍV”& ÍV ”' ÍV!”- ÍV'”/ ÍV)”2 ÍV,”3 ÍV-”4 ÍV.”5 ÍV/Ü ” ÍW” ÍW
+” ÍW” ÍW” ÍW” ÍW” ÍW”" ÍW”# ÍW”) ÍW#”+ ÍW%”. ÍW(”4 ÍW.”5 ÍW/”8 ÍW2”9 ÍW3”: ÍW4Ü ” ÍX” ÍX
+” ÍX” ÍX” ÍX” ÍX” ÍX”" ÍX”# ÍX”) ÍX#”+ ÍX%”. ÍX(”4 ÍX.”5 ÍX/”8 ÍX2”9 ÍX3”: ÍX4”” ÍY” ÍY” ÍY” ÍY“” ÍZ” ÍZ” ÍZ•” Í[
+” Í[” Í[”" Í[”# Í[—” Í\
+” Í\” Í\”! Í\”$ Í\”( Í\”) Í\’” Í]
+” Í]“” Í^” Í^” Í^•” Í_
+” Í_” Í_”" Í_”# Í_–” Í`
+” Í`” Í`” Í`”# Í`”% Í`–” Ía” Ía”" Ía”% Ía”) Ía”* Ía•” Íb” Íb” Íb”# Íb”$ Íb•” Íc” Íc” Íc”# Íc”$ Íc‘” Íd—” Íe
+” Íe” Íe”! Íe”$ Íe”( Íe”) Íe’” Íf
+” Íf“” Íg” Íg” Íg•” Íh
+” Íh” Íh”" Íh”# Íh—” Íi
+” Íi” Íi”! Íi”$ Íi”( Íi”) Íi’” Íj
+” Íj‘” Ík•” Íl
+” Íl” Íl”" Íl”# Íl•” Ím
+” Ím” Ím”! Ím”" Ím•” Ím” Ím” Ím!”  Ím"”! Ím#œ” Ín
+” Ín” Ín”! Ín”" Ín”' Ín”( Ín”, Ín"”/ Ín%”3 Ín)”4 Ín*”5 Ín+™” Ío
+” Ío” Ío”! Ío”$ Ío”( Ío”) Ío”* Ío ”2 Ío(’” Íp
+” Íp‘” Íq‘”	 Ír’” Ít” Ít–” Íu” Íu” Íu” Íu”$ Íu ”% Íu!•” Ív” Ív” Ív	” Ív” ÍvÜ ” Íw” Íw” Íw”$ Íw”' Íw!”+ Íw%”, Íw&”1 Íw+”2 Íw,”6 Íw0”7 Íw1”= Íw7”? Íw9”ÌB Íw<”ÌD Íw>”ÌE Íw?”ÌH ÍwÌB”ÌI ÍwÌC”ÌJ ÍwÌD•” Íx” Íx
+” Íx”" Íx”# Íxš” Íx” Íx.”" Íx1”& Íx5”' Íx6”* Íx9”+ Íx:”: ÍxÌI”; ÍxÌJ”< ÍxÌK•” Íy” Íy
+” Íy”$ Íy”* Íy$—” Íy&” Íy5”" Íy8”( Íy>”+ ÍyÌA”, ÍyÌB”- ÍyÌC‘”	 ÍzŸ” Í|” Í|” Í|” Í|” Í|” Í|”" Í|”& Í|"”. Í|*”2 Í|.”6 Í|2”< Í|8”ÌK Í|ÌG”ÌM Í|ÌI”ÌN Í|ÌJŸ” Í}” Í}” Í}” Í}”! Í}”* Í}&”+ Í}'”, Í}(”- Í})”1 Í}-”2 Í}.”3 Í}/”4 Í}0”8 Í}4”9 Í}5–” Í~” Í~” Í~” Í~” Í~”( Í~$œ” Í” Í” Í” Í” Í” Í”! Í”% Í”) Í#”/ Í)”5 Í/”ÌB Í<Ÿ” Í€” Í€” Í€” Í€” Í€” Í€”! Í€”% Í€”) Í€#”/ Í€)”5 Í€/”ÌA Í€;”ÌP Í€ÌJ”Ì] Í€ÌW”Ì^ Í€ÌX”” Í‚” Í‚” Í‚” Í‚’” Íƒ” Íƒ‘” Í…‘” Í‡–” Íˆ
+”
+ Íˆ” Íˆ” Íˆ” Íˆ” Íˆ+”” Í‰” Í‰” Í‰” Í‰“” ÍŠ” ÍŠ” ÍŠ”” Í‹” Í‹” Í‹” Í‹“” ÍŒ” ÍŒ” ÍŒ”” Í” Í” Í” Í“” Í” Í” Í”” Í” Í” Í” Í“” Í” Í” Í”” Í‘” Í‘” Í‘” Í‘“” Í’” Í’” Í’”” Í“” Í“” Í“” Í““” Í”” Í”” Í””” Í•” Í•” Í•” Í•‘” Í–”” Í—” Í—” Í—” Í—‘”	 Í˜’” Í™” Í™‘” Í›‘” ÍŸ–” Í ”
+ Í ” Í 	”# Í !”$ Í "”5 Í ;–” Í¡” Í¡
+” Í¡” Í¡%” Í¡'”  Í¡(Ü ” Í£” Í£	” Í£” Í£” Í£”% Í£!”& Í£"”/ Í£+”1 Í£-”6 Í£2”: Í£6”ÌF Í£ÌB”ÌG Í£ÌC”ÌP Í£ÌL”ÌR Í£ÌN”ÌW Í£ÌS”ÌY Í£ÌU”Ì[ Í£ÌW” Í¤” Í¤” Í¤” Í¤”" Í¤”# Í¤”8 Í¤2”9 Í¤3”> Í¤8”Ì@ Í¤:”ÌQ Í¤ÌK”ÌR Í¤ÌL”ÌS Í¤ÌM™” Í¥” Í¥” Í¥” Í¥” Í¥”! Í¥”* Í¥$”+ Í¥%”, Í¥&‘”	 Í¦”” Í¨” Í¨” Í¨” Í¨’” Í©” Í©‘” ÍªÔrH–§version¤file§sources®sourcesContent¥names¨mappingsÀ‘À‘ÀÜ›‘”    ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”  	 ‘”  
+ ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”   ‘”    ‘”  ! ‘”  " ‘”  # ‘”  $ ‘”  % ‘”  & ‘”  ' ‘”  ( ‘”  ) ‘”  * ‘”  + ‘”  , ‘”  - ‘”  . ‘”  / ‘”  0 ‘”  1 ‘”  2 ‘”  3 ‘”  4 ‘”  5 ‘”  6 ‘”  7 ‘”  8 ‘”  9 ‘”  : ‘”  ; ‘”  < ‘”  = ‘”  > ‘”  ? ‘”  Ì@ ‘”  ÌA ‘”  ÌB ‘”  ÌC ‘”  ÌD ‘”  ÌE ‘”  ÌF ‘”  ÌG ‘”  ÌH ‘”  ÌI ‘”  ÌJ ‘”  ÌK ‘”  ÌL ‘”  ÌM ‘”  ÌN ‘”  ÌO ‘”  ÌP ‘”  ÌQ ‘”  ÌR ‘”  ÌS ‘”  ÌT ‘”  ÌU ‘”  ÌV ‘”  ÌW ‘”  ÌX ‘”  ÌY ‘”  ÌZ ‘”  Ì[ ‘”  Ì\ ‘”  Ì] ‘”  Ì^ ‘”  Ì_ ‘”  Ì` ‘”  Ìa ‘”  Ìb ‘”  Ìc ‘”  Ìd ‘”  Ìe ‘”  Ìf ‘”  Ìg ‘”  Ìh ‘”  Ìi ‘”  Ìj ‘”  Ìk ‘”  Ìl ‘”  Ìm ‘”  Ìn ‘”  Ìo ‘”  Ìp ‘”  Ìq ‘”  Ìr ‘”  Ìs ‘”  Ìt ‘”  Ìu ‘”  Ìv ‘”  Ìw ‘”  Ìx ‘”  Ìy ‘”  Ìz ‘”  Ì{ ‘”  Ì| ‘”  Ì} ‘”  Ì~ ‘”  Ì ‘”  Ì€ ‘”  Ì ‘”  Ì‚ ‘”  Ìƒ ‘”  Ì„ ‘”  Ì… ‘”  Ì† ‘”  Ì‡ ‘”  Ìˆ ‘”  Ì‰ ‘”  ÌŠ ‘”  Ì‹ ‘”  ÌŒ ‘”  Ì ‘”  Ì ‘”  Ì ‘”  Ì ‘”  Ì‘ ‘”  Ì’ ‘”  Ì“ ‘”  Ì” ‘”  Ì• ‘”  Ì– ‘”  Ì— ‘”  Ì˜ ‘”  Ì™ ‘”  Ìš ‘”  Ì› ‘”  Ìœ ‘”  Ì ‘”  Ì ‘”  ÌŸ ‘”  Ì  ‘”  Ì¡ ‘”  Ì¢ ‘”  Ì£ ‘”  Ì¤ ‘”  Ì¥ ‘”  Ì¦ ‘”  Ì§ ‘”  Ì¨ ‘”  Ì© ‘”  Ìª ‘”  Ì« ‘”  Ì¬ ‘”  Ì­ ‘”  Ì® ‘”  Ì¯ ‘”  Ì° ‘”  Ì± ‘”  Ì² ‘”  Ì³ ‘”  Ì´ ‘”  Ìµ ‘”  Ì¶ ‘”  Ì· ‘”  Ì¸ ‘”  Ì¹ ‘”  Ìº ‘”  Ì» ‘”  Ì¼ ‘”  Ì½ ‘”  Ì¾ ‘”  Ì¿ ‘”  ÌÀ ‘”  ÌÁ ‘”  ÌÂ ‘”  ÌÃ ‘”  ÌÄ ‘”  ÌÅ ‘”  ÌÆ ‘”  ÌÇ ‘”  ÌÈ ‘”  ÌÉ ‘”  ÌÊ ‘”  ÌË ‘”  ÌÌ ‘”  ÌÍ ‘”  ÌÎ ‘”  ÌÏ ‘”  ÌĞ ‘”  ÌÑ ‘”  ÌÒ ‘”  ÌÓ ‘”  ÌÔ ‘”  ÌÕ ‘”  ÌÖ ‘”  Ì× ‘”  ÌØ ‘”  ÌÙ ‘”  ÌÚ ‘”  ÌÛ ‘”  ÌÜ ‘”  Ìİ ‘”  ÌŞ ‘”  Ìß ‘”  Ìà ‘”  Ìá ‘”  Ìâ ‘”  Ìã ‘”  Ìä ‘”  Ìå ‘”  Ìæ ‘”  Ìç ‘”  Ìè ‘”  Ìé ‘”  Ìê ‘”  Ìë ‘”  Ìì ‘”  Ìí ‘”  Ìî ‘”  Ìï ‘”  Ìğ ‘”  Ìñ ‘”  Ìò ‘”  Ìó ‘”  Ìô ‘”  Ìõ ‘”  Ìö ‘”  Ì÷ ‘”  Ìø ‘”  Ìù ‘”  Ìú ‘”  Ìû ‘”  Ìü ‘”  Ìı ‘”  Ìş ‘”  Ìÿ ‘”  Í  ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í	 ‘”  Í
+ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í  ‘”  Í! ‘”  Í" ‘”  Í# ‘”  Í$ ‘”  Í% ‘”  Í& ‘”  Í' ‘”  Í( ‘”  Í) ‘”  Í* ‘”  Í+ ‘”  Í, ‘”  Í- ‘”  Í. ‘”  Í/ ‘”  Í0 ‘”  Í1 ‘”  Í2 ‘”  Í3 ‘”  Í4 ‘”  Í5 ‘”  Í6 ‘”  Í7 ‘”  Í8 ‘”  Í9 ‘”  Í: ‘”  Í; ‘”  Í< ‘”  Í= ‘”  Í> ‘”  Í? ‘”  Í@ ‘”  ÍA ‘”  ÍB ‘”  ÍC ‘”  ÍD ‘”  ÍE ‘”  ÍF ‘”  ÍG ‘”  ÍH ‘”  ÍI ‘”  ÍJ ‘”  ÍK ‘”  ÍL ‘”  ÍM ‘”  ÍN ‘”  ÍO ‘”  ÍP ‘”  ÍQ ‘”  ÍR ‘”  ÍS ‘”  ÍT ‘”  ÍU ‘”  ÍV ‘”  ÍW ‘”  ÍX ‘”  ÍY ‘”  ÍZ ‘”  Í[ ‘”  Í\ ‘”  Í] ‘”  Í^ ‘”  Í_ ‘”  Í` ‘”  Ía ‘”  Íb ‘”  Íc ‘”  Íd ‘”  Íe ‘”  Íf ‘”  Íg ‘”  Íh ‘”  Íi ‘”  Íj ‘”  Ík ‘”  Íl ‘”  Ím ‘”  Ín ‘”  Ío ‘”  Íp ‘”  Íq ‘”  Ír ‘”  Ís ‘”  Ít ‘”  Íu ‘”  Ív ‘”  Íw ‘”  Íx ‘”  Íy ‘”  Íz ‘”  Í{ ‘”  Í| ‘”  Í} ‘”  Í~ ‘”  Í ‘”  Í€ ‘”  Í ‘”  Í‚ ‘”  Íƒ ‘”  Í„ ‘”  Í… ‘”  Í† ‘”  Í‡ ‘”  Íˆ ‘”  Í‰ ‘”  ÍŠ ‘”  Í‹ ‘”  ÍŒ ‘”  Í ‘”  Í ‘”  Í ‘”  Í ‘”  Í‘ ‘”  Í’ ‘”  Í“ ‘”  Í” ‘”  Í• ‘”  Í– ‘”  Í— ‘”  Í˜ ‘”  Í™ ‘”  Íš ÔrI’§missing¦pluginÃ¦genAbcÂÔ  ÔrJ”²dynamicImportCache¹exportAllDeclarationCache»exportNamedDeclarationCache«importCache‘ÔrK–¤type¥start£end«declarationªspecifiers¦source¶ExportNamedDeclarationÌ€Í9ÅÔrL–¤type¥start£end¢idªsuperClass¤body°ClassDeclarationÌ‡Í9ÅÔrM”¤type¥start£end¤nameªIdentifierÌÌ¢µQuestionDataGeneratorÀÔrN”¤type¥start£end¤body©ClassBodyÌ£Í9Å˜ÔrO˜¤type¥start£end¦static¨computed£key¤kind¥value°MethodDefinitionÍÍÃÂMªIdentifierÍ%Í:µgenerateMathQuestions¦methodÔrP™¤type¥start£end¢idªexpression©generator¥async¦params¤body²FunctionExpressionÍ:ÍÀÂÂÂ’MªIdentifierÍ;Í@¥gradeMªIdentifierÍBÍG¥countN®BlockStatementÍIÍ”ÔrQ•¤type¥start£end¬declarations¤kind³VariableDeclarationÍTÍi‘ÔrR•¤type¥start£end¢id¤init²VariableDeclaratorÍZÍhMªIdentifierÍZÍc©questionsÔrS”¤type¥start£end¨elements¯ArrayExpressionÍfÍh¥constÔrT–¤type¥start£end¤testªconsequent©alternate«IfStatementÍŸÍÿÔrU–¤type¥start£end¤left¨operator¥right°BinaryExpressionÍ£Í®MªIdentifierÍ£Í¨¥count£===ÔrV•¤type¥start£end¥value£raw§LiteralÍ­Í®¡5N®BlockStatementÍ°Íÿ‘ÔrW”¤type¥start£end¨argument¯ReturnStatementÍ¿ÍôÔrX–¤type¥start£end¦callee©arguments¨optional®CallExpressionÍÆÍóÔrY—¤type¥start£end¦object¨property¨computed¨optional°MemberExpressionÍÆÍìÔrZ“¤type¥start£end®ThisExpressionÍÆÍÊMªIdentifierÍËÍìÙ!generateMathQuestionsWithAllTypesÂÂ‘MªIdentifierÍíÍò¥gradeÂÀÔr[—¤type¥start£end¤init¤test¦update¤body¬ForStatementÍÍğQ³VariableDeclarationÍ#Í,‘R²VariableDeclaratorÍ'Í,MªIdentifierÍ'Í(¡iV§LiteralÍ+Í, ¡0£letU°BinaryExpressionÍ.Í7MªIdentifierÍ.Í/¡i¡<MªIdentifierÍ2Í7¥countÔr\–¤type¥start£end¨operator¦prefix¨argument°UpdateExpressionÍ9Í<¢++ÂMªIdentifierÍ9Í:¡iN®BlockStatementÍ>Íğ’Q³VariableDeclarationÍMÍ…‘R²VariableDeclaratorÍSÍ„MªIdentifierÍSÍ[¨questionX®CallExpressionÍ^Í„Y°MemberExpressionÍ^Í}Z®ThisExpressionÍ^ÍbMªIdentifierÍcÍ}ºgenerateRandomMathQuestionÂÂ‘MªIdentifierÍ~Íƒ¥gradeÂ¥constT«IfStatementÍ“ÍåU°BinaryExpressionÍ—Í¨MªIdentifierÍ—ÍŸ¨question£!==V§LiteralÍ¤Í¨À¤nullN®BlockStatementÍªÍå‘Ôr]”¤type¥start£endªexpression³ExpressionStatementÍ½ÍÖX®CallExpressionÍ½ÍÕY°MemberExpressionÍ½ÍËMªIdentifierÍ½ÍÆ©questionsMªIdentifierÍÇÍË¤pushÂÂ‘MªIdentifierÍÌÍÔ¨questionÂÀW¯ReturnStatementÍúÍMªIdentifierÍÍ
+©questionsO°MethodDefinitionÍTÍ	ÃÂMªIdentifierÍ[Í|Ù!generateMathQuestionsWithAllTypes¦methodP²FunctionExpressionÍ|Í	ÀÂÂÂ‘MªIdentifierÍ}Í‚¥gradeN®BlockStatementÍ„Í	šQ³VariableDeclarationÍÍ¤‘R²VariableDeclaratorÍ•Í£MªIdentifierÍ•Í©questionsS¯ArrayExpressionÍ¡Í£¥const[¬ForStatementÍÀÍ‡Q³VariableDeclarationÍÅÍÎ‘R²VariableDeclaratorÍÉÍÎMªIdentifierÍÉÍÊ¡iV§LiteralÍÍÍÎ ¡0£letU°BinaryExpressionÍĞÍÕMªIdentifierÍĞÍÑ¡i¡<V§LiteralÍÔÍÕ¡2\°UpdateExpressionÍ×ÍÚ¢++ÂMªIdentifierÍ×ÍØ¡iN®BlockStatementÍÜÍ‡–Q³VariableDeclarationÍëÍ‘R²VariableDeclaratorÍñÍ
+MªIdentifierÍñÍù¨questionÔr^•¤type¥start£end¦callee©arguments­NewExpressionÍüÍ
+MªIdentifierÍ Í¨Question¥const]³ExpressionStatementÍÍHÔr_–¤type¥start£end¨operator¤left¥right´AssignmentExpressionÍÍG¡=Y°MemberExpressionÍÍ+MªIdentifierÍÍ!¨questionMªIdentifierÍ"Í+©subjectIdÂÂY°MemberExpressionÍ.ÍGMªIdentifierÍ.Í:¬AppConstantsMªIdentifierÍ;ÍG¬SUBJECT_MATHÂÂ]³ExpressionStatementÍVÍm_´AssignmentExpressionÍVÍl¡=Y°MemberExpressionÍVÍdMªIdentifierÍVÍ^¨questionMªIdentifierÍ_Íd¥gradeÂÂMªIdentifierÍgÍl¥grade]³ExpressionStatementÍ{Í¾_´AssignmentExpressionÍ{Í½¡=Y°MemberExpressionÍ{ÍMªIdentifierÍ{Íƒ¨questionMªIdentifierÍ„ÍªdifficultyÂÂX®CallExpressionÍ‘Í½Y°MemberExpressionÍ‘Í™MªIdentifierÍ‘Í•¤MathMªIdentifierÍ–Í™£minÂÂ’MªIdentifierÍšÍŸ¥gradeY°MemberExpressionÍ¡Í¼MªIdentifierÍ¡Í­¬AppConstantsMªIdentifierÍ®Í¼®MAX_DIFFICULTYÂÂÂQ³VariableDeclarationÍÌÍ‘R²VariableDeclaratorÍÒÍMªIdentifierÍÒÍŞ¬singleChoiceX®CallExpressionÍáÍY°MemberExpressionÍáÍZ®ThisExpressionÍáÍåMªIdentifierÍæÍ¼generateSingleChoiceQuestionÂÂ’MªIdentifierÍÍ¨questionMªIdentifierÍÍ¥gradeÂ¥constT«IfStatementÍ"Í|U°BinaryExpressionÍ&Í;MªIdentifierÍ&Í2¬singleChoice£!==V§LiteralÍ7Í;À¤nullN®BlockStatementÍ=Í|‘]³ExpressionStatementÍPÍmX®CallExpressionÍPÍlY°MemberExpressionÍPÍ^MªIdentifierÍPÍY©questionsMªIdentifierÍZÍ^¤pushÂÂ‘MªIdentifierÍ_Ík¬singleChoiceÂÀ[¬ForStatementÍ£Í^Q³VariableDeclarationÍ¨Í±‘R²VariableDeclaratorÍ¬Í±MªIdentifierÍ¬Í­¡iV§LiteralÍ°Í± ¡0£letU°BinaryExpressionÍ³Í¸MªIdentifierÍ³Í´¡i¡<V§LiteralÍ·Í¸¡2\°UpdateExpressionÍºÍ½¢++ÂMªIdentifierÍºÍ»¡iN®BlockStatementÍ¿Í^–Q³VariableDeclarationÍÎÍî‘R²VariableDeclaratorÍÔÍíMªIdentifierÍÔÍÜ¨question^­NewExpressionÍßÍíMªIdentifierÍãÍë¨Question¥const]³ExpressionStatementÍüÍ+_´AssignmentExpressionÍüÍ*¡=Y°MemberExpressionÍüÍMªIdentifierÍüÍ¨questionMªIdentifierÍÍ©subjectIdÂÂY°MemberExpressionÍÍ*MªIdentifierÍÍ¬AppConstantsMªIdentifierÍÍ*¬SUBJECT_MATHÂÂ]³ExpressionStatementÍ9ÍP_´AssignmentExpressionÍ9ÍO¡=Y°MemberExpressionÍ9ÍGMªIdentifierÍ9ÍA¨questionMªIdentifierÍBÍG¥gradeÂÂMªIdentifierÍJÍO¥grade]³ExpressionStatementÍ^Í¡_´AssignmentExpressionÍ^Í ¡=Y°MemberExpressionÍ^ÍqMªIdentifierÍ^Íf¨questionMªIdentifierÍgÍqªdifficultyÂÂX®CallExpressionÍtÍ Y°MemberExpressionÍtÍ|MªIdentifierÍtÍx¤MathMªIdentifierÍyÍ|£minÂÂ’MªIdentifierÍ}Í‚¥gradeY°MemberExpressionÍ„ÍŸMªIdentifierÍ„Í¬AppConstantsMªIdentifierÍ‘ÍŸ®MAX_DIFFICULTYÂÂÂQ³VariableDeclarationÍ¯Íñ‘R²VariableDeclaratorÍµÍğMªIdentifierÍµÍ¾©fillBlankX®CallExpressionÍÁÍğY°MemberExpressionÍÁÍßZ®ThisExpressionÍÁÍÅMªIdentifierÍÆÍß¹generateFillBlankQuestionÂÂ’MªIdentifierÍàÍè¨questionMªIdentifierÍêÍï¥gradeÂ¥constT«IfStatementÍÿÍSU°BinaryExpressionÍÍMªIdentifierÍÍ©fillBlank£!==V§LiteralÍÍÀ¤nullN®BlockStatementÍÍS‘]³ExpressionStatementÍ*ÍDX®CallExpressionÍ*ÍCY°MemberExpressionÍ*Í8MªIdentifierÍ*Í3©questionsMªIdentifierÍ4Í8¤pushÂÂ‘MªIdentifierÍ9ÍB©fillBlankÂÀQ³VariableDeclarationÍzÍš‘R²VariableDeclaratorÍ€Í™MªIdentifierÍ€Íˆ¨question^­NewExpressionÍ‹Í™MªIdentifierÍÍ—¨Question¥const]³ExpressionStatementÍ¤ÍÓ_´AssignmentExpressionÍ¤ÍÒ¡=Y°MemberExpressionÍ¤Í¶MªIdentifierÍ¤Í¬¨questionMªIdentifierÍ­Í¶©subjectIdÂÂY°MemberExpressionÍ¹ÍÒMªIdentifierÍ¹ÍÅ¬AppConstantsMªIdentifierÍÆÍÒ¬SUBJECT_MATHÂÂ]³ExpressionStatementÍİÍô_´AssignmentExpressionÍİÍó¡=Y°MemberExpressionÍİÍëMªIdentifierÍİÍå¨questionMªIdentifierÍæÍë¥gradeÂÂMªIdentifierÍîÍó¥grade]³ExpressionStatementÍşÍA_´AssignmentExpressionÍşÍ@¡=Y°MemberExpressionÍşÍMªIdentifierÍşÍ¨questionMªIdentifierÍÍªdifficultyÂÂX®CallExpressionÍÍ@Y°MemberExpressionÍÍMªIdentifierÍÍ¤MathMªIdentifierÍÍ£minÂÂ’MªIdentifierÍÍ"¥gradeY°MemberExpressionÍ$Í?MªIdentifierÍ$Í0¬AppConstantsMªIdentifierÍ1Í?®MAX_DIFFICULTYÂÂÂQ³VariableDeclarationÍKÍ‹‘R²VariableDeclaratorÍQÍŠMªIdentifierÍQÍY¨judgmentX®CallExpressionÍ\ÍŠY°MemberExpressionÍ\ÍyZ®ThisExpressionÍ\Í`MªIdentifierÍaÍy¸generateJudgmentQuestionÂÂ’MªIdentifierÍzÍ‚¨questionMªIdentifierÍ„Í‰¥gradeÂ¥constT«IfStatementÍ•ÍßU°BinaryExpressionÍ™ÍªMªIdentifierÍ™Í¡¨judgment£!==V§LiteralÍ¦ÍªÀ¤nullN®BlockStatementÍ¬Íß‘]³ExpressionStatementÍ»ÍÔX®CallExpressionÍ»ÍÓY°MemberExpressionÍ»ÍÉMªIdentifierÍ»ÍÄ©questionsMªIdentifierÍÅÍÉ¤pushÂÂ‘MªIdentifierÍÊÍÒ¨judgmentÂÀW¯ReturnStatementÍéÍúMªIdentifierÍğÍù©questionsO°MethodDefinitionÍ	*Í"ÃÂMªIdentifierÍ	1Í	KºgenerateRandomMathQuestion¦methodP²FunctionExpressionÍ	KÍ"ÀÂÂÂ‘MªIdentifierÍ	LÍ	Q¥gradeN®BlockStatementÍ	SÍ"–Q³VariableDeclarationÍ	^Í	~‘R²VariableDeclaratorÍ	dÍ	}MªIdentifierÍ	dÍ	l¨question^­NewExpressionÍ	oÍ	}MªIdentifierÍ	sÍ	{¨Question¥const]³ExpressionStatementÍ	ˆÍ	·_´AssignmentExpressionÍ	ˆÍ	¶¡=Y°MemberExpressionÍ	ˆÍ	šMªIdentifierÍ	ˆÍ	¨questionMªIdentifierÍ	‘Í	š©subjectIdÂÂY°MemberExpressionÍ	Í	¶MªIdentifierÍ	Í	©¬AppConstantsMªIdentifierÍ	ªÍ	¶¬SUBJECT_MATHÂÂ]³ExpressionStatementÍ	ÁÍ	Ø_´AssignmentExpressionÍ	ÁÍ	×¡=Y°MemberExpressionÍ	ÁÍ	ÏMªIdentifierÍ	ÁÍ	É¨questionMªIdentifierÍ	ÊÍ	Ï¥gradeÂÂMªIdentifierÍ	ÒÍ	×¥grade]³ExpressionStatementÍ	âÍ
+%_´AssignmentExpressionÍ	âÍ
+$¡=Y°MemberExpressionÍ	âÍ	õMªIdentifierÍ	âÍ	ê¨questionMªIdentifierÍ	ëÍ	õªdifficultyÂÂX®CallExpressionÍ	øÍ
+$Y°MemberExpressionÍ	øÍ
+ MªIdentifierÍ	øÍ	ü¤MathMªIdentifierÍ	ıÍ
+ £minÂÂ’MªIdentifierÍ
+Í
+¥gradeY°MemberExpressionÍ
+Í
+#MªIdentifierÍ
+Í
+¬AppConstantsMªIdentifierÍ
+Í
+#®MAX_DIFFICULTYÂÂÂQ³VariableDeclarationÍ
+DÍ
+t‘R²VariableDeclaratorÍ
+JÍ
+sMªIdentifierÍ
+JÍ
+S©typeIndexX®CallExpressionÍ
+VÍ
+sY°MemberExpressionÍ
+VÍ
+`MªIdentifierÍ
+VÍ
+Z¤MathMªIdentifierÍ
+[Í
+`¥floorÂÂ‘U°BinaryExpressionÍ
+aÍ
+rX®CallExpressionÍ
+aÍ
+nY°MemberExpressionÍ
+aÍ
+lMªIdentifierÍ
+aÍ
+e¤MathMªIdentifierÍ
+fÍ
+l¦randomÂÂÂ¡*V§LiteralÍ
+qÍ
+r¡3Â¥constÔr`•¤type¥start£end¬discriminant¥cases¯SwitchStatementÍ
+~ÍMªIdentifierÍ
+†Í
+©typeIndex”Ôra•¤type¥start£endªconsequent¤testªSwitchCaseÍ
+ Í
+ó‘W¯ReturnStatementÍ
+¹Í
+óX®CallExpressionÍ
+ÀÍ
+òY°MemberExpressionÍ
+ÀÍ
+áZ®ThisExpressionÍ
+ÀÍ
+ÄMªIdentifierÍ
+ÅÍ
+á¼generateSingleChoiceQuestionÂÂ’MªIdentifierÍ
+âÍ
+ê¨questionMªIdentifierÍ
+ìÍ
+ñ¥gradeÂV§LiteralÍ
+¥Í
+¦ ¡0aªSwitchCaseÍÍQ‘W¯ReturnStatementÍÍQX®CallExpressionÍ!ÍPY°MemberExpressionÍ!Í?Z®ThisExpressionÍ!Í%MªIdentifierÍ&Í?¹generateFillBlankQuestionÂÂ’MªIdentifierÍ@ÍH¨questionMªIdentifierÍJÍO¥gradeÂV§LiteralÍÍ¡1aªSwitchCaseÍ_Í®‘W¯ReturnStatementÍxÍ®X®CallExpressionÍÍ­Y°MemberExpressionÍÍœZ®ThisExpressionÍÍƒMªIdentifierÍ„Íœ¸generateJudgmentQuestionÂÂ’MªIdentifierÍÍ¥¨questionMªIdentifierÍ§Í¬¥gradeÂV§LiteralÍdÍe¡2aªSwitchCaseÍ¼Í‘W¯ReturnStatementÍÖÍX®CallExpressionÍİÍY°MemberExpressionÍİÍşZ®ThisExpressionÍİÍáMªIdentifierÍâÍş¼generateSingleChoiceQuestionÂÂ’MªIdentifierÍÿÍ¨questionMªIdentifierÍ	Í¥gradeÂÀO°MethodDefinitionÍHÍ;ÃÂMªIdentifierÍOÍk¼generateSingleChoiceQuestion¦methodP²FunctionExpressionÍkÍ;ÀÂÂÂ’MªIdentifierÍlÍt¨questionMªIdentifierÍvÍ{¥gradeN®BlockStatementÍ}Í;]³ExpressionStatementÍˆÍÁ_´AssignmentExpressionÍˆÍÀ¡=Y°MemberExpressionÍˆÍ•MªIdentifierÍˆÍ¨questionMªIdentifierÍ‘Í•¤typeÂÂY°MemberExpressionÍ˜ÍÀMªIdentifierÍ˜Í¤¬AppConstantsMªIdentifierÍ¥ÍÀ»QUESTION_TYPE_SINGLE_CHOICEÂÂQ³VariableDeclarationÍËÍâ“R²VariableDeclaratorÍÏÍÓMªIdentifierÍÏÍÓ¤num1ÀR²VariableDeclaratorÍÕÍÙMªIdentifierÍÕÍÙ¤num2ÀR²VariableDeclaratorÍÛÍáMªIdentifierÍÛÍá¦resultÀ£letQ³VariableDeclarationÍìÍù‘R²VariableDeclaratorÍğÍøMªIdentifierÍğÍø¨operatorÀ£letQ³VariableDeclarationÍÍ+‘R²VariableDeclaratorÍ	Í*MªIdentifierÍ	Í¦maxNumX®CallExpressionÍÍ*Y°MemberExpressionÍÍ#Z®ThisExpressionÍÍMªIdentifierÍÍ#¬getMaxNumberÂÂ‘MªIdentifierÍ$Í)¥gradeÂ¥constT«IfStatementÍOÍŒU°BinaryExpressionÍSÍ]MªIdentifierÍSÍX¥grade¢<=V§LiteralÍ\Í]¡2N®BlockStatementÍ_ÍŒ“]³ExpressionStatementÍŠÍ¸_´AssignmentExpressionÍŠÍ·¡=MªIdentifierÍŠÍ¤num1U°BinaryExpressionÍ‘Í·X®CallExpressionÍ‘Í³Y°MemberExpressionÍ‘Í›MªIdentifierÍ‘Í•¤MathMªIdentifierÍ–Í›¥floorÂÂ‘U°BinaryExpressionÍœÍ²X®CallExpressionÍœÍ©Y°MemberExpressionÍœÍ§MªIdentifierÍœÍ ¤MathMªIdentifierÍ¡Í§¦randomÂÂÂ¡*MªIdentifierÍ¬Í²¦maxNumÂ¡+V§LiteralÍ¶Í·¡1]³ExpressionStatementÍÆÍô_´AssignmentExpressionÍÆÍó¡=MªIdentifierÍÆÍÊ¤num2U°BinaryExpressionÍÍÍóX®CallExpressionÍÍÍïY°MemberExpressionÍÍÍ×MªIdentifierÍÍÍÑ¤MathMªIdentifierÍÒÍ×¥floorÂÂ‘U°BinaryExpressionÍØÍîX®CallExpressionÍØÍåY°MemberExpressionÍØÍãMªIdentifierÍØÍÜ¤MathMªIdentifierÍİÍã¦randomÂÂÂ¡*MªIdentifierÍèÍî¦maxNumÂ¡+V§LiteralÍòÍó¡1T«IfStatementÍÍU°BinaryExpressionÍÍX®CallExpressionÍÍY°MemberExpressionÍÍMªIdentifierÍÍ
+¤MathMªIdentifierÍÍ¦randomÂÂÂ¡>V§LiteralÍÍË?à      £0.5N®BlockStatementÍÍs’]³ExpressionStatementÍ.Í=_´AssignmentExpressionÍ.Í<¡=MªIdentifierÍ.Í6¨operatorV§LiteralÍ9Í<¡+£'+']³ExpressionStatementÍOÍd_´AssignmentExpressionÍOÍc¡=MªIdentifierÍOÍU¦resultU°BinaryExpressionÍXÍcMªIdentifierÍXÍ\¤num1¡+MªIdentifierÍ_Íc¤num2N®BlockStatementÍ†Í“]³ExpressionStatementÍ™Í¨_´AssignmentExpressionÍ™Í§¡=MªIdentifierÍ™Í¡¨operatorV§LiteralÍ¤Í§¡-£'-'T«IfStatementÍºÍKU°BinaryExpressionÍ¾ÍÉMªIdentifierÍ¾ÍÂ¤num1¡<MªIdentifierÍÅÍÉ¤num2N®BlockStatementÍËÍK“Q³VariableDeclarationÍâÍô‘R²VariableDeclaratorÍèÍóMªIdentifierÍèÍì¤tempMªIdentifierÍïÍó¤num1¥const]³ExpressionStatementÍ
+Í_´AssignmentExpressionÍ
+Í¡=MªIdentifierÍ
+Í¤num1MªIdentifierÍÍ¤num2]³ExpressionStatementÍ,Í8_´AssignmentExpressionÍ,Í7¡=MªIdentifierÍ,Í0¤num2MªIdentifierÍ3Í7¤tempÀ]³ExpressionStatementÍ]Ír_´AssignmentExpressionÍ]Íq¡=MªIdentifierÍ]Íc¦resultU°BinaryExpressionÍfÍqMªIdentifierÍfÍj¤num1¡-MªIdentifierÍmÍq¤num2T«IfStatementÍ›ÍŒU°BinaryExpressionÍŸÍ©MªIdentifierÍŸÍ¤¥grade¢<=V§LiteralÍ¨Í©¡4N®BlockStatementÍ«Íÿ”Q³VariableDeclarationÍÕÍş‘R²VariableDeclaratorÍÛÍıMªIdentifierÍÛÍİ¢opX®CallExpressionÍàÍıY°MemberExpressionÍàÍêMªIdentifierÍàÍä¤MathMªIdentifierÍåÍê¥floorÂÂ‘U°BinaryExpressionÍëÍüX®CallExpressionÍëÍøY°MemberExpressionÍëÍöMªIdentifierÍëÍï¤MathMªIdentifierÍğÍö¦randomÂÂÂ¡*V§LiteralÍûÍü¡4Â¥const]³ExpressionStatementÍÍ:_´AssignmentExpressionÍÍ9¡=MªIdentifierÍÍ¤num1U°BinaryExpressionÍÍ9X®CallExpressionÍÍ5Y°MemberExpressionÍÍMªIdentifierÍÍ¤MathMªIdentifierÍÍ¥floorÂÂ‘U°BinaryExpressionÍÍ4X®CallExpressionÍÍ+Y°MemberExpressionÍÍ)MªIdentifierÍÍ"¤MathMªIdentifierÍ#Í)¦randomÂÂÂ¡*MªIdentifierÍ.Í4¦maxNumÂ¡+V§LiteralÍ8Í9¡1]³ExpressionStatementÍHÍv_´AssignmentExpressionÍHÍu¡=MªIdentifierÍHÍL¤num2U°BinaryExpressionÍOÍuX®CallExpressionÍOÍqY°MemberExpressionÍOÍYMªIdentifierÍOÍS¤MathMªIdentifierÍTÍY¥floorÂÂ‘U°BinaryExpressionÍZÍpX®CallExpressionÍZÍgY°MemberExpressionÍZÍeMªIdentifierÍZÍ^¤MathMªIdentifierÍ_Íe¦randomÂÂÂ¡*MªIdentifierÍjÍp¦maxNumÂ¡+V§LiteralÍtÍu¡1`¯SwitchStatementÍ„ÍôMªIdentifierÍŒÍ¢op”aªSwitchCaseÍ£Í“]³ExpressionStatementÍÀÍÏ_´AssignmentExpressionÍÀÍÎ¡=MªIdentifierÍÀÍÈ¨operatorV§LiteralÍËÍÎ¡+£'+']³ExpressionStatementÍåÍú_´AssignmentExpressionÍåÍù¡=MªIdentifierÍåÍë¦resultU°BinaryExpressionÍîÍùMªIdentifierÍîÍò¤num1¡+MªIdentifierÍõÍù¤num2Ôrb”¤type¥start£end¥label®BreakStatementÍÍÀV§LiteralÍ¨Í© ¡0aªSwitchCaseÍ(ÍR”]³ExpressionStatementÍEÍT_´AssignmentExpressionÍEÍS¡=MªIdentifierÍEÍM¨operatorV§LiteralÍPÍS¡-£'-'T«IfStatementÍjÍU°BinaryExpressionÍnÍyMªIdentifierÍnÍr¤num1¡<MªIdentifierÍuÍy¤num2N®BlockStatementÍ{Í“Q³VariableDeclarationÍ–Í¨‘R²VariableDeclaratorÍœÍ§MªIdentifierÍœÍ ¤tempMªIdentifierÍ£Í§¤num1¥const]³ExpressionStatementÍÂÍÎ_´AssignmentExpressionÍÂÍÍ¡=MªIdentifierÍÂÍÆ¤num1MªIdentifierÍÉÍÍ¤num2]³ExpressionStatementÍèÍô_´AssignmentExpressionÍèÍó¡=MªIdentifierÍèÍì¤num2MªIdentifierÍïÍó¤tempÀ]³ExpressionStatementÍ!Í6_´AssignmentExpressionÍ!Í5¡=MªIdentifierÍ!Í'¦resultU°BinaryExpressionÍ*Í5MªIdentifierÍ*Í.¤num1¡-MªIdentifierÍ1Í5¤num2b®BreakStatementÍLÍRÀV§LiteralÍ-Í.¡1aªSwitchCaseÍdÍ×“]³ExpressionStatementÍÍ_´AssignmentExpressionÍÍ¡=MªIdentifierÍÍ‰¨operatorV§LiteralÍŒÍ¢Ã—¤'Ã—']³ExpressionStatementÍ¦Í»_´AssignmentExpressionÍ¦Íº¡=MªIdentifierÍ¦Í¬¦resultU°BinaryExpressionÍ¯ÍºMªIdentifierÍ¯Í³¤num1¡*MªIdentifierÍ¶Íº¤num2b®BreakStatementÍÑÍ×ÀV§LiteralÍiÍj¡2aªSwitchCaseÍéÍå•]³ExpressionStatementÍÍ_´AssignmentExpressionÍÍ¡=MªIdentifierÍÍ¨operatorV§LiteralÍÍ¢Ã·¤'Ã·'T«IfStatementÍ,Í^U°BinaryExpressionÍ0Í:MªIdentifierÍ0Í4¤num2£===V§LiteralÍ9Í: ¡0]³ExpressionStatementÍUÍ^_´AssignmentExpressionÍUÍ]¡=MªIdentifierÍUÍY¤num2V§LiteralÍ\Í]¡1À]³ExpressionStatementÍtÍ•_´AssignmentExpressionÍtÍ”¡=MªIdentifierÍtÍz¦resultX®CallExpressionÍ}Í”Y°MemberExpressionÍ}Í‡MªIdentifierÍ}Í¤MathMªIdentifierÍ‚Í‡¥floorÂÂ‘U°BinaryExpressionÍˆÍ“MªIdentifierÍˆÍŒ¤num1¡/MªIdentifierÍÍ“¤num2Â]³ExpressionStatementÍ«ÍÀ_´AssignmentExpressionÍ«Í¿¡=MªIdentifierÍ«Í¯¤num1U°BinaryExpressionÍ²Í¿MªIdentifierÍ²Í¸¦result¡*MªIdentifierÍ»Í¿¤num2b®BreakStatementÍßÍåÀÀN®BlockStatementÍÍŒ”Q³VariableDeclarationÍ8Ía‘R²VariableDeclaratorÍ>Í`MªIdentifierÍ>Í@¢opX®CallExpressionÍCÍ`Y°MemberExpressionÍCÍMMªIdentifierÍCÍG¤MathMªIdentifierÍHÍM¥floorÂÂ‘U°BinaryExpressionÍNÍ_X®CallExpressionÍNÍ[Y°MemberExpressionÍNÍYMªIdentifierÍNÍR¤MathMªIdentifierÍSÍY¦randomÂÂÂ¡*V§LiteralÍ^Í_¡4Â¥const]³ExpressionStatementÍoÍ_´AssignmentExpressionÍoÍ¡=MªIdentifierÍoÍs¤num1U°BinaryExpressionÍvÍX®CallExpressionÍvÍ˜Y°MemberExpressionÍvÍ€MªIdentifierÍvÍz¤MathMªIdentifierÍ{Í€¥floorÂÂ‘U°BinaryExpressionÍÍ—X®CallExpressionÍÍY°MemberExpressionÍÍŒMªIdentifierÍÍ…¤MathMªIdentifierÍ†ÍŒ¦randomÂÂÂ¡*MªIdentifierÍ‘Í—¦maxNumÂ¡+V§LiteralÍ›Í
+¢10]³ExpressionStatementÍ¬ÍÚ_´AssignmentExpressionÍ¬ÍÙ¡=MªIdentifierÍ¬Í°¤num2U°BinaryExpressionÍ³ÍÙX®CallExpressionÍ³ÍÕY°MemberExpressionÍ³Í½MªIdentifierÍ³Í·¤MathMªIdentifierÍ¸Í½¥floorÂÂ‘U°BinaryExpressionÍ¾ÍÔX®CallExpressionÍ¾ÍËY°MemberExpressionÍ¾ÍÉMªIdentifierÍ¾ÍÂ¤MathMªIdentifierÍÃÍÉ¦randomÂÂÂ¡*MªIdentifierÍÎÍÔ¦maxNumÂ¡+V§LiteralÍØÍÙ¡1`¯SwitchStatementÍèÍMªIdentifierÍğÍò¢op”aªSwitchCaseÍÍz“]³ExpressionStatementÍ$Í3_´AssignmentExpressionÍ$Í2¡=MªIdentifierÍ$Í,¨operatorV§LiteralÍ/Í2¡+£'+']³ExpressionStatementÍIÍ^_´AssignmentExpressionÍIÍ]¡=MªIdentifierÍIÍO¦resultU°BinaryExpressionÍRÍ]MªIdentifierÍRÍV¤num1¡+MªIdentifierÍYÍ]¤num2b®BreakStatementÍtÍzÀV§LiteralÍÍ ¡0aªSwitchCaseÍŒÍ¶”]³ExpressionStatementÍ©Í¸_´AssignmentExpressionÍ©Í·¡=MªIdentifierÍ©Í±¨operatorV§LiteralÍ´Í·¡-£'-'T«IfStatementÍÎÍoU°BinaryExpressionÍÒÍİMªIdentifierÍÒÍÖ¤num1¡<MªIdentifierÍÙÍİ¤num2N®BlockStatementÍßÍo“Q³VariableDeclarationÍúÍ‘R²VariableDeclaratorÍ ÍMªIdentifierÍ Í¤tempMªIdentifierÍÍ¤num1¥const]³ExpressionStatementÍ&Í2_´AssignmentExpressionÍ&Í1¡=MªIdentifierÍ&Í*¤num1MªIdentifierÍ-Í1¤num2]³ExpressionStatementÍLÍX_´AssignmentExpressionÍLÍW¡=MªIdentifierÍLÍP¤num2MªIdentifierÍSÍW¤tempÀ]³ExpressionStatementÍ…Íš_´AssignmentExpressionÍ…Í™¡=MªIdentifierÍ…Í‹¦resultU°BinaryExpressionÍÍ™MªIdentifierÍÍ’¤num1¡-MªIdentifierÍ•Í™¤num2b®BreakStatementÍ°Í¶ÀV§LiteralÍ‘Í’¡1aªSwitchCaseÍÈÍ;“]³ExpressionStatementÍåÍô_´AssignmentExpressionÍåÍó¡=MªIdentifierÍåÍí¨operatorV§LiteralÍğÍó¢Ã—¤'Ã—']³ExpressionStatementÍ
+Í_´AssignmentExpressionÍ
+Í¡=MªIdentifierÍ
+Í¦resultU°BinaryExpressionÍÍMªIdentifierÍÍ¤num1¡*MªIdentifierÍÍ¤num2b®BreakStatementÍ5Í;ÀV§LiteralÍÍÍÎ¡2aªSwitchCaseÍMÍr–]³ExpressionStatementÍkÍz_´AssignmentExpressionÍkÍy¡=MªIdentifierÍkÍs¨operatorV§LiteralÍvÍy¢Ã·¤'Ã·'T«IfStatementÍÍÂU°BinaryExpressionÍ”ÍMªIdentifierÍ”Í˜¤num2£===V§LiteralÍÍ ¡0]³ExpressionStatementÍ¹ÍÂ_´AssignmentExpressionÍ¹ÍÁ¡=MªIdentifierÍ¹Í½¤num2V§LiteralÍÀÍÁ¡1ÀQ³VariableDeclarationÍØÍ‘R²VariableDeclaratorÍŞÍ MªIdentifierÍŞÍæ¨quotientX®CallExpressionÍéÍ Y°MemberExpressionÍéÍóMªIdentifierÍéÍí¤MathMªIdentifierÍîÍó¥floorÂÂ‘U°BinaryExpressionÍôÍÿMªIdentifierÍôÍø¤num1¡/MªIdentifierÍûÍÿ¤num2Â¥const]³ExpressionStatementÍÍ._´AssignmentExpressionÍÍ-¡=MªIdentifierÍÍ¤num1U°BinaryExpressionÍÍ-MªIdentifierÍÍ&¨quotient¡*MªIdentifierÍ)Í-¤num2]³ExpressionStatementÍDÍV_´AssignmentExpressionÍDÍU¡=MªIdentifierÍDÍJ¦resultMªIdentifierÍMÍU¨quotientb®BreakStatementÍlÍrÀÀ]³ExpressionStatementÍ–ÍË_´AssignmentExpressionÍ–ÍÊ¡=Y°MemberExpressionÍ–Í¦MªIdentifierÍ–Í¨questionMªIdentifierÍŸÍ¦§contentÂÂÔrc•¤type¥start£end«expressions¦quasis¯TemplateLiteralÍ©ÍÊ“MªIdentifierÍ¬Í°¤num1MªIdentifierÍ´Í¼¨operatorMªIdentifierÍÀÍÄ¤num2”Ôrd•¤type¥start£end¥value¤tail¯TemplateElementÍªÍªÔre’£raw¦cooked  Âd¯TemplateElementÍ±Í²e¡ ¡ Âd¯TemplateElementÍ½Í¾e¡ ¡ Âd¯TemplateElementÍÅÍÉe¤ = ?¤ = ?Ã]³ExpressionStatementÍÕÍı_´AssignmentExpressionÍÕÍü¡=Y°MemberExpressionÍÕÍëMªIdentifierÍÕÍİ¨questionMªIdentifierÍŞÍë­correctAnswerÂÂX®CallExpressionÍîÍüMªIdentifierÍîÍô¦String‘MªIdentifierÍõÍû¦resultÂQ³VariableDeclarationÍ'ÍP‘R²VariableDeclaratorÍ-ÍOMªIdentifierÍ-Í4§optionsS¯ArrayExpressionÍ7ÍO‘Y°MemberExpressionÍ8ÍNMªIdentifierÍ8Í@¨questionMªIdentifierÍAÍN­correctAnswerÂÂ¥const[¬ForStatementÍmÍÖQ³VariableDeclarationÍrÍ{‘R²VariableDeclaratorÍvÍ{MªIdentifierÍvÍw¡iV§LiteralÍzÍ{ ¡0£letU°BinaryExpressionÍ}Í‚MªIdentifierÍ}Í~¡i¡<V§LiteralÍÍ‚¡3\°UpdateExpressionÍ„Í‡¢++ÂMªIdentifierÍ„Í…¡iN®BlockStatementÍ‰ÍÖ”Q³VariableDeclarationÍ˜Í×‘R²VariableDeclaratorÍœÍÖMªIdentifierÍœÍ§«wrongAnswerU°BinaryExpressionÍªÍÖU°BinaryExpressionÍªÍÑMªIdentifierÍªÍ°¦result¡+X®CallExpressionÍ³ÍÑY°MemberExpressionÍ³Í½MªIdentifierÍ³Í·¤MathMªIdentifierÍ¸Í½¥floorÂÂ‘U°BinaryExpressionÍ¾ÍĞX®CallExpressionÍ¾ÍËY°MemberExpressionÍ¾ÍÉMªIdentifierÍ¾ÍÂ¤MathMªIdentifierÍÃÍÉ¦randomÂÂÂ¡*V§LiteralÍÎÍĞ¢20Â¡-V§LiteralÍÔÍÖ
+¢10£letT«IfStatementÍåÍ/U°BinaryExpressionÍéÍøMªIdentifierÍéÍô«wrongAnswer¡<V§LiteralÍ÷Íø ¡0]³ExpressionStatementÍÍ/_´AssignmentExpressionÍÍ.¡=MªIdentifierÍÍ«wrongAnswerX®CallExpressionÍÍ.Y°MemberExpressionÍÍ!MªIdentifierÍÍ¤MathMªIdentifierÍÍ!£absÂÂ‘MªIdentifierÍ"Í-«wrongAnswerÂÀT«IfStatementÍ=Í›U°BinaryExpressionÍAÍWMªIdentifierÍAÍL«wrongAnswer£===MªIdentifierÍQÍW¦result]³ExpressionStatementÍjÍ›_´AssignmentExpressionÍjÍš¢+=MªIdentifierÍjÍu«wrongAnswerU°BinaryExpressionÍyÍšX®CallExpressionÍyÍ–Y°MemberExpressionÍyÍƒMªIdentifierÍyÍ}¤MathMªIdentifierÍ~Íƒ¥floorÂÂ‘U°BinaryExpressionÍ„Í•X®CallExpressionÍ„Í‘Y°MemberExpressionÍ„ÍMªIdentifierÍ„Íˆ¤MathMªIdentifierÍ‰Í¦randomÂÂÂ¡*V§LiteralÍ”Í•¡5Â¡+V§LiteralÍ™Íš¡1À]³ExpressionStatementÍ©ÍËX®CallExpressionÍ©ÍÊY°MemberExpressionÍ©ÍµMªIdentifierÍ©Í°§optionsMªIdentifierÍ±Íµ¤pushÂÂ‘X®CallExpressionÍ¶ÍÉMªIdentifierÍ¶Í¼¦String‘MªIdentifierÍ½ÍÈ«wrongAnswerÂÂ[¬ForStatementÍóÍªQ³VariableDeclarationÍøÍ‘R²VariableDeclaratorÍüÍMªIdentifierÍüÍı¡iU°BinaryExpressionÍ ÍY°MemberExpressionÍ ÍMªIdentifierÍ Í§optionsMªIdentifierÍÍ¦lengthÂÂ¡-V§LiteralÍÍ¡1£letU°BinaryExpressionÍÍMªIdentifierÍÍ¡i¡>V§LiteralÍÍ ¡0\°UpdateExpressionÍÍ¢--ÂMªIdentifierÍÍ¡iN®BlockStatementÍ Íª’Q³VariableDeclarationÍ/Í]‘R²VariableDeclaratorÍ5Í\MªIdentifierÍ5Í6¡jX®CallExpressionÍ9Í\Y°MemberExpressionÍ9ÍCMªIdentifierÍ9Í=¤MathMªIdentifierÍ>ÍC¥floorÂÂ‘U°BinaryExpressionÍDÍ[X®CallExpressionÍDÍQY°MemberExpressionÍDÍOMªIdentifierÍDÍH¤MathMªIdentifierÍIÍO¦randomÂÂÂ¡*U°BinaryExpressionÍUÍZMªIdentifierÍUÍV¡i¡+V§LiteralÍYÍZ¡1Â¥const]³ExpressionStatementÍkÍŸ_´AssignmentExpressionÍkÍ¡=S¬ArrayPatternÍkÍƒ’Y°MemberExpressionÍlÍvMªIdentifierÍlÍs§optionsMªIdentifierÍtÍu¡iÃÂY°MemberExpressionÍxÍ‚MªIdentifierÍxÍ§optionsMªIdentifierÍ€Í¡jÃÂS¯ArrayExpressionÍ†Í’Y°MemberExpressionÍ‡Í‘MªIdentifierÍ‡Í§optionsMªIdentifierÍÍ¡jÃÂY°MemberExpressionÍ“ÍMªIdentifierÍ“Íš§optionsMªIdentifierÍ›Íœ¡iÃÂ]³ExpressionStatementÍ´ÍÏ_´AssignmentExpressionÍ´ÍÎ¡=Y°MemberExpressionÍ´ÍÄMªIdentifierÍ´Í¼¨questionMªIdentifierÍ½ÍÄ§optionsÂÂMªIdentifierÍÇÍÎ§options]³ExpressionStatementÍÙÍ_´AssignmentExpressionÍÙÍ¡=Y°MemberExpressionÍÙÍíMªIdentifierÍÙÍá¨questionMªIdentifierÍâÍí«explanationÂÂc¯TemplateLiteralÍğÍ”MªIdentifierÍóÍ÷¤num1MªIdentifierÍûÍ¨operatorMªIdentifierÍÍ¤num2MªIdentifierÍÍ¦result•d¯TemplateElementÍñÍñe  Âd¯TemplateElementÍøÍùe¡ ¡ Âd¯TemplateElementÍÍe¡ ¡ Âd¯TemplateElementÍÍe£ = £ = Âd¯TemplateElementÍÍe  ÃW¯ReturnStatementÍ$Í4MªIdentifierÍ+Í3¨questionO°MethodDefinitionÍaÍ+…ÃÂMªIdentifierÍhÍ¹generateFillBlankQuestion¦methodP²FunctionExpressionÍÍ+…ÀÂÂÂ’MªIdentifierÍ‚ÍŠ¨questionMªIdentifierÍŒÍ‘¥gradeN®BlockStatementÍ“Í+…˜]³ExpressionStatementÍÍÔ_´AssignmentExpressionÍÍÓ¡=Y°MemberExpressionÍÍ«MªIdentifierÍÍ¦¨questionMªIdentifierÍ§Í«¤typeÂÂY°MemberExpressionÍ®ÍÓMªIdentifierÍ®Íº¬AppConstantsMªIdentifierÍ»ÍÓ¸QUESTION_TYPE_FILL_BLANKÂÂQ³VariableDeclarationÍŞÍõ“R²VariableDeclaratorÍâÍæMªIdentifierÍâÍæ¤num1ÀR²VariableDeclaratorÍèÍìMªIdentifierÍèÍì¤num2ÀR²VariableDeclaratorÍîÍôMªIdentifierÍîÍô¦resultÀ£letQ³VariableDeclarationÍÿÍ‘R²VariableDeclaratorÍÍMªIdentifierÍÍ¨operatorÀ£letQ³VariableDeclarationÍÍ>‘R²VariableDeclaratorÍÍ=MªIdentifierÍÍ"¦maxNumX®CallExpressionÍ%Í=Y°MemberExpressionÍ%Í6Z®ThisExpressionÍ%Í)MªIdentifierÍ*Í6¬getMaxNumberÂÂ‘MªIdentifierÍ7Í<¥gradeÂ¥constT«IfStatementÍHÍ*çU°BinaryExpressionÍLÍVMªIdentifierÍLÍQ¥grade¢<=V§LiteralÍUÍV¡2N®BlockStatementÍXÍí“]³ExpressionStatementÍgÍ•_´AssignmentExpressionÍgÍ”¡=MªIdentifierÍgÍk¤num1U°BinaryExpressionÍnÍ”X®CallExpressionÍnÍY°MemberExpressionÍnÍxMªIdentifierÍnÍr¤MathMªIdentifierÍsÍx¥floorÂÂ‘U°BinaryExpressionÍyÍX®CallExpressionÍyÍ†Y°MemberExpressionÍyÍ„MªIdentifierÍyÍ}¤MathMªIdentifierÍ~Í„¦randomÂÂÂ¡*MªIdentifierÍ‰Í¦maxNumÂ¡+V§LiteralÍ“Í”¡1]³ExpressionStatementÍ£ÍÑ_´AssignmentExpressionÍ£ÍĞ¡=MªIdentifierÍ£Í§¤num2U°BinaryExpressionÍªÍĞX®CallExpressionÍªÍÌY°MemberExpressionÍªÍ´MªIdentifierÍªÍ®¤MathMªIdentifierÍ¯Í´¥floorÂÂ‘U°BinaryExpressionÍµÍËX®CallExpressionÍµÍÂY°MemberExpressionÍµÍÀMªIdentifierÍµÍ¹¤MathMªIdentifierÍºÍÀ¦randomÂÂÂ¡*MªIdentifierÍÅÍË¦maxNumÂ¡+V§LiteralÍÏÍĞ¡1T«IfStatementÍßÍâU°BinaryExpressionÍãÍöX®CallExpressionÍãÍğY°MemberExpressionÍãÍîMªIdentifierÍãÍç¤MathMªIdentifierÍèÍî¦randomÂÂÂ¡>V§LiteralÍóÍöË?à      £0.5N®BlockStatementÍøÍ’“]³ExpressionStatementÍÍ_´AssignmentExpressionÍÍ¡=MªIdentifierÍÍ¨operatorV§LiteralÍÍ¡+£'+']³ExpressionStatementÍ,ÍA_´AssignmentExpressionÍ,Í@¡=MªIdentifierÍ,Í2¦resultU°BinaryExpressionÍ5Í@MªIdentifierÍ5Í9¤num1¡+MªIdentifierÍ<Í@¤num2]³ExpressionStatementÍSÍƒ_´AssignmentExpressionÍSÍ‚¡=Y°MemberExpressionÍSÍcMªIdentifierÍSÍ[¨questionMªIdentifierÍ\Íc§contentÂÂc¯TemplateLiteralÍfÍ‚’MªIdentifierÍiÍm¤num1MªIdentifierÍsÍw¤num2“d¯TemplateElementÍgÍge  Âd¯TemplateElementÍnÍqe£ + £ + Âd¯TemplateElementÍxÍe© = (    )© = (    )ÃN®BlockStatementÍ¥Íâ”]³ExpressionStatementÍ¸ÍÇ_´AssignmentExpressionÍ¸ÍÆ¡=MªIdentifierÍ¸ÍÀ¨operatorV§LiteralÍÃÍÆ¡-£'-'T«IfStatementÍÙÍjU°BinaryExpressionÍİÍèMªIdentifierÍİÍá¤num1¡<MªIdentifierÍäÍè¤num2N®BlockStatementÍêÍj“Q³VariableDeclarationÍÍ‘R²VariableDeclaratorÍÍMªIdentifierÍÍ¤tempMªIdentifierÍÍ¤num1¥const]³ExpressionStatementÍ)Í5_´AssignmentExpressionÍ)Í4¡=MªIdentifierÍ)Í-¤num1MªIdentifierÍ0Í4¤num2]³ExpressionStatementÍKÍW_´AssignmentExpressionÍKÍV¡=MªIdentifierÍKÍO¤num2MªIdentifierÍRÍV¤tempÀ]³ExpressionStatementÍ|Í‘_´AssignmentExpressionÍ|Í¡=MªIdentifierÍ|Í‚¦resultU°BinaryExpressionÍ…ÍMªIdentifierÍ…Í‰¤num1¡-MªIdentifierÍŒÍ¤num2]³ExpressionStatementÍ£ÍÓ_´AssignmentExpressionÍ£ÍÒ¡=Y°MemberExpressionÍ£Í³MªIdentifierÍ£Í«¨questionMªIdentifierÍ¬Í³§contentÂÂc¯TemplateLiteralÍ¶ÍÒ’MªIdentifierÍ¹Í½¤num1MªIdentifierÍÃÍÇ¤num2“d¯TemplateElementÍ·Í·e  Âd¯TemplateElementÍ¾ÍÁe£ - £ - Âd¯TemplateElementÍÈÍÑe© = (    )© = (    )ÃT«IfStatementÍüÍ*çU°BinaryExpressionÍ  Í 
+MªIdentifierÍ  Í ¥grade¢<=V§LiteralÍ 	Í 
+¡4N®BlockStatementÍ Í%]”Q³VariableDeclarationÍ Í D‘R²VariableDeclaratorÍ !Í CMªIdentifierÍ !Í #¢opX®CallExpressionÍ &Í CY°MemberExpressionÍ &Í 0MªIdentifierÍ &Í *¤MathMªIdentifierÍ +Í 0¥floorÂÂ‘U°BinaryExpressionÍ 1Í BX®CallExpressionÍ 1Í >Y°MemberExpressionÍ 1Í <MªIdentifierÍ 1Í 5¤MathMªIdentifierÍ 6Í <¦randomÂÂÂ¡*V§LiteralÍ AÍ B¡4Â¥const]³ExpressionStatementÍ RÍ €_´AssignmentExpressionÍ RÍ ¡=MªIdentifierÍ RÍ V¤num1U°BinaryExpressionÍ YÍ X®CallExpressionÍ YÍ {Y°MemberExpressionÍ YÍ cMªIdentifierÍ YÍ ]¤MathMªIdentifierÍ ^Í c¥floorÂÂ‘U°BinaryExpressionÍ dÍ zX®CallExpressionÍ dÍ qY°MemberExpressionÍ dÍ oMªIdentifierÍ dÍ h¤MathMªIdentifierÍ iÍ o¦randomÂÂÂ¡*MªIdentifierÍ tÍ z¦maxNumÂ¡+V§LiteralÍ ~Í ¡1]³ExpressionStatementÍ Í ¼_´AssignmentExpressionÍ Í »¡=MªIdentifierÍ Í ’¤num2U°BinaryExpressionÍ •Í »X®CallExpressionÍ •Í ·Y°MemberExpressionÍ •Í ŸMªIdentifierÍ •Í ™¤MathMªIdentifierÍ šÍ Ÿ¥floorÂÂ‘U°BinaryExpressionÍ  Í ¶X®CallExpressionÍ  Í ­Y°MemberExpressionÍ  Í «MªIdentifierÍ  Í ¤¤MathMªIdentifierÍ ¥Í «¦randomÂÂÂ¡*MªIdentifierÍ °Í ¶¦maxNumÂ¡+V§LiteralÍ ºÍ »¡1`¯SwitchStatementÍ ÊÍ%RMªIdentifierÍ ÒÍ Ô¢op”aªSwitchCaseÍ éÍ!¢”]³ExpressionStatementÍ!Í!_´AssignmentExpressionÍ!Í!¡=MªIdentifierÍ!Í!¨operatorV§LiteralÍ!Í!¡+£'+']³ExpressionStatementÍ!+Í!@_´AssignmentExpressionÍ!+Í!?¡=MªIdentifierÍ!+Í!1¦resultU°BinaryExpressionÍ!4Í!?MªIdentifierÍ!4Í!8¤num1¡+MªIdentifierÍ!;Í!?¤num2]³ExpressionStatementÍ!VÍ!†_´AssignmentExpressionÍ!VÍ!…¡=Y°MemberExpressionÍ!VÍ!fMªIdentifierÍ!VÍ!^¨questionMªIdentifierÍ!_Í!f§contentÂÂc¯TemplateLiteralÍ!iÍ!…’MªIdentifierÍ!lÍ!p¤num1MªIdentifierÍ!vÍ!z¤num2“d¯TemplateElementÍ!jÍ!je  Âd¯TemplateElementÍ!qÍ!te£ + £ + Âd¯TemplateElementÍ!{Í!„e© = (    )© = (    )Ãb®BreakStatementÍ!œÍ!¢ÀV§LiteralÍ îÍ ï ¡0aªSwitchCaseÍ!´Í#$•]³ExpressionStatementÍ!ÑÍ!à_´AssignmentExpressionÍ!ÑÍ!ß¡=MªIdentifierÍ!ÑÍ!Ù¨operatorV§LiteralÍ!ÜÍ!ß¡-£'-'T«IfStatementÍ!öÍ"—U°BinaryExpressionÍ!úÍ"MªIdentifierÍ!úÍ!ş¤num1¡<MªIdentifierÍ"Í"¤num2N®BlockStatementÍ"Í"—“Q³VariableDeclarationÍ""Í"4‘R²VariableDeclaratorÍ"(Í"3MªIdentifierÍ"(Í",¤tempMªIdentifierÍ"/Í"3¤num1¥const]³ExpressionStatementÍ"NÍ"Z_´AssignmentExpressionÍ"NÍ"Y¡=MªIdentifierÍ"NÍ"R¤num1MªIdentifierÍ"UÍ"Y¤num2]³ExpressionStatementÍ"tÍ"€_´AssignmentExpressionÍ"tÍ"¡=MªIdentifierÍ"tÍ"x¤num2MªIdentifierÍ"{Í"¤tempÀ]³ExpressionStatementÍ"­Í"Â_´AssignmentExpressionÍ"­Í"Á¡=MªIdentifierÍ"­Í"³¦resultU°BinaryExpressionÍ"¶Í"ÁMªIdentifierÍ"¶Í"º¤num1¡-MªIdentifierÍ"½Í"Á¤num2]³ExpressionStatementÍ"ØÍ#_´AssignmentExpressionÍ"ØÍ#¡=Y°MemberExpressionÍ"ØÍ"èMªIdentifierÍ"ØÍ"à¨questionMªIdentifierÍ"áÍ"è§contentÂÂc¯TemplateLiteralÍ"ëÍ#’MªIdentifierÍ"îÍ"ò¤num1MªIdentifierÍ"øÍ"ü¤num2“d¯TemplateElementÍ"ìÍ"ìe  Âd¯TemplateElementÍ"óÍ"öe£ - £ - Âd¯TemplateElementÍ"ıÍ#e© = (    )© = (    )Ãb®BreakStatementÍ#Í#$ÀV§LiteralÍ!¹Í!º¡1aªSwitchCaseÍ#6Í#ï”]³ExpressionStatementÍ#SÍ#b_´AssignmentExpressionÍ#SÍ#a¡=MªIdentifierÍ#SÍ#[¨operatorV§LiteralÍ#^Í#a¢Ã—¤'Ã—']³ExpressionStatementÍ#xÍ#_´AssignmentExpressionÍ#xÍ#Œ¡=MªIdentifierÍ#xÍ#~¦resultU°BinaryExpressionÍ#Í#ŒMªIdentifierÍ#Í#…¤num1¡*MªIdentifierÍ#ˆÍ#Œ¤num2]³ExpressionStatementÍ#£Í#Ó_´AssignmentExpressionÍ#£Í#Ò¡=Y°MemberExpressionÍ#£Í#³MªIdentifierÍ#£Í#«¨questionMªIdentifierÍ#¬Í#³§contentÂÂc¯TemplateLiteralÍ#¶Í#Ò’MªIdentifierÍ#¹Í#½¤num1MªIdentifierÍ#ÃÍ#Ç¤num2“d¯TemplateElementÍ#·Í#·e  Âd¯TemplateElementÍ#¾Í#Áe¤ Ã— ¤ Ã— Âd¯TemplateElementÍ#ÈÍ#Ñe© = (    )© = (    )Ãb®BreakStatementÍ#éÍ#ïÀV§LiteralÍ#;Í#<¡2aªSwitchCaseÍ$Í%C–]³ExpressionStatementÍ$Í$._´AssignmentExpressionÍ$Í$-¡=MªIdentifierÍ$Í$'¨operatorV§LiteralÍ$*Í$-¢Ã·¤'Ã·'T«IfStatementÍ$DÍ$vU°BinaryExpressionÍ$HÍ$RMªIdentifierÍ$HÍ$L¤num2£===V§LiteralÍ$QÍ$R ¡0]³ExpressionStatementÍ$mÍ$v_´AssignmentExpressionÍ$mÍ$u¡=MªIdentifierÍ$mÍ$q¤num2V§LiteralÍ$tÍ$u¡1À]³ExpressionStatementÍ$ŒÍ$­_´AssignmentExpressionÍ$ŒÍ$¬¡=MªIdentifierÍ$ŒÍ$’¦resultX®CallExpressionÍ$•Í$¬Y°MemberExpressionÍ$•Í$ŸMªIdentifierÍ$•Í$™¤MathMªIdentifierÍ$šÍ$Ÿ¥floorÂÂ‘U°BinaryExpressionÍ$ Í$«MªIdentifierÍ$ Í$¤¤num1¡/MªIdentifierÍ$§Í$«¤num2Â]³ExpressionStatementÍ$ÃÍ$Ø_´AssignmentExpressionÍ$ÃÍ$×¡=MªIdentifierÍ$ÃÍ$Ç¤num1U°BinaryExpressionÍ$ÊÍ$×MªIdentifierÍ$ÊÍ$Ğ¦result¡*MªIdentifierÍ$ÓÍ$×¤num2]³ExpressionStatementÍ$÷Í%'_´AssignmentExpressionÍ$÷Í%&¡=Y°MemberExpressionÍ$÷Í%MªIdentifierÍ$÷Í$ÿ¨questionMªIdentifierÍ% Í%§contentÂÂc¯TemplateLiteralÍ%
+Í%&’MªIdentifierÍ%Í%¤num1MªIdentifierÍ%Í%¤num2“d¯TemplateElementÍ%Í%e  Âd¯TemplateElementÍ%Í%e¤ Ã· ¤ Ã· Âd¯TemplateElementÍ%Í%%e© = (    )© = (    )Ãb®BreakStatementÍ%=Í%CÀÀN®BlockStatementÍ%lÍ*ç”Q³VariableDeclarationÍ%{Í%¤‘R²VariableDeclaratorÍ%Í%£MªIdentifierÍ%Í%ƒ¢opX®CallExpressionÍ%†Í%£Y°MemberExpressionÍ%†Í%MªIdentifierÍ%†Í%Š¤MathMªIdentifierÍ%‹Í%¥floorÂÂ‘U°BinaryExpressionÍ%‘Í%¢X®CallExpressionÍ%‘Í%Y°MemberExpressionÍ%‘Í%œMªIdentifierÍ%‘Í%•¤MathMªIdentifierÍ%–Í%œ¦randomÂÂÂ¡*V§LiteralÍ%¡Í%¢¡4Â¥const]³ExpressionStatementÍ%²Í%á_´AssignmentExpressionÍ%²Í%à¡=MªIdentifierÍ%²Í%¶¤num1U°BinaryExpressionÍ%¹Í%àX®CallExpressionÍ%¹Í%ÛY°MemberExpressionÍ%¹Í%ÃMªIdentifierÍ%¹Í%½¤MathMªIdentifierÍ%¾Í%Ã¥floorÂÂ‘U°BinaryExpressionÍ%ÄÍ%ÚX®CallExpressionÍ%ÄÍ%ÑY°MemberExpressionÍ%ÄÍ%ÏMªIdentifierÍ%ÄÍ%È¤MathMªIdentifierÍ%ÉÍ%Ï¦randomÂÂÂ¡*MªIdentifierÍ%ÔÍ%Ú¦maxNumÂ¡+V§LiteralÍ%ŞÍ%à
+¢10]³ExpressionStatementÍ%ïÍ&_´AssignmentExpressionÍ%ïÍ&¡=MªIdentifierÍ%ïÍ%ó¤num2U°BinaryExpressionÍ%öÍ&X®CallExpressionÍ%öÍ&Y°MemberExpressionÍ%öÍ& MªIdentifierÍ%öÍ%ú¤MathMªIdentifierÍ%ûÍ& ¥floorÂÂ‘U°BinaryExpressionÍ&Í&X®CallExpressionÍ&Í&Y°MemberExpressionÍ&Í&MªIdentifierÍ&Í&¤MathMªIdentifierÍ&Í&¦randomÂÂÂ¡*MªIdentifierÍ&Í&¦maxNumÂ¡+V§LiteralÍ&Í&¡1`¯SwitchStatementÍ&+Í*ÜMªIdentifierÍ&3Í&5¢op”aªSwitchCaseÍ&JÍ'”]³ExpressionStatementÍ&gÍ&v_´AssignmentExpressionÍ&gÍ&u¡=MªIdentifierÍ&gÍ&o¨operatorV§LiteralÍ&rÍ&u¡+£'+']³ExpressionStatementÍ&ŒÍ&¡_´AssignmentExpressionÍ&ŒÍ& ¡=MªIdentifierÍ&ŒÍ&’¦resultU°BinaryExpressionÍ&•Í& MªIdentifierÍ&•Í&™¤num1¡+MªIdentifierÍ&œÍ& ¤num2]³ExpressionStatementÍ&·Í&ç_´AssignmentExpressionÍ&·Í&æ¡=Y°MemberExpressionÍ&·Í&ÇMªIdentifierÍ&·Í&¿¨questionMªIdentifierÍ&ÀÍ&Ç§contentÂÂc¯TemplateLiteralÍ&ÊÍ&æ’MªIdentifierÍ&ÍÍ&Ñ¤num1MªIdentifierÍ&×Í&Û¤num2“d¯TemplateElementÍ&ËÍ&Ëe  Âd¯TemplateElementÍ&ÒÍ&Õe£ + £ + Âd¯TemplateElementÍ&ÜÍ&åe© = (    )© = (    )Ãb®BreakStatementÍ&ıÍ'ÀV§LiteralÍ&OÍ&P ¡0aªSwitchCaseÍ'Í(…•]³ExpressionStatementÍ'2Í'A_´AssignmentExpressionÍ'2Í'@¡=MªIdentifierÍ'2Í':¨operatorV§LiteralÍ'=Í'@¡-£'-'T«IfStatementÍ'WÍ'øU°BinaryExpressionÍ'[Í'fMªIdentifierÍ'[Í'_¤num1¡<MªIdentifierÍ'bÍ'f¤num2N®BlockStatementÍ'hÍ'ø“Q³VariableDeclarationÍ'ƒÍ'•‘R²VariableDeclaratorÍ'‰Í'”MªIdentifierÍ'‰Í'¤tempMªIdentifierÍ'Í'”¤num1¥const]³ExpressionStatementÍ'¯Í'»_´AssignmentExpressionÍ'¯Í'º¡=MªIdentifierÍ'¯Í'³¤num1MªIdentifierÍ'¶Í'º¤num2]³ExpressionStatementÍ'ÕÍ'á_´AssignmentExpressionÍ'ÕÍ'à¡=MªIdentifierÍ'ÕÍ'Ù¤num2MªIdentifierÍ'ÜÍ'à¤tempÀ]³ExpressionStatementÍ(Í(#_´AssignmentExpressionÍ(Í("¡=MªIdentifierÍ(Í(¦resultU°BinaryExpressionÍ(Í("MªIdentifierÍ(Í(¤num1¡-MªIdentifierÍ(Í("¤num2]³ExpressionStatementÍ(9Í(i_´AssignmentExpressionÍ(9Í(h¡=Y°MemberExpressionÍ(9Í(IMªIdentifierÍ(9Í(A¨questionMªIdentifierÍ(BÍ(I§contentÂÂc¯TemplateLiteralÍ(LÍ(h’MªIdentifierÍ(OÍ(S¤num1MªIdentifierÍ(YÍ(]¤num2“d¯TemplateElementÍ(MÍ(Me  Âd¯TemplateElementÍ(TÍ(We£ - £ - Âd¯TemplateElementÍ(^Í(ge© = (    )© = (    )Ãb®BreakStatementÍ(Í(…ÀV§LiteralÍ'Í'¡1aªSwitchCaseÍ(—Í)P”]³ExpressionStatementÍ(´Í(Ã_´AssignmentExpressionÍ(´Í(Â¡=MªIdentifierÍ(´Í(¼¨operatorV§LiteralÍ(¿Í(Â¢Ã—¤'Ã—']³ExpressionStatementÍ(ÙÍ(î_´AssignmentExpressionÍ(ÙÍ(í¡=MªIdentifierÍ(ÙÍ(ß¦resultU°BinaryExpressionÍ(âÍ(íMªIdentifierÍ(âÍ(æ¤num1¡*MªIdentifierÍ(éÍ(í¤num2]³ExpressionStatementÍ)Í)4_´AssignmentExpressionÍ)Í)3¡=Y°MemberExpressionÍ)Í)MªIdentifierÍ)Í)¨questionMªIdentifierÍ)Í)§contentÂÂc¯TemplateLiteralÍ)Í)3’MªIdentifierÍ)Í)¤num1MªIdentifierÍ)$Í)(¤num2“d¯TemplateElementÍ)Í)e  Âd¯TemplateElementÍ)Í)"e¤ Ã— ¤ Ã— Âd¯TemplateElementÍ))Í)2e© = (    )© = (    )Ãb®BreakStatementÍ)JÍ)PÀV§LiteralÍ(œÍ(¡2aªSwitchCaseÍ)bÍ*Í—]³ExpressionStatementÍ)€Í)_´AssignmentExpressionÍ)€Í)¡=MªIdentifierÍ)€Í)ˆ¨operatorV§LiteralÍ)‹Í)¢Ã·¤'Ã·'T«IfStatementÍ)¥Í)×U°BinaryExpressionÍ)©Í)³MªIdentifierÍ)©Í)­¤num2£===V§LiteralÍ)²Í)³ ¡0]³ExpressionStatementÍ)ÎÍ)×_´AssignmentExpressionÍ)ÎÍ)Ö¡=MªIdentifierÍ)ÎÍ)Ò¤num2V§LiteralÍ)ÕÍ)Ö¡1ÀQ³VariableDeclarationÍ)íÍ*‘R²VariableDeclaratorÍ)óÍ*MªIdentifierÍ)óÍ)û¨quotientX®CallExpressionÍ)şÍ*Y°MemberExpressionÍ)şÍ*MªIdentifierÍ)şÍ*¤MathMªIdentifierÍ*Í*¥floorÂÂ‘U°BinaryExpressionÍ*	Í*MªIdentifierÍ*	Í*¤num1¡/MªIdentifierÍ*Í*¤num2Â¥const]³ExpressionStatementÍ*,Í*C_´AssignmentExpressionÍ*,Í*B¡=MªIdentifierÍ*,Í*0¤num1U°BinaryExpressionÍ*3Í*BMªIdentifierÍ*3Í*;¨quotient¡*MªIdentifierÍ*>Í*B¤num2]³ExpressionStatementÍ*YÍ*k_´AssignmentExpressionÍ*YÍ*j¡=MªIdentifierÍ*YÍ*_¦resultMªIdentifierÍ*bÍ*j¨quotient]³ExpressionStatementÍ*Í*±_´AssignmentExpressionÍ*Í*°¡=Y°MemberExpressionÍ*Í*‘MªIdentifierÍ*Í*‰¨questionMªIdentifierÍ*ŠÍ*‘§contentÂÂc¯TemplateLiteralÍ*”Í*°’MªIdentifierÍ*—Í*›¤num1MªIdentifierÍ*¡Í*¥¤num2“d¯TemplateElementÍ*•Í*•e  Âd¯TemplateElementÍ*œÍ*Ÿe¤ Ã· ¤ Ã· Âd¯TemplateElementÍ*¦Í*¯e© = (    )© = (    )Ãb®BreakStatementÍ*ÇÍ*ÍÀÀ]³ExpressionStatementÍ*ñÍ+_´AssignmentExpressionÍ*ñÍ+¡=Y°MemberExpressionÍ*ñÍ+MªIdentifierÍ*ñÍ*ù¨questionMªIdentifierÍ*úÍ+­correctAnswerÂÂX®CallExpressionÍ+
+Í+MªIdentifierÍ+
+Í+¦String‘MªIdentifierÍ+Í+¦resultÂ]³ExpressionStatementÍ+#Í+d_´AssignmentExpressionÍ+#Í+c¡=Y°MemberExpressionÍ+#Í+7MªIdentifierÍ+#Í++¨questionMªIdentifierÍ+,Í+7«explanationÂÂc¯TemplateLiteralÍ+:Í+c”MªIdentifierÍ+=Í+A¤num1MªIdentifierÍ+EÍ+M¨operatorMªIdentifierÍ+QÍ+U¤num2MªIdentifierÍ+[Í+a¦result•d¯TemplateElementÍ+;Í+;e  Âd¯TemplateElementÍ+BÍ+Ce¡ ¡ Âd¯TemplateElementÍ+NÍ+Oe¡ ¡ Âd¯TemplateElementÍ+VÍ+Ye£ = £ = Âd¯TemplateElementÍ+bÍ+be  ÃW¯ReturnStatementÍ+nÍ+~MªIdentifierÍ+uÍ+}¨questionO°MethodDefinitionÍ+«Í6ÃÂMªIdentifierÍ+²Í+Ê¸generateJudgmentQuestion¦methodP²FunctionExpressionÍ+ÊÍ6ÀÂÂÂ’MªIdentifierÍ+ËÍ+Ó¨questionMªIdentifierÍ+ÕÍ+Ú¥gradeN®BlockStatementÍ+ÜÍ6œ]³ExpressionStatementÍ+çÍ,_´AssignmentExpressionÍ+çÍ,¡=Y°MemberExpressionÍ+çÍ+ôMªIdentifierÍ+çÍ+ï¨questionMªIdentifierÍ+ğÍ+ô¤typeÂÂY°MemberExpressionÍ+÷Í,MªIdentifierÍ+÷Í,¬AppConstantsMªIdentifierÍ,Í,¶QUESTION_TYPE_JUDGMENTÂÂQ³VariableDeclarationÍ,%Í,<“R²VariableDeclaratorÍ,)Í,-MªIdentifierÍ,)Í,-¤num1ÀR²VariableDeclaratorÍ,/Í,3MªIdentifierÍ,/Í,3¤num2ÀR²VariableDeclaratorÍ,5Í,;MªIdentifierÍ,5Í,;¦resultÀ£letQ³VariableDeclarationÍ,FÍ,S‘R²VariableDeclaratorÍ,JÍ,RMªIdentifierÍ,JÍ,R¨operatorÀ£letQ³VariableDeclarationÍ,]Í,ƒ‘R²VariableDeclaratorÍ,cÍ,‚MªIdentifierÍ,cÍ,l©isCorrectU°BinaryExpressionÍ,oÍ,‚X®CallExpressionÍ,oÍ,|Y°MemberExpressionÍ,oÍ,zMªIdentifierÍ,oÍ,s¤MathMªIdentifierÍ,tÍ,z¦randomÂÂÂ¡>V§LiteralÍ,Í,‚Ë?à      £0.5¥constQ³VariableDeclarationÍ,Í,µ‘R²VariableDeclaratorÍ,“Í,´MªIdentifierÍ,“Í,™¦maxNumX®CallExpressionÍ,œÍ,´Y°MemberExpressionÍ,œÍ,­Z®ThisExpressionÍ,œÍ, MªIdentifierÍ,¡Í,­¬getMaxNumberÂÂ‘MªIdentifierÍ,®Í,³¥gradeÂ¥constT«IfStatementÍ,¿Í3(U°BinaryExpressionÍ,ÃÍ,ÍMªIdentifierÍ,ÃÍ,È¥grade¢<=V§LiteralÍ,ÌÍ,Í¡2N®BlockStatementÍ,ÏÍ.à“]³ExpressionStatementÍ,ŞÍ-_´AssignmentExpressionÍ,ŞÍ-¡=MªIdentifierÍ,ŞÍ,â¤num1U°BinaryExpressionÍ,åÍ-X®CallExpressionÍ,åÍ-Y°MemberExpressionÍ,åÍ,ïMªIdentifierÍ,åÍ,é¤MathMªIdentifierÍ,êÍ,ï¥floorÂÂ‘U°BinaryExpressionÍ,ğÍ-X®CallExpressionÍ,ğÍ,ıY°MemberExpressionÍ,ğÍ,ûMªIdentifierÍ,ğÍ,ô¤MathMªIdentifierÍ,õÍ,û¦randomÂÂÂ¡*MªIdentifierÍ- Í-¦maxNumÂ¡+V§LiteralÍ-
+Í-¡1]³ExpressionStatementÍ-Í-H_´AssignmentExpressionÍ-Í-G¡=MªIdentifierÍ-Í-¤num2U°BinaryExpressionÍ-!Í-GX®CallExpressionÍ-!Í-CY°MemberExpressionÍ-!Í-+MªIdentifierÍ-!Í-%¤MathMªIdentifierÍ-&Í-+¥floorÂÂ‘U°BinaryExpressionÍ-,Í-BX®CallExpressionÍ-,Í-9Y°MemberExpressionÍ-,Í-7MªIdentifierÍ-,Í-0¤MathMªIdentifierÍ-1Í-7¦randomÂÂÂ¡*MªIdentifierÍ-<Í-B¦maxNumÂ¡+V§LiteralÍ-FÍ-G¡1T«IfStatementÍ-VÍ.ÕU°BinaryExpressionÍ-ZÍ-mX®CallExpressionÍ-ZÍ-gY°MemberExpressionÍ-ZÍ-eMªIdentifierÍ-ZÍ-^¤MathMªIdentifierÍ-_Í-e¦randomÂÂÂ¡>V§LiteralÍ-jÍ-mË?à      £0.5N®BlockStatementÍ-oÍ-Ç’]³ExpressionStatementÍ-‚Í-‘_´AssignmentExpressionÍ-‚Í-¡=MªIdentifierÍ-‚Í-Š¨operatorV§LiteralÍ-Í-¡+£'+']³ExpressionStatementÍ-£Í-¸_´AssignmentExpressionÍ-£Í-·¡=MªIdentifierÍ-£Í-©¦resultU°BinaryExpressionÍ-¬Í-·MªIdentifierÍ-¬Í-°¤num1¡+MªIdentifierÍ-³Í-·¤num2N®BlockStatementÍ-ÚÍ.Õ“]³ExpressionStatementÍ-íÍ-ü_´AssignmentExpressionÍ-íÍ-û¡=MªIdentifierÍ-íÍ-õ¨operatorV§LiteralÍ-øÍ-û¡-£'-'T«IfStatementÍ.Í.ŸU°BinaryExpressionÍ.Í.MªIdentifierÍ.Í.¤num1¡<MªIdentifierÍ.Í.¤num2N®BlockStatementÍ.Í.Ÿ“Q³VariableDeclarationÍ.6Í.H‘R²VariableDeclaratorÍ.<Í.GMªIdentifierÍ.<Í.@¤tempMªIdentifierÍ.CÍ.G¤num1¥const]³ExpressionStatementÍ.^Í.j_´AssignmentExpressionÍ.^Í.i¡=MªIdentifierÍ.^Í.b¤num1MªIdentifierÍ.eÍ.i¤num2]³ExpressionStatementÍ.€Í.Œ_´AssignmentExpressionÍ.€Í.‹¡=MªIdentifierÍ.€Í.„¤num2MªIdentifierÍ.‡Í.‹¤tempÀ]³ExpressionStatementÍ.±Í.Æ_´AssignmentExpressionÍ.±Í.Å¡=MªIdentifierÍ.±Í.·¦resultU°BinaryExpressionÍ.ºÍ.ÅMªIdentifierÍ.ºÍ.¾¤num1¡-MªIdentifierÍ.ÁÍ.Å¤num2N®BlockStatementÍ.ïÍ3(”Q³VariableDeclarationÍ.şÍ/'‘R²VariableDeclaratorÍ/Í/&MªIdentifierÍ/Í/¢opX®CallExpressionÍ/	Í/&Y°MemberExpressionÍ/	Í/MªIdentifierÍ/	Í/¤MathMªIdentifierÍ/Í/¥floorÂÂ‘U°BinaryExpressionÍ/Í/%X®CallExpressionÍ/Í/!Y°MemberExpressionÍ/Í/MªIdentifierÍ/Í/¤MathMªIdentifierÍ/Í/¦randomÂÂÂ¡*V§LiteralÍ/$Í/%¡4Â¥const]³ExpressionStatementÍ/5Í/c_´AssignmentExpressionÍ/5Í/b¡=MªIdentifierÍ/5Í/9¤num1U°BinaryExpressionÍ/<Í/bX®CallExpressionÍ/<Í/^Y°MemberExpressionÍ/<Í/FMªIdentifierÍ/<Í/@¤MathMªIdentifierÍ/AÍ/F¥floorÂÂ‘U°BinaryExpressionÍ/GÍ/]X®CallExpressionÍ/GÍ/TY°MemberExpressionÍ/GÍ/RMªIdentifierÍ/GÍ/K¤MathMªIdentifierÍ/LÍ/R¦randomÂÂÂ¡*MªIdentifierÍ/WÍ/]¦maxNumÂ¡+V§LiteralÍ/aÍ/b¡1]³ExpressionStatementÍ/qÍ/Ÿ_´AssignmentExpressionÍ/qÍ/¡=MªIdentifierÍ/qÍ/u¤num2U°BinaryExpressionÍ/xÍ/X®CallExpressionÍ/xÍ/šY°MemberExpressionÍ/xÍ/‚MªIdentifierÍ/xÍ/|¤MathMªIdentifierÍ/}Í/‚¥floorÂÂ‘U°BinaryExpressionÍ/ƒÍ/™X®CallExpressionÍ/ƒÍ/Y°MemberExpressionÍ/ƒÍ/MªIdentifierÍ/ƒÍ/‡¤MathMªIdentifierÍ/ˆÍ/¦randomÂÂÂ¡*MªIdentifierÍ/“Í/™¦maxNumÂ¡+V§LiteralÍ/Í/¡1`¯SwitchStatementÍ/­Í3MªIdentifierÍ/µÍ/·¢op”aªSwitchCaseÍ/ÌÍ0?“]³ExpressionStatementÍ/éÍ/ø_´AssignmentExpressionÍ/éÍ/÷¡=MªIdentifierÍ/éÍ/ñ¨operatorV§LiteralÍ/ôÍ/÷¡+£'+']³ExpressionStatementÍ0Í0#_´AssignmentExpressionÍ0Í0"¡=MªIdentifierÍ0Í0¦resultU°BinaryExpressionÍ0Í0"MªIdentifierÍ0Í0¤num1¡+MªIdentifierÍ0Í0"¤num2b®BreakStatementÍ09Í0?ÀV§LiteralÍ/ÑÍ/Ò ¡0aªSwitchCaseÍ0QÍ1{”]³ExpressionStatementÍ0nÍ0}_´AssignmentExpressionÍ0nÍ0|¡=MªIdentifierÍ0nÍ0v¨operatorV§LiteralÍ0yÍ0|¡-£'-'T«IfStatementÍ0“Í14U°BinaryExpressionÍ0—Í0¢MªIdentifierÍ0—Í0›¤num1¡<MªIdentifierÍ0Í0¢¤num2N®BlockStatementÍ0¤Í14“Q³VariableDeclarationÍ0¿Í0Ñ‘R²VariableDeclaratorÍ0ÅÍ0ĞMªIdentifierÍ0ÅÍ0É¤tempMªIdentifierÍ0ÌÍ0Ğ¤num1¥const]³ExpressionStatementÍ0ëÍ0÷_´AssignmentExpressionÍ0ëÍ0ö¡=MªIdentifierÍ0ëÍ0ï¤num1MªIdentifierÍ0òÍ0ö¤num2]³ExpressionStatementÍ1Í1_´AssignmentExpressionÍ1Í1¡=MªIdentifierÍ1Í1¤num2MªIdentifierÍ1Í1¤tempÀ]³ExpressionStatementÍ1JÍ1__´AssignmentExpressionÍ1JÍ1^¡=MªIdentifierÍ1JÍ1P¦resultU°BinaryExpressionÍ1SÍ1^MªIdentifierÍ1SÍ1W¤num1¡-MªIdentifierÍ1ZÍ1^¤num2b®BreakStatementÍ1uÍ1{ÀV§LiteralÍ0VÍ0W¡1aªSwitchCaseÍ1Í2 “]³ExpressionStatementÍ1ªÍ1¹_´AssignmentExpressionÍ1ªÍ1¸¡=MªIdentifierÍ1ªÍ1²¨operatorV§LiteralÍ1µÍ1¸¢Ã—¤'Ã—']³ExpressionStatementÍ1ÏÍ1ä_´AssignmentExpressionÍ1ÏÍ1ã¡=MªIdentifierÍ1ÏÍ1Õ¦resultU°BinaryExpressionÍ1ØÍ1ãMªIdentifierÍ1ØÍ1Ü¤num1¡*MªIdentifierÍ1ßÍ1ã¤num2b®BreakStatementÍ1úÍ2 ÀV§LiteralÍ1’Í1“¡2aªSwitchCaseÍ2Í3•]³ExpressionStatementÍ20Í2?_´AssignmentExpressionÍ20Í2>¡=MªIdentifierÍ20Í28¨operatorV§LiteralÍ2;Í2>¢Ã·¤'Ã·'T«IfStatementÍ2UÍ2‡U°BinaryExpressionÍ2YÍ2cMªIdentifierÍ2YÍ2]¤num2£===V§LiteralÍ2bÍ2c ¡0]³ExpressionStatementÍ2~Í2‡_´AssignmentExpressionÍ2~Í2†¡=MªIdentifierÍ2~Í2‚¤num2V§LiteralÍ2…Í2†¡1À]³ExpressionStatementÍ2Í2¾_´AssignmentExpressionÍ2Í2½¡=MªIdentifierÍ2Í2£¦resultX®CallExpressionÍ2¦Í2½Y°MemberExpressionÍ2¦Í2°MªIdentifierÍ2¦Í2ª¤MathMªIdentifierÍ2«Í2°¥floorÂÂ‘U°BinaryExpressionÍ2±Í2¼MªIdentifierÍ2±Í2µ¤num1¡/MªIdentifierÍ2¸Í2¼¤num2Â]³ExpressionStatementÍ2ÔÍ2é_´AssignmentExpressionÍ2ÔÍ2è¡=MªIdentifierÍ2ÔÍ2Ø¤num1U°BinaryExpressionÍ2ÛÍ2èMªIdentifierÍ2ÛÍ2á¦result¡*MªIdentifierÍ2äÍ2è¤num2b®BreakStatementÍ3Í3ÀÀQ³VariableDeclarationÍ3PÍ3m‘R²VariableDeclaratorÍ3TÍ3lMªIdentifierÍ3TÍ3c¯displayedResultMªIdentifierÍ3fÍ3l¦result£letT«IfStatementÍ3wÍ4Ÿ\¯UnaryExpressionÍ3{Í3…¡!ÃMªIdentifierÍ3|Í3…©isCorrectN®BlockStatementÍ3‡Í4Ÿ“]³ExpressionStatementÍ3–Í3Ô_´AssignmentExpressionÍ3–Í3Ó¡=MªIdentifierÍ3–Í3¥¯displayedResultU°BinaryExpressionÍ3¨Í3ÓU°BinaryExpressionÍ3¨Í3ÏMªIdentifierÍ3¨Í3®¦result¡+X®CallExpressionÍ3±Í3ÏY°MemberExpressionÍ3±Í3»MªIdentifierÍ3±Í3µ¤MathMªIdentifierÍ3¶Í3»¥floorÂÂ‘U°BinaryExpressionÍ3¼Í3ÎX®CallExpressionÍ3¼Í3ÉY°MemberExpressionÍ3¼Í3ÇMªIdentifierÍ3¼Í3À¤MathMªIdentifierÍ3ÁÍ3Ç¦randomÂÂÂ¡*V§LiteralÍ3ÌÍ3Î
+¢10Â¡-V§LiteralÍ3ÒÍ3Ó¡5T«IfStatementÍ3âÍ48U°BinaryExpressionÍ3æÍ3ùMªIdentifierÍ3æÍ3õ¯displayedResult¡<V§LiteralÍ3øÍ3ù ¡0]³ExpressionStatementÍ4Í48_´AssignmentExpressionÍ4Í47¡=MªIdentifierÍ4Í4¯displayedResultX®CallExpressionÍ4Í47Y°MemberExpressionÍ4Í4&MªIdentifierÍ4Í4"¤MathMªIdentifierÍ4#Í4&£absÂÂ‘MªIdentifierÍ4'Í46¯displayedResultÂÀT«IfStatementÍ4FÍ4”U°BinaryExpressionÍ4JÍ4dMªIdentifierÍ4JÍ4Y¯displayedResult£===MªIdentifierÍ4^Í4d¦result]³ExpressionStatementÍ4wÍ4”_´AssignmentExpressionÍ4wÍ4“¡=MªIdentifierÍ4wÍ4†¯displayedResultU°BinaryExpressionÍ4‰Í4“MªIdentifierÍ4‰Í4¦result¡+V§LiteralÍ4’Í4“¡1ÀÀ]³ExpressionStatementÍ4©Í4ï_´AssignmentExpressionÍ4©Í4î¡=Y°MemberExpressionÍ4©Í4¹MªIdentifierÍ4©Í4±¨questionMªIdentifierÍ4²Í4¹§contentÂÂc¯TemplateLiteralÍ4¼Í4î”MªIdentifierÍ4¿Í4Ã¤num1MªIdentifierÍ4ÇÍ4Ï¨operatorMªIdentifierÍ4ÓÍ4×¤num2MªIdentifierÍ4İÍ4ì¯displayedResult•d¯TemplateElementÍ4½Í4½e  Âd¯TemplateElementÍ4ÄÍ4Åe¡ ¡ Âd¯TemplateElementÍ4ĞÍ4Ñe¡ ¡ Âd¯TemplateElementÍ4ØÍ4Ûe£ = £ = Âd¯TemplateElementÍ4íÍ4íe  Ã]³ExpressionStatementÍ4ùÍ5*_´AssignmentExpressionÍ4ùÍ5)¡=Y°MemberExpressionÍ4ùÍ5MªIdentifierÍ4ùÍ5¨questionMªIdentifierÍ5Í5­correctAnswerÂÂTµConditionalExpressionÍ5Í5)MªIdentifierÍ5Í5©isCorrectV§LiteralÍ5Í5"¦æ­£ç¡®¨'æ­£ç¡®'V§LiteralÍ5%Í5)¦é”™è¯¯¨'é”™è¯¯']³ExpressionStatementÍ54Í5ø_´AssignmentExpressionÍ54Í5÷¡=Y°MemberExpressionÍ54Í5HMªIdentifierÍ54Í5<¨questionMªIdentifierÍ5=Í5H«explanationÂÂTµConditionalExpressionÍ5KÍ5÷MªIdentifierÍ5KÍ5T©isCorrectc¯TemplateLiteralÍ5dÍ5˜”MªIdentifierÍ5gÍ5k¤num1MªIdentifierÍ5oÍ5w¨operatorMªIdentifierÍ5{Í5¤num2MªIdentifierÍ5…Í5‹¦result•d¯TemplateElementÍ5eÍ5ee  Âd¯TemplateElementÍ5lÍ5me¡ ¡ Âd¯TemplateElementÍ5xÍ5ye¡ ¡ Âd¯TemplateElementÍ5€Í5ƒe£ = £ = Âd¯TemplateElementÍ5ŒÍ5—eÙ!ï¼Œæ‰€ä»¥è¿™ä¸ªç­‰å¼æ˜¯æ­£ç¡®çš„Ù!ï¼Œæ‰€ä»¥è¿™ä¸ªç­‰å¼æ˜¯æ­£ç¡®çš„Ãc¯TemplateLiteralÍ5¨Í5÷•MªIdentifierÍ5«Í5¯¤num1MªIdentifierÍ5³Í5»¨operatorMªIdentifierÍ5¿Í5Ã¤num2MªIdentifierÍ5ÉÍ5Ï¦resultMªIdentifierÍ5ÛÍ5ê¯displayedResult–d¯TemplateElementÍ5©Í5©e  Âd¯TemplateElementÍ5°Í5±e¡ ¡ Âd¯TemplateElementÍ5¼Í5½e¡ ¡ Âd¯TemplateElementÍ5ÄÍ5Çe£ = £ = Âd¯TemplateElementÍ5ĞÍ5Ùe¹ï¼Œä½†é¢˜ç›®ä¸­å†™çš„æ˜¯ ¹ï¼Œä½†é¢˜ç›®ä¸­å†™çš„æ˜¯ Âd¯TemplateElementÍ5ëÍ5öeÙ!ï¼Œæ‰€ä»¥è¿™ä¸ªç­‰å¼æ˜¯é”™è¯¯çš„Ù!ï¼Œæ‰€ä»¥è¿™ä¸ªç­‰å¼æ˜¯é”™è¯¯çš„ÃW¯ReturnStatementÍ6Í6MªIdentifierÍ6	Í6¨questionO°MethodDefinitionÍ6FÍ7ìÃÂMªIdentifierÍ6MÍ6Y¬getMaxNumber¦methodP²FunctionExpressionÍ6YÍ7ìÀÂÂÂ‘MªIdentifierÍ6ZÍ6_¥gradeN®BlockStatementÍ6aÍ7ì‘`¯SwitchStatementÍ6lÍ7åMªIdentifierÍ6tÍ6y¥grade—aªSwitchCaseÍ6ŠÍ6­‘W¯ReturnStatementÍ6£Í6­V§LiteralÍ6ªÍ6¬¢20V§LiteralÍ6Í6¡1aªSwitchCaseÍ6»Í6Ş‘W¯ReturnStatementÍ6ÔÍ6ŞV§LiteralÍ6ÛÍ6İ2¢50V§LiteralÍ6ÀÍ6Á¡2aªSwitchCaseÍ6ìÍ7‘W¯ReturnStatementÍ7Í7V§LiteralÍ7Í7Ìd£100V§LiteralÍ6ñÍ6ò¡3aªSwitchCaseÍ7Í7B‘W¯ReturnStatementÍ77Í7BV§LiteralÍ7>Í7AÌÈ£200V§LiteralÍ7#Í7$¡4aªSwitchCaseÍ7PÍ7t‘W¯ReturnStatementÍ7iÍ7tV§LiteralÍ7pÍ7sÍô£500V§LiteralÍ7UÍ7V¡5aªSwitchCaseÍ7‚Í7§‘W¯ReturnStatementÍ7›Í7§V§LiteralÍ7¢Í7¦Íè¤1000V§LiteralÍ7‡Í7ˆ¡6aªSwitchCaseÍ7µÍ7Ú‘W¯ReturnStatementÍ7ÏÍ7ÚV§LiteralÍ7ÖÍ7ÙÌd£100ÀO°MethodDefinitionÍ8[Í9ÂÃÂMªIdentifierÍ8bÍ8z¸generateAllMathQuestions¦methodP²FunctionExpressionÍ8zÍ9ÂÀÂÂÂ‘MªIdentifierÍ8{Í8Œ±questionsPerGradeN®BlockStatementÍ8Í9Â“Q³VariableDeclarationÍ8™Í8±‘R²VariableDeclaratorÍ8ŸÍ8°MªIdentifierÍ8ŸÍ8«¬allQuestionsS¯ArrayExpressionÍ8®Í8°¥const[¬ForStatementÍ8»Í9Q³VariableDeclarationÍ8ÀÍ8â‘R²VariableDeclaratorÍ8ÄÍ8âMªIdentifierÍ8ÄÍ8É¥gradeY°MemberExpressionÍ8ÌÍ8âMªIdentifierÍ8ÌÍ8Ø¬AppConstantsMªIdentifierÍ8ÙÍ8â©MIN_GRADEÂÂ£letU°BinaryExpressionÍ8äÍ9MªIdentifierÍ8äÍ8é¥grade¢<=Y°MemberExpressionÍ8íÍ9MªIdentifierÍ8íÍ8ù¬AppConstantsMªIdentifierÍ8úÍ9©MAX_GRADEÂÂ\°UpdateExpressionÍ9Í9¢++ÂMªIdentifierÍ9Í9
+¥gradeN®BlockStatementÍ9Í9’Q³VariableDeclarationÍ9Í9d‘R²VariableDeclaratorÍ9#Í9cMªIdentifierÍ9#Í9,©questionsX®CallExpressionÍ9/Í9cY°MemberExpressionÍ9/Í9IZ®ThisExpressionÍ9/Í93MªIdentifierÍ94Í9IµgenerateMathQuestionsÂÂ’MªIdentifierÍ9JÍ9O¥gradeMªIdentifierÍ9QÍ9b±questionsPerGradeÂ¥const]³ExpressionStatementÍ9rÍ9’X®CallExpressionÍ9rÍ9‘Y°MemberExpressionÍ9rÍ9ƒMªIdentifierÍ9rÍ9~¬allQuestionsMªIdentifierÍ9Í9ƒ¤pushÂÂ‘W­SpreadElementÍ9„Í9MªIdentifierÍ9‡Í9©questionsÂW¯ReturnStatementÍ9§Í9»MªIdentifierÍ9®Í9º¬allQuestionsÀ’Ôrf•¤type¥start£endªspecifiers¦source±ImportDeclaration 9‘Ôrg•¤type¥start£end¨imported¥local¯ImportSpecifier	MªIdentifier	¬AppConstantsMªIdentifier	¬AppConstantsV§Literal8¹../constants/AppConstants»'../constants/AppConstants'f±ImportDeclaration;Ìh‘g¯ImportSpecifierÌDÌLMªIdentifierÌDÌL¨QuestionMªIdentifierÌDÌL¨QuestionV§LiteralÌTÌg±../model/Question³'../model/Question'

@@ -64,3 +64,82 @@
 # Keep model classes
 -keep class com.edu.primary.model.** { *; }
 -keep class com.edu.primary.database.entity.** { *; }
+
+# Keep all entity classes for Room
+-keep @androidx.room.Entity class * {
+    <fields>;
+}
+
+# Keep Room database classes
+-keep class * extends androidx.room.RoomDatabase {
+    <init>(...);
+}
+
+# Keep DAO classes
+-keep @androidx.room.Dao interface * {
+    <methods>;
+}
+
+# Keep RxJava classes
+-dontwarn rx.**
+-keep class rx.** { *; }
+-keepclassmembers class rx.** {
+    <methods>;
+}
+
+# Keep RxAndroid classes
+-dontwarn io.reactivex.**
+-keep class io.reactivex.** { *; }
+
+# Keep application classes
+-keep class com.edu.primary.** { *; }
+-keepclassmembers class com.edu.primary.** {
+    <init>(...);
+}
+
+# Keep BuildConfig
+-keep class com.edu.primary.BuildConfig { *; }
+
+# Keep native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# Keep Parcelable implementations
+-keep class * implements android.os.Parcelable {
+    public static final android.os.Parcelable$Creator *;
+}
+
+# Keep Serializable classes
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+# Keep annotations
+-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes Exceptions
+-keepattributes InnerClasses
+-keepattributes EnclosingMethod
+
+# Keep line numbers for debugging
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
+# Remove logging in release builds (优化性能)
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+}
+
+# Keep Logger class but remove debug logs in release
+-keep class com.edu.primary.utils.Logger { *; }
+-assumenosideeffects class com.edu.primary.utils.Logger {
+    public static *** d(...);
+}
