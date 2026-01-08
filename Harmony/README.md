@@ -184,30 +184,59 @@ hvigorw test
 
 ## 常见问题
 
+### 快速查找解决方案
+
+**遇到问题？先查看 [FAQ文档](./FAQ.md)** - 包含所有常见问题的详细解答和解决方案。
+
+FAQ涵盖以下方面：
+- 环境与配置问题
+- IDE相关问题（同步失败、索引错误等）
+- 编译问题（编译错误、资源问题等）
+- 运行时问题（崩溃、数据库问题等）
+- 功能问题（注册登录、答题功能等）
+- 网络与API问题
+- 性能优化问题
+
 ### 项目同步失败
 
 如果在 DevEco Studio 6.0.0 中遇到 "Project sync failed" 错误，请查看：
 
+- **[FAQ - 项目同步失败](./FAQ.md#q4-项目同步失败-project-sync-failed)** - FAQ中的详细解答
 - [项目同步问题解决方案](./docs/SYNC_ISSUES.md) - 详细的同步问题排查和解决指南
-
-常见解决方法：
-1. 确保已安装 Node.js（推荐 14.x 或 16.x）
-2. 检查 HarmonyOS SDK 是否正确安装
-3. 清理项目缓存：`File -> Invalidate Caches / Restart`
-4. 检查 `.hvigor/hvigor-config.json5` 文件是否存在
+- [快速修复同步问题](./docs/QUICK_FIX_SYNC.md) - 快速修复步骤
 
 ### IDE 错误
 
-如果遇到 DevEco Studio IDE 内部错误（如 NullPointerException、CustomNotification 错误等），请查看：
+如果遇到 DevEco Studio IDE 内部错误，请查看：
 
+- **[FAQ - IDE错误](./FAQ.md#ide相关问题)** - FAQ中的IDE错误解答
 - [IDE 错误解决方案](./docs/IDE_ERRORS.md) - IDE 常见错误及解决方法
 - [快速修复索引错误](./FIX_INDEX_ERROR.md) - 索引错误的快速修复指南
 
-常见解决方法：
-1. 清理缓存：`File -> Invalidate Caches / Restart`
-2. 更新 DevEco Studio 到最新版本
-3. 检查并更新相关插件
-4. **注意**: 大多数 IDE 内部错误不影响项目编译和运行，可以安全忽略
+常见错误：
+- CustomNotification 类初始化错误 - 通常可以安全忽略
+- NullPointerException in BalloonImpl - IDE UI组件错误，不影响项目
+- 项目索引错误 - 需要清理索引缓存
+
+### 编译问题
+
+如果遇到编译错误，请查看：
+
+- **[FAQ - 编译问题](./FAQ.md#编译问题)** - 编译错误的详细解答
+- [编译检查清单](./docs/COMPILE_CHECKLIST.md) - 编译前的检查清单
+- [构建文档](./docs/BUILD.md) - 详细的构建说明
+
+### 功能问题
+
+如果遇到功能相关的问题，请查看：
+
+- **[FAQ - 功能问题](./FAQ.md#功能问题)** - 功能问题的详细解答
+
+常见问题：
+- 用户注册/登录问题
+- 答题功能问题（题目显示、答案保存等）
+- 数据库操作问题
+- 网络请求问题
 
 ## 联系方式
 
