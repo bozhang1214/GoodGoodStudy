@@ -49,3 +49,25 @@ AI 助手使用 **端侧 TensorFlow Lite** 做**意图分类 + 固定回复**，
 | `npm run android:with-metro` | 先启 Metro 再跑应用，避免 “Unable to load script” 红屏 |
 | `npm run android:wait` | 等模拟器就绪后自动运行应用（需另开终端跑 Metro） |
 | `npm run android:clean` | 清理 Android 构建（遇原生相关问题时使用） |
+
+## 项目文档索引
+
+本工程已按模块整理了开发文档，位于 `docs/` 目录，推荐从下列入口阅读：
+
+- **整体架构**
+  - `ARCHITECTURE.md`：系统分层架构、核心模块关系、主要业务与数据流。
+- **模块文档（docs/modules）**
+  - `module-app.md`：应用壳与登录/Tab 导航。
+  - `module-practice.md`：练习、进度与错题本业务。
+  - `module-ai-assistant.md`：AI 助手 UI 与对话后端（规则 / TFLite / Llama）。
+- **第三方框架说明（docs/third-party）**
+  - `react-native.md`：React / React Native 在本项目中的用法与注意事项。
+  - `async-storage.md`：AsyncStorage 存储设计与坑点。
+  - `llama-rn.md`：llama.rn 端侧大模型集成说明。
+  - `react-native-fs.md`：文件系统与 GGUF 模型下载。
+  - `tflite-android.md`：Android 端 TensorFlow Lite 集成与意图分类模块。
+- **开发辅助文档（docs/guide）**
+  - `setup.md`：环境搭建与运行指南。
+  - `testing.md`：测试与质量保障建议。
+  - `faq.md`：运行/构建/AI 相关常见问题。
+  - 端侧 LLM 相关补充文档：`ON_DEVICE_LLM.md`、`QWEN122B_GGUF_ANALYSIS.md`。
