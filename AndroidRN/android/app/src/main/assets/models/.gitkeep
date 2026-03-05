@@ -1,0 +1,9 @@
+// 在此目录下放置默认随 APK 打包的 GGUF 模型文件，例如：
+// - llama-3.2-1b-instruct-q4_k_m.gguf
+// - phi-2-q4_k_m.gguf
+//
+// 代码中默认使用路径类似：
+// file:///android_asset/models/phi-2-q4_k_m.gguf
+//
+// 注意：真实 GGUF 模型文件体积较大，请根据发行需求自行选择是否打包进应用。
+

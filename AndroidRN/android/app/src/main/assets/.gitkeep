@@ -1,0 +1,2 @@
+# 将 intent_classifier.tflite 放于此目录可启用 TFLite 意图分类；无则使用内置规则回复。
+# 生成模型：在项目根目录执行 pip install tensorflow && python scripts/export_intent_model.py

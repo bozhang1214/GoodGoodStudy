@@ -1,0 +1,41 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Android（等模拟器就绪后运行）",
+      "cwd": "${workspaceFolder}",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "android:wait"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run Android（等模拟器就绪，不启 Metro）",
+      "cwd": "${workspaceFolder}",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "android:wait-no-packager"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run Android（连接已有 Metro）",
+      "cwd": "${workspaceFolder}",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "android", "--", "--no-packager"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Attach to packager (Metro 8081)",
+      "cwd": "${workspaceFolder}",
+      "type": "node",
+      "request": "attach",
+      "port": 8081,
+      "sourceMaps": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    }
+  ]
+}
